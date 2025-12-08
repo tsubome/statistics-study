@@ -845,6 +845,40 @@ const distributionRelations = {
   ]
 };
 
+// 最重要公式リスト（表形式）
+const essentialFormulas = [
+  { category: "確率", name: "条件付き確率", formula: "P(A|B) = \\frac{P(A \\cap B)}{P(B)}", importance: "★★★", note: "分母を取り違えないこと" },
+  { category: "確率", name: "ベイズの定理", formula: "P(A|B) = \\frac{P(B|A)P(A)}{P(B)}", importance: "★★★", note: "尤度×事前確率÷正規化定数" },
+  { category: "確率変数", name: "期待値の線形性", formula: "E[aX+b] = aE[X]+b", importance: "★★★", note: "そのまま係数が出る" },
+  { category: "確率変数", name: "分散の線形性", formula: "V[aX+b] = a^2 V[X]", importance: "★★★", note: "係数は2乗、定数は消える" },
+  { category: "確率変数", name: "分散の計算式", formula: "V[X] = E[X^2] - (E[X])^2", importance: "★★★", note: "計算効率化の鍵" },
+  { category: "分布", name: "二項分布", formula: "E=np,\\quad V=np(1-p)", importance: "★★★", note: "最頻出" },
+  { category: "分布", name: "ポアソン分布", formula: "P(X=k)=\\frac{e^{-\\lambda}\\lambda^k}{k!}", importance: "★★", note: "E=V=λ" },
+  { category: "分布", name: "幾何分布", formula: "E=\\frac{1}{p},\\quad V=\\frac{1-p}{p^2}", importance: "★★", note: "分散の式を忘れがち" },
+  { category: "標本・推定", name: "標準化", formula: "Z = \\frac{X - \\mu}{\\sigma}", importance: "★★★", note: "全ての基本" },
+  { category: "標本・推定", name: "標本平均の標準化", formula: "Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}", importance: "★★★", note: "分母はσ/√n" },
+  { category: "標本・推定", name: "信頼区間", formula: "\\bar{X} \\pm Z_{\\alpha/2} \\frac{\\sigma}{\\sqrt{n}}", importance: "★★", note: "Z₀.₀₂₅=1.96は常識" },
+];
+
+// 用語定義
+const glossary = [
+  { term: "排反（Mutually Exclusive）", definition: "2つの事象が同時に起こらない。P(A∩B)=0", example: "サイコロで「1」と「2」が同時に出ることはない" },
+  { term: "独立（Independent）", definition: "一方の事象が他方に影響しない。P(A∩B)=P(A)P(B)", example: "コイン投げの1回目と2回目の結果" },
+  { term: "条件付き確率", definition: "ある事象が起きた条件下での別の事象の確率", example: "雨が降っている条件下で傘を持っている確率" },
+  { term: "事前確率（Prior）", definition: "観測前のパラメータの確率分布", example: "検査前の病気である確率" },
+  { term: "尤度（Likelihood）", definition: "パラメータが与えられた下でデータが観測される確率", example: "病気の人が陽性になる確率" },
+  { term: "事後確率（Posterior）", definition: "観測後に更新されたパラメータの確率", example: "陽性だった人が実際に病気である確率" },
+  { term: "不偏推定量", definition: "期待値が真の値と一致する推定量。E[θ̂]=θ", example: "標本平均は母平均の不偏推定量" },
+  { term: "標準誤差（SE）", definition: "標本統計量の標準偏差。SE=σ/√n", example: "標本平均のばらつきの指標" },
+];
+
+// 分布近似の条件表
+const approximationTable = [
+  { type: "ポアソン近似", from: "B(n,p)", to: "Po(np)", condition: "n≥100, p≤0.05, np一定", use: "稀な事象の多数回試行", formula: "\\lambda = np" },
+  { type: "正規近似", from: "B(n,p)", to: "N(np, np(1-p))", condition: "np≥5 かつ n(1-p)≥5", use: "大標本の二項分布", formula: "\\mu=np,\\, \\sigma^2=np(1-p)" },
+  { type: "中心極限定理", from: "任意の分布", to: "N(μ, σ²/n)", condition: "n≥30", use: "標本平均の分布", formula: "\\bar{X} \\sim N(\\mu, \\frac{\\sigma^2}{n})" },
+];
+
 // クイックリファレンス
 const quickReference = [
   {
@@ -906,7 +940,10 @@ const quickReference = [
 function TabNav({ activeTab, setActiveTab }) {
   const tabs = [
     { id: 'learn', label: '📚 学習', icon: '📚' },
+    { id: 'visual', label: '📊 視覚学習', icon: '📊' },
     { id: 'formulas', label: '📝 公式集', icon: '📝' },
+    { id: 'essential', label: '⭐ 最重要公式', icon: '⭐' },
+    { id: 'glossary', label: '📖 用語集', icon: '📖' },
     { id: 'relations', label: '🔗 分布関係', icon: '🔗' },
     { id: 'checklist', label: '✅ チェックリスト', icon: '✅' },
   ];
@@ -1115,12 +1152,97 @@ function FormulasTab() {
   );
 }
 
+function EssentialFormulasTab() {
+  const categories = [...new Set(essentialFormulas.map(f => f.category))];
+
+  return (
+    <div className="essential-tab">
+      <h2>⭐ 絶対に覚えるべき最重要公式</h2>
+      <p className="tab-description">試験で必ず使う公式を厳選。重要度★★★は必須暗記！</p>
+
+      <div className="essential-table-container">
+        <table className="essential-table">
+          <thead>
+            <tr>
+              <th>カテゴリ</th>
+              <th>項目</th>
+              <th>公式</th>
+              <th>重要度</th>
+              <th>注意点</th>
+            </tr>
+          </thead>
+          <tbody>
+            {essentialFormulas.map((f, i) => (
+              <tr key={i}>
+                <td className="category-cell">{f.category}</td>
+                <td className="name-cell">{f.name}</td>
+                <td className="formula-cell"><MathFormula>{f.formula}</MathFormula></td>
+                <td className="importance-cell">{f.importance}</td>
+                <td className="note-cell">{f.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function GlossaryTab() {
+  return (
+    <div className="glossary-tab">
+      <h2>📖 重要用語集</h2>
+      <p className="tab-description">混同しやすい用語の定義を明確にしよう</p>
+
+      <div className="glossary-grid">
+        {glossary.map((item, i) => (
+          <div key={i} className="glossary-card">
+            <h4 className="glossary-term">{item.term}</h4>
+            <p className="glossary-definition">{item.definition}</p>
+            <div className="glossary-example">
+              <strong>例:</strong> {item.example}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function RelationsTab() {
   return (
     <div className="relations-tab">
       <h2>🔗 {distributionRelations.title}</h2>
       <p className="tab-description">分布間の近似条件と使い分けを理解しよう</p>
-      
+
+      {/* 近似条件表 */}
+      <h3 className="section-subtitle">📊 近似条件一覧表</h3>
+      <div className="approx-table-container">
+        <table className="approx-table">
+          <thead>
+            <tr>
+              <th>近似の種類</th>
+              <th>元の分布</th>
+              <th>近似先</th>
+              <th>条件</th>
+              <th>使用場面</th>
+            </tr>
+          </thead>
+          <tbody>
+            {approximationTable.map((row, i) => (
+              <tr key={i}>
+                <td>{row.type}</td>
+                <td>{row.from}</td>
+                <td>{row.to}</td>
+                <td>{row.condition}</td>
+                <td>{row.use}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h3 className="section-subtitle">🔄 分布間の関係</h3>
       <div className="relations-grid">
         {distributionRelations.relations.map((rel, i) => (
           <div key={i} className="relation-card">
@@ -1237,6 +1359,306 @@ function ChecklistTab() {
             })}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ベイズのツリー図コンポーネント
+function BayesTreeDiagram() {
+  return (
+    <div className="visual-card">
+      <h3>🌳 ベイズの定理 - ツリー図（樹形図）</h3>
+      <p className="visual-desc">部品の供給元問題を視覚化</p>
+      <div className="tree-diagram">
+        <svg viewBox="0 0 600 300" className="tree-svg">
+          {/* ルート */}
+          <circle cx="50" cy="150" r="20" fill="#667eea"/>
+          <text x="50" y="155" textAnchor="middle" fill="white" fontSize="12">全体</text>
+
+          {/* A社の枝 */}
+          <line x1="70" y1="150" x2="180" y2="50" stroke="#ff6b6b" strokeWidth="2"/>
+          <text x="110" y="85" fill="#ff6b6b" fontSize="11">P(A)=0.15</text>
+          <circle cx="200" cy="50" r="18" fill="#ff6b6b"/>
+          <text x="200" y="54" textAnchor="middle" fill="white" fontSize="10">A社</text>
+
+          {/* A社→不良品 */}
+          <line x1="218" y1="50" x2="350" y2="30" stroke="#ff6b6b" strokeWidth="1.5"/>
+          <text x="270" y="30" fill="#aaa" fontSize="9">P(E|A)=0.004</text>
+          <rect x="360" y="15" width="80" height="30" rx="5" fill="rgba(255,107,107,0.3)" stroke="#ff6b6b"/>
+          <text x="400" y="35" textAnchor="middle" fill="#ff6b6b" fontSize="10">0.0006</text>
+
+          {/* B社の枝 */}
+          <line x1="70" y1="150" x2="180" y2="150" stroke="#4ecdc4" strokeWidth="2"/>
+          <text x="110" y="140" fill="#4ecdc4" fontSize="11">P(B)=0.35</text>
+          <circle cx="200" cy="150" r="18" fill="#4ecdc4"/>
+          <text x="200" y="154" textAnchor="middle" fill="white" fontSize="10">B社</text>
+
+          {/* B社→不良品 */}
+          <line x1="218" y1="150" x2="350" y2="130" stroke="#4ecdc4" strokeWidth="1.5"/>
+          <text x="270" y="130" fill="#aaa" fontSize="9">P(E|B)=0.004</text>
+          <rect x="360" y="115" width="80" height="30" rx="5" fill="rgba(78,205,196,0.3)" stroke="#4ecdc4"/>
+          <text x="400" y="135" textAnchor="middle" fill="#4ecdc4" fontSize="10">0.0014</text>
+
+          {/* C社の枝 */}
+          <line x1="70" y1="150" x2="180" y2="250" stroke="#a55eea" strokeWidth="2"/>
+          <text x="110" y="215" fill="#a55eea" fontSize="11">P(C)=0.50</text>
+          <circle cx="200" cy="250" r="18" fill="#a55eea"/>
+          <text x="200" y="254" textAnchor="middle" fill="white" fontSize="10">C社</text>
+
+          {/* C社→不良品 */}
+          <line x1="218" y1="250" x2="350" y2="230" stroke="#a55eea" strokeWidth="1.5"/>
+          <text x="270" y="230" fill="#aaa" fontSize="9">P(E|C)=0.002</text>
+          <rect x="360" y="215" width="80" height="30" rx="5" fill="rgba(165,94,234,0.3)" stroke="#a55eea"/>
+          <text x="400" y="235" textAnchor="middle" fill="#a55eea" fontSize="10">0.0010</text>
+
+          {/* 合計 */}
+          <rect x="480" y="100" width="100" height="60" rx="8" fill="rgba(102,126,234,0.3)" stroke="#667eea" strokeWidth="2"/>
+          <text x="530" y="125" textAnchor="middle" fill="#667eea" fontSize="11">P(E) = 合計</text>
+          <text x="530" y="145" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">0.003</text>
+        </svg>
+      </div>
+      <div className="visual-formula">
+        <MathFormula>P(A|E) = \frac{0.0006}{0.003} = \frac{1}{5} = 20\%</MathFormula>
+      </div>
+    </div>
+  );
+}
+
+// 正規分布の図コンポーネント
+function NormalDistributionDiagram() {
+  return (
+    <div className="visual-card">
+      <h3>🔔 正規分布と68-95-99.7ルール</h3>
+      <p className="visual-desc">標準偏差ごとの区間確率を視覚化</p>
+      <div className="normal-diagram">
+        <svg viewBox="0 0 500 250" className="normal-svg">
+          {/* 曲線 */}
+          <path d="M 50 200 Q 100 200, 150 180 Q 200 140, 250 50 Q 300 140, 350 180 Q 400 200, 450 200"
+                fill="none" stroke="#667eea" strokeWidth="3"/>
+
+          {/* 1σ区間 */}
+          <rect x="175" y="50" width="150" height="150" fill="rgba(102,126,234,0.3)"/>
+          <text x="250" y="130" textAnchor="middle" fill="#667eea" fontSize="14" fontWeight="bold">68%</text>
+
+          {/* 2σ区間 */}
+          <rect x="125" y="50" width="50" height="150" fill="rgba(102,126,234,0.15)"/>
+          <rect x="325" y="50" width="50" height="150" fill="rgba(102,126,234,0.15)"/>
+          <text x="150" y="100" textAnchor="middle" fill="#888" fontSize="10">13.5%</text>
+          <text x="350" y="100" textAnchor="middle" fill="#888" fontSize="10">13.5%</text>
+
+          {/* 軸 */}
+          <line x1="50" y1="200" x2="450" y2="200" stroke="#666" strokeWidth="1"/>
+
+          {/* ラベル */}
+          <text x="125" y="220" textAnchor="middle" fill="#888" fontSize="11">-2σ</text>
+          <text x="175" y="220" textAnchor="middle" fill="#888" fontSize="11">-1σ</text>
+          <text x="250" y="220" textAnchor="middle" fill="#fff" fontSize="12">μ</text>
+          <text x="325" y="220" textAnchor="middle" fill="#888" fontSize="11">+1σ</text>
+          <text x="375" y="220" textAnchor="middle" fill="#888" fontSize="11">+2σ</text>
+
+          {/* 凡例 */}
+          <text x="250" y="240" textAnchor="middle" fill="#4ecdc4" fontSize="11">±1σ: 68% | ±2σ: 95% | ±3σ: 99.7%</text>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// 仮説検定フローチャート
+function HypothesisTestFlowchart() {
+  return (
+    <div className="visual-card">
+      <h3>⚖️ 仮説検定のフローチャート</h3>
+      <p className="visual-desc">検定の手順を視覚的に理解</p>
+      <div className="flowchart">
+        <div className="flow-step start">
+          <span>1. 仮説設定</span>
+          <small>H₀: μ = μ₀（帰無仮説）</small>
+          <small>H₁: μ ≠ μ₀（対立仮説）</small>
+        </div>
+        <div className="flow-arrow">↓</div>
+        <div className="flow-step">
+          <span>2. 有意水準α決定</span>
+          <small>通常 α = 0.05 または 0.01</small>
+        </div>
+        <div className="flow-arrow">↓</div>
+        <div className="flow-step">
+          <span>3. 検定統計量Z計算</span>
+          <small>Z = (X̄ - μ₀) / (σ/√n)</small>
+        </div>
+        <div className="flow-arrow">↓</div>
+        <div className="flow-step decision">
+          <span>4. 判定</span>
+          <small>|Z| ≥ z(α/2) ?</small>
+        </div>
+        <div className="flow-branches">
+          <div className="flow-branch yes">
+            <span className="branch-label">Yes</span>
+            <div className="flow-result reject">H₀を棄却</div>
+          </div>
+          <div className="flow-branch no">
+            <span className="branch-label">No</span>
+            <div className="flow-result accept">H₀を棄却できない</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 標本平均の収束図
+function SampleMeanConvergence() {
+  return (
+    <div className="visual-card">
+      <h3>📉 中心極限定理 - サンプルサイズと分布</h3>
+      <p className="visual-desc">サンプルサイズが大きくなると標本平均の分布が狭くなる</p>
+      <div className="convergence-diagram">
+        <div className="convergence-row">
+          <span className="conv-label">n = 1</span>
+          <div className="conv-bar wide"></div>
+          <span className="conv-se">SE = σ</span>
+        </div>
+        <div className="convergence-row">
+          <span className="conv-label">n = 4</span>
+          <div className="conv-bar medium"></div>
+          <span className="conv-se">SE = σ/2</span>
+        </div>
+        <div className="convergence-row">
+          <span className="conv-label">n = 16</span>
+          <div className="conv-bar narrow"></div>
+          <span className="conv-se">SE = σ/4</span>
+        </div>
+        <div className="convergence-row">
+          <span className="conv-label">n = 100</span>
+          <div className="conv-bar very-narrow"></div>
+          <span className="conv-se">SE = σ/10</span>
+        </div>
+      </div>
+      <div className="visual-note">
+        💡 標準誤差 SE = σ/√n → サンプル4倍で精度2倍
+      </div>
+    </div>
+  );
+}
+
+// パラメータ整理テンプレート
+function ParameterTemplate() {
+  return (
+    <div className="visual-card">
+      <h3>📋 問題解法 - パラメータ整理テンプレート</h3>
+      <p className="visual-desc">ベイズの問題を解くときの表形式整理</p>
+      <table className="param-table">
+        <thead>
+          <tr>
+            <th>供給元</th>
+            <th>事前確率 P(·)</th>
+            <th>尤度 P(E|·)</th>
+            <th>積事象 P(·∩E)</th>
+            <th>事後確率 P(·|E)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A社</td>
+            <td>0.15</td>
+            <td>0.004</td>
+            <td>0.0006</td>
+            <td>0.2 (20%)</td>
+          </tr>
+          <tr>
+            <td>B社</td>
+            <td>0.35</td>
+            <td>0.004</td>
+            <td>0.0014</td>
+            <td>0.47 (47%)</td>
+          </tr>
+          <tr>
+            <td>C社</td>
+            <td>0.50</td>
+            <td>0.002</td>
+            <td>0.0010</td>
+            <td>0.33 (33%)</td>
+          </tr>
+          <tr className="total-row">
+            <td>合計</td>
+            <td>1.00</td>
+            <td>-</td>
+            <td>0.003</td>
+            <td>1.00</td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="visual-note">
+        💡 表を作ることで計算ミスを防ぎ、部分点も狙える！
+      </div>
+    </div>
+  );
+}
+
+// 分布の形状比較
+function DistributionShapes() {
+  return (
+    <div className="visual-card">
+      <h3>📊 分布の形状比較</h3>
+      <p className="visual-desc">各分布の特徴を視覚的に比較</p>
+      <div className="dist-comparison">
+        <div className="dist-item">
+          <div className="dist-shape binomial">
+            <div className="bar" style={{height: '20%'}}></div>
+            <div className="bar" style={{height: '40%'}}></div>
+            <div className="bar" style={{height: '60%'}}></div>
+            <div className="bar" style={{height: '80%'}}></div>
+            <div className="bar" style={{height: '100%'}}></div>
+            <div className="bar" style={{height: '80%'}}></div>
+            <div className="bar" style={{height: '60%'}}></div>
+            <div className="bar" style={{height: '40%'}}></div>
+            <div className="bar" style={{height: '20%'}}></div>
+          </div>
+          <span className="dist-name">二項分布 B(n,p)</span>
+          <small>離散・左右対称(p=0.5時)</small>
+        </div>
+        <div className="dist-item">
+          <div className="dist-shape poisson">
+            <div className="bar" style={{height: '100%'}}></div>
+            <div className="bar" style={{height: '80%'}}></div>
+            <div className="bar" style={{height: '50%'}}></div>
+            <div className="bar" style={{height: '25%'}}></div>
+            <div className="bar" style={{height: '10%'}}></div>
+            <div className="bar" style={{height: '5%'}}></div>
+          </div>
+          <span className="dist-name">ポアソン分布 Po(λ)</span>
+          <small>離散・右に裾が長い</small>
+        </div>
+        <div className="dist-item">
+          <div className="dist-shape normal">
+            <svg viewBox="0 0 100 60">
+              <path d="M 5 55 Q 25 55, 35 40 Q 45 15, 50 10 Q 55 15, 65 40 Q 75 55, 95 55"
+                    fill="rgba(102,126,234,0.3)" stroke="#667eea" strokeWidth="2"/>
+            </svg>
+          </div>
+          <span className="dist-name">正規分布 N(μ,σ²)</span>
+          <small>連続・左右対称</small>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 視覚学習タブ
+function VisualLearningTab() {
+  return (
+    <div className="visual-tab">
+      <h2>📊 視覚的に学ぶ統計学</h2>
+      <p className="tab-description">図と表で直感的に理解しよう</p>
+
+      <div className="visual-grid">
+        <BayesTreeDiagram />
+        <NormalDistributionDiagram />
+        <DistributionShapes />
+        <HypothesisTestFlowchart />
+        <SampleMeanConvergence />
+        <ParameterTemplate />
       </div>
     </div>
   );
@@ -1777,11 +2199,11 @@ function App() {
         }
 
         /* Formulas Tab */
-        .formulas-tab, .relations-tab, .checklist-tab {
+        .formulas-tab, .relations-tab, .checklist-tab, .essential-tab, .glossary-tab {
           padding: 20px 0;
         }
 
-        .formulas-tab h2, .relations-tab h2, .checklist-tab h2 {
+        .formulas-tab h2, .relations-tab h2, .checklist-tab h2, .essential-tab h2, .glossary-tab h2 {
           text-align: center;
           font-size: 1.8rem;
           margin-bottom: 10px;
@@ -1794,6 +2216,84 @@ function App() {
           text-align: center;
           color: #888;
           margin-bottom: 25px;
+        }
+
+        /* Essential Formulas Table */
+        .essential-table-container, .approx-table-container {
+          overflow-x: auto;
+          margin: 20px 0;
+        }
+
+        .essential-table, .approx-table {
+          width: 100%;
+          border-collapse: collapse;
+          background: rgba(0,0,0,0.3);
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+        .essential-table th, .approx-table th {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          padding: 15px 10px;
+          text-align: left;
+          font-weight: 600;
+        }
+
+        .essential-table td, .approx-table td {
+          padding: 12px 10px;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+          color: #e8e8e8;
+        }
+
+        .essential-table tr:hover, .approx-table tr:hover {
+          background: rgba(102,126,234,0.1);
+        }
+
+        .category-cell { color: #45aaf2; font-weight: 500; }
+        .name-cell { font-weight: 500; }
+        .formula-cell { min-width: 200px; }
+        .formula-cell .math-inline { font-size: 1em; }
+        .importance-cell { color: #f7b731; text-align: center; }
+        .note-cell { color: #aaa; font-size: 0.9rem; }
+
+        /* Glossary */
+        .glossary-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+          gap: 20px;
+        }
+
+        .glossary-card {
+          background: rgba(0,0,0,0.3);
+          padding: 20px;
+          border-radius: 15px;
+          border-left: 4px solid #667eea;
+        }
+
+        .glossary-term {
+          color: #667eea;
+          font-size: 1.1rem;
+          margin-bottom: 10px;
+        }
+
+        .glossary-definition {
+          color: #e8e8e8;
+          line-height: 1.6;
+          margin-bottom: 10px;
+        }
+
+        .glossary-example {
+          color: #888;
+          font-size: 0.9rem;
+          padding-top: 10px;
+          border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-subtitle {
+          color: #45aaf2;
+          font-size: 1.3rem;
+          margin: 30px 0 15px;
         }
 
         .quick-ref-grid {
@@ -2043,6 +2543,153 @@ function App() {
           border-left: 3px solid #eb3b5a;
         }
 
+        /* 視覚学習タブのスタイル */
+        .visual-tab {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .visual-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+          gap: 20px;
+        }
+
+        .visual-card {
+          background: white;
+          border-radius: 15px;
+          padding: 20px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .visual-card h3 {
+          color: #2c3e50;
+          margin-bottom: 15px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .visual-desc {
+          color: #666;
+          font-size: 0.9rem;
+          margin-bottom: 15px;
+        }
+
+        .diagram-container {
+          display: flex;
+          justify-content: center;
+          margin: 15px 0;
+        }
+
+        .diagram-container svg {
+          max-width: 100%;
+          height: auto;
+        }
+
+        .tree-legend, .normal-legend, .shape-legend, .flowchart-legend {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+          margin-top: 15px;
+          padding: 10px;
+          background: #f8f9fa;
+          border-radius: 8px;
+        }
+
+        .legend-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.85rem;
+        }
+
+        .legend-color {
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .flowchart-container {
+          overflow-x: auto;
+        }
+
+        .convergence-controls {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          margin-bottom: 15px;
+          flex-wrap: wrap;
+        }
+
+        .convergence-controls label {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .convergence-controls input[type="range"] {
+          width: 200px;
+        }
+
+        .convergence-controls button {
+          padding: 8px 16px;
+          background: #6c5ce7;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+
+        .convergence-controls button:hover {
+          background: #5b4bc7;
+        }
+
+        .convergence-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 10px;
+          margin-top: 15px;
+        }
+
+        .stat-item {
+          background: #f8f9fa;
+          padding: 10px;
+          border-radius: 8px;
+          text-align: center;
+        }
+
+        .stat-item .label {
+          font-size: 0.8rem;
+          color: #666;
+        }
+
+        .stat-item .value {
+          font-size: 1.2rem;
+          font-weight: bold;
+          color: #2c3e50;
+        }
+
+        .param-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        .param-table th, .param-table td {
+          padding: 10px;
+          border: 1px solid #ddd;
+          text-align: center;
+        }
+
+        .param-table th {
+          background: #6c5ce7;
+          color: white;
+        }
+
+        .param-table tr:nth-child(even) {
+          background: #f8f9fa;
+        }
+
         .footer {
           text-align: center;
           padding: 40px;
@@ -2056,11 +2703,13 @@ function App() {
 
         @media (max-width: 768px) {
           .header h1 { font-size: 1.8rem; }
-          .formulas-grid, .problems-grid, .relations-grid, .checklist-grid { 
-            grid-template-columns: 1fr; 
+          .formulas-grid, .problems-grid, .relations-grid, .checklist-grid, .visual-grid {
+            grid-template-columns: 1fr;
           }
           .tab-nav { gap: 5px; }
           .tab-btn { padding: 10px 15px; font-size: 0.9rem; }
+          .visual-grid { grid-template-columns: 1fr; }
+          .convergence-controls { flex-direction: column; align-items: flex-start; }
         }
       `}</style>
 
@@ -2087,7 +2736,10 @@ function App() {
           />
         )}
         {activeTab === 'formulas' && <FormulasTab />}
+        {activeTab === 'essential' && <EssentialFormulasTab />}
+        {activeTab === 'glossary' && <GlossaryTab />}
         {activeTab === 'relations' && <RelationsTab />}
+        {activeTab === 'visual' && <VisualLearningTab />}
         {activeTab === 'checklist' && <ChecklistTab />}
       </main>
 
