@@ -1,37 +1,6 @@
 // CDN版React用（import不要）
 const { useState, useEffect, useRef } = React;
 
-// ===== KaTeX読み込み =====
-const useKaTeX = () => {
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    if (window.katex) {
-      setLoaded(true);
-      return;
-    }
-
-    // CSS読み込み
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css';
-    document.head.appendChild(link);
-
-    // JS読み込み
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js';
-    script.onload = () => setLoaded(true);
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(link);
-      document.head.removeChild(script);
-    };
-  }, []);
-
-  return loaded;
-};
-
 // 数式レンダリングコンポーネント（MathJax版）
 function MathFormula({ children, display = false }) {
   const ref = useRef(null);
@@ -1389,23 +1358,107 @@ function ChecklistTab() {
 
 // クイズモードコンポーネント
 function QuizTab() {
+  // クイズカテゴリ定義
+  const quizCategories = {
+    all: { name: "🎲 全問ランダム", icon: "🎲" },
+    formula: { name: "📝 公式マスター", icon: "📝" },
+    calc: { name: "🧮 計算ドリル", icon: "🧮" },
+    theory: { name: "💡 理論チェック", icon: "💡" },
+    dist: { name: "📊 分布の特徴", icon: "📊" },
+    test: { name: "🔬 仮説検定", icon: "🔬" },
+    random10: { name: "⚡ ランダム10問", icon: "⚡" },
+  };
+
   const quizData = [
-    { question: "二項分布 B(n,p) の期待値は？", correct: "np", wrong: ["n/p", "np(1-p)", "n(1-p)"] },
-    { question: "二項分布 B(n,p) の分散は？", correct: "np(1-p)", wrong: ["np", "np²", "(1-p)/n"] },
-    { question: "ポアソン分布 Po(λ) の期待値と分散は？", correct: "E[X] = V[X] = λ", wrong: ["E[X] = λ, V[X] = λ²", "E[X] = 1/λ, V[X] = λ", "E[X] = λ², V[X] = λ"] },
-    { question: "標準化の公式は？", correct: "Z = (X - μ) / σ", wrong: ["Z = (X - μ) / σ²", "Z = (X + μ) / σ", "Z = X / σ"] },
-    { question: "標本平均の標準化は？", correct: "Z = (X̄ - μ) / (σ/√n)", wrong: ["Z = (X̄ - μ) / σ", "Z = (X̄ - μ) / (σ²/n)", "Z = (X̄ + μ) / (σ/√n)"] },
-    { question: "不偏分散の分母は？", correct: "n - 1", wrong: ["n", "n + 1", "n²"] },
-    { question: "チェビシェフの不等式は？", correct: "P(|X-μ| ≥ kσ) ≤ 1/k²", wrong: ["P(|X-μ| ≥ kσ) ≤ 1/k", "P(|X-μ| ≤ kσ) ≥ 1/k²", "P(|X-μ| ≥ kσ) ≤ k²"] },
-    { question: "ベイズの定理の分子は？", correct: "P(B|A) × P(A)", wrong: ["P(A|B) × P(B)", "P(A) × P(B)", "P(A∩B) / P(B)"] },
-    { question: "加法定理 P(A∪B) は？", correct: "P(A) + P(B) - P(A∩B)", wrong: ["P(A) + P(B)", "P(A) × P(B)", "P(A) + P(B) + P(A∩B)"] },
-    { question: "V[aX + b] は？", correct: "a²V[X]", wrong: ["aV[X] + b", "a²V[X] + b", "aV[X]"] },
-    { question: "幾何分布 Ge(p) の期待値は？", correct: "1/p", wrong: ["p", "1-p", "p/(1-p)"] },
-    { question: "指数分布 Ex(λ) の期待値は？", correct: "1/λ", wrong: ["λ", "λ²", "1/λ²"] },
-    { question: "二項分布の正規近似の条件は？", correct: "np ≥ 5 かつ n(1-p) ≥ 5", wrong: ["np ≥ 10", "n ≥ 30", "np ≥ 5 または n(1-p) ≥ 5"] },
-    { question: "両側5%の棄却点 z は？", correct: "1.96", wrong: ["1.645", "2.58", "2.33"] },
-    { question: "片側5%の棄却点 z は？", correct: "1.645", wrong: ["1.96", "2.58", "1.28"] },
-    { question: "e⁻³ の近似値は？", correct: "≈ 0.05", wrong: ["≈ 0.37", "≈ 0.14", "≈ 0.01"] },
+    // ===== 公式暗記系 =====
+    { category: "formula", question: "二項分布 B(n,p) の期待値は？", correct: "np", wrong: ["n/p", "np(1-p)", "n(1-p)"] },
+    { category: "formula", question: "二項分布 B(n,p) の分散は？", correct: "np(1-p)", wrong: ["np", "np²", "(1-p)/n"] },
+    { category: "formula", question: "ポアソン分布 Po(λ) の期待値と分散は？", correct: "E[X] = V[X] = λ", wrong: ["E[X] = λ, V[X] = λ²", "E[X] = 1/λ, V[X] = λ", "E[X] = λ², V[X] = λ"] },
+    { category: "formula", question: "標準化の公式は？", correct: "Z = (X - μ) / σ", wrong: ["Z = (X - μ) / σ²", "Z = (X + μ) / σ", "Z = X / σ"] },
+    { category: "formula", question: "標本平均の標準化は？", correct: "Z = (X̄ - μ) / (σ/√n)", wrong: ["Z = (X̄ - μ) / σ", "Z = (X̄ - μ) / (σ²/n)", "Z = (X̄ + μ) / (σ/√n)"] },
+    { category: "formula", question: "不偏分散の分母は？", correct: "n - 1", wrong: ["n", "n + 1", "n²"] },
+    { category: "formula", question: "チェビシェフの不等式は？", correct: "P(|X-μ| ≥ kσ) ≤ 1/k²", wrong: ["P(|X-μ| ≥ kσ) ≤ 1/k", "P(|X-μ| ≤ kσ) ≥ 1/k²", "P(|X-μ| ≥ kσ) ≤ k²"] },
+    { category: "formula", question: "ベイズの定理の分子は？", correct: "P(B|A) × P(A)", wrong: ["P(A|B) × P(B)", "P(A) × P(B)", "P(A∩B) / P(B)"] },
+    { category: "formula", question: "加法定理 P(A∪B) は？", correct: "P(A) + P(B) - P(A∩B)", wrong: ["P(A) + P(B)", "P(A) × P(B)", "P(A) + P(B) + P(A∩B)"] },
+    { category: "formula", question: "V[aX + b] は？", correct: "a²V[X]", wrong: ["aV[X] + b", "a²V[X] + b", "aV[X]"] },
+    { category: "formula", question: "幾何分布 Ge(p) の期待値は？", correct: "1/p", wrong: ["p", "1-p", "p/(1-p)"] },
+    { category: "formula", question: "指数分布 Ex(λ) の期待値は？", correct: "1/λ", wrong: ["λ", "λ²", "1/λ²"] },
+    { category: "formula", question: "両側5%の棄却点 z は？", correct: "1.96", wrong: ["1.645", "2.58", "2.33"] },
+    { category: "formula", question: "片側5%の棄却点 z は？", correct: "1.645", wrong: ["1.96", "2.58", "1.28"] },
+    { category: "formula", question: "e⁻³ の近似値は？", correct: "≈ 0.05", wrong: ["≈ 0.37", "≈ 0.14", "≈ 0.01"] },
+    { category: "formula", question: "E[aX + b] は？", correct: "aE[X] + b", wrong: ["aE[X]", "E[X] + b", "a²E[X] + b"] },
+    { category: "formula", question: "幾何分布 Ge(p) の分散は？", correct: "(1-p)/p²", wrong: ["1/p²", "p(1-p)", "1/p"] },
+    { category: "formula", question: "指数分布 Ex(λ) の分散は？", correct: "1/λ²", wrong: ["λ", "1/λ", "λ²"] },
+    { category: "formula", question: "標準正規分布の期待値と分散は？", correct: "E[Z]=0, V[Z]=1", wrong: ["E[Z]=1, V[Z]=0", "E[Z]=0, V[Z]=0", "E[Z]=1, V[Z]=1"] },
+    { category: "formula", question: "条件付き確率 P(A|B) の定義は？", correct: "P(A∩B) / P(B)", wrong: ["P(A∩B) / P(A)", "P(A) × P(B)", "P(A) / P(B)"] },
+    { category: "formula", question: "余事象 P(Aᶜ) は？", correct: "1 - P(A)", wrong: ["P(A)", "1/P(A)", "-P(A)"] },
+    { category: "formula", question: "標本平均X̄の分散は？", correct: "σ²/n", wrong: ["σ²", "σ/n", "σ²×n"] },
+
+    // ===== 計算系（暗算で解ける） =====
+    { category: "calc", question: "平均50、標準偏差10のとき、X=70のZスコアは？", correct: "2", wrong: ["0.2", "20", "-2"] },
+    { category: "calc", question: "平均60、標準偏差5のとき、X=50のZスコアは？", correct: "-2", wrong: ["2", "-0.5", "0.5"] },
+    { category: "calc", question: "E[X]=4 のとき、E[3X+2] は？", correct: "14", wrong: ["12", "6", "18"] },
+    { category: "calc", question: "E[X]=5 のとき、E[2X-3] は？", correct: "7", wrong: ["10", "13", "4"] },
+    { category: "calc", question: "V[X]=4 のとき、V[3X] は？", correct: "36", wrong: ["12", "4", "9"] },
+    { category: "calc", question: "V[X]=9 のとき、V[2X+5] は？", correct: "36", wrong: ["18", "23", "41"] },
+    { category: "calc", question: "サイコロを1回振ったときの期待値は？", correct: "3.5", wrong: ["3.0", "4.0", "2.5"] },
+    { category: "calc", question: "コインを3回投げて表が出る回数の期待値は？", correct: "1.5", wrong: ["1", "2", "3"] },
+    { category: "calc", question: "B(100, 0.3) の期待値は？", correct: "30", wrong: ["70", "21", "0.3"] },
+    { category: "calc", question: "B(50, 0.4) の分散は？", correct: "12", wrong: ["20", "8", "24"] },
+    { category: "calc", question: "Po(5) の分散は？", correct: "5", wrong: ["25", "√5", "1/5"] },
+    { category: "calc", question: "n=100, σ=20 のとき、標準誤差 SE は？", correct: "2", wrong: ["0.2", "20", "200"] },
+    { category: "calc", question: "n=25, σ=10 のとき、標準誤差 SE は？", correct: "2", wrong: ["0.4", "5", "50"] },
+    { category: "calc", question: "Zスコア=2、偏差値は？", correct: "70", wrong: ["60", "52", "80"] },
+    { category: "calc", question: "Zスコア=-1、偏差値は？", correct: "40", wrong: ["30", "49", "60"] },
+    { category: "calc", question: "P(A) = 0.3, P(B|A) = 0.8 のとき P(A∩B) は？", correct: "0.24", wrong: ["1.1", "0.5", "0.027"] },
+    { category: "calc", question: "n=100, σ=15 のとき95%信頼区間の幅は？", correct: "±2.94（約±3）", wrong: ["±1.5", "±15", "±29.4"] },
+
+    // ===== 概念・理論系 =====
+    { category: "theory", question: "帰無仮説を棄却できなかった時の正しい解釈は？", correct: "判断を保留（証拠不十分）", wrong: ["帰無仮説が正しいと証明された", "対立仮説が正しい", "実験失敗である"] },
+    { category: "theory", question: "95%信頼区間の正しい解釈は？", correct: "この方法で作ると95%の確率で母数を含む", wrong: ["母数がこの区間に入る確率が95%", "標本の95%がこの区間にある", "誤差が5%以内である"] },
+    { category: "theory", question: "第一種の過誤（α）とは？", correct: "正しい帰無仮説を誤って棄却", wrong: ["誤った帰無仮説を見逃す", "計算ミス", "標本選択の誤り"] },
+    { category: "theory", question: "第二種の過誤（β）とは？", correct: "誤った帰無仮説を棄却しない", wrong: ["正しい帰無仮説を棄却", "有意水準の設定ミス", "サンプルサイズ不足"] },
+    { category: "theory", question: "中心極限定理が適用できる条件は？", correct: "サンプルサイズnが十分大きい", wrong: ["母集団が正規分布", "σが既知", "母集団が有限"] },
+    { category: "theory", question: "不偏分散でn-1で割る理由は？", correct: "期待値が母分散σ²と一致するため", wrong: ["計算を簡単にするため", "標本が小さいから", "正規分布に従うため"] },
+    { category: "theory", question: "独立な事象A, Bについて P(A∩B) は？", correct: "P(A) × P(B)", wrong: ["P(A) + P(B)", "P(A|B)", "P(A) + P(B) - P(A∩B)"] },
+    { category: "theory", question: "P(A|B) と P(B|A) の関係は？", correct: "一般に等しくない", wrong: ["常に等しい", "P(A|B) > P(B|A)", "P(A|B) < P(B|A)"] },
+    { category: "theory", question: "全確率の法則の意味は？", correct: "排反事象で分解して確率を合算", wrong: ["すべての確率の積", "条件付き確率の和", "ベイズの定理の逆"] },
+    { category: "theory", question: "ベイズの定理で「事前確率」とは？", correct: "データを見る前の確率 P(A)", wrong: ["データを見た後の確率", "条件付き確率", "尤度"] },
+    { category: "theory", question: "ベイズの定理で「事後確率」とは？", correct: "データを見た後の確率 P(A|E)", wrong: ["データを見る前の確率", "P(E|A)", "P(E)"] },
+    { category: "theory", question: "E[X+Y] は？（XとYは任意）", correct: "E[X] + E[Y]", wrong: ["E[X] × E[Y]", "E[XY]", "√(E[X]² + E[Y]²)"] },
+    { category: "theory", question: "V[X+Y] は？（XとYが独立）", correct: "V[X] + V[Y]", wrong: ["V[X] × V[Y]", "(V[X] + V[Y])²", "√(V[X] + V[Y])"] },
+    { category: "theory", question: "V[X-Y] は？（XとYが独立）", correct: "V[X] + V[Y]", wrong: ["V[X] - V[Y]", "|V[X] - V[Y]|", "V[X] × V[Y]"] },
+    { category: "theory", question: "E[c] は？（cは定数）", correct: "c", wrong: ["0", "1", "c²"] },
+    { category: "theory", question: "V[c] は？（cは定数）", correct: "0", wrong: ["c", "c²", "1"] },
+
+    // ===== 分布の特徴系 =====
+    { category: "dist", question: "ポアソン分布で成り立つ関係は？", correct: "期待値 = 分散", wrong: ["期待値 > 分散", "期待値 < 分散", "期待値 × 分散 = 1"] },
+    { category: "dist", question: "正規分布の歪度は？", correct: "0（左右対称）", wrong: ["1", "-1", "σによる"] },
+    { category: "dist", question: "正規分布で μ±σ の範囲に入る確率は約？", correct: "68%", wrong: ["50%", "95%", "99%"] },
+    { category: "dist", question: "正規分布で μ±2σ の範囲に入る確率は約？", correct: "95%", wrong: ["68%", "90%", "99%"] },
+    { category: "dist", question: "正規分布で μ±3σ の範囲に入る確率は約？", correct: "99.7%", wrong: ["95%", "99%", "99.9%"] },
+    { category: "dist", question: "t分布の自由度が大きくなると？", correct: "標準正規分布に近づく", wrong: ["分散が大きくなる", "歪みが大きくなる", "一様分布に近づく"] },
+    { category: "dist", question: "カイ二乗分布の自由度nのとき期待値は？", correct: "n", wrong: ["n-1", "n+1", "2n"] },
+    { category: "dist", question: "二項分布がポアソン分布で近似できる条件は？", correct: "nが大きく、pが小さい", wrong: ["nが小さく、pが大きい", "npが小さい", "n(1-p)が小さい"] },
+    { category: "dist", question: "二項分布の正規近似の条件は？", correct: "np ≥ 5 かつ n(1-p) ≥ 5", wrong: ["np ≥ 10", "n ≥ 30", "np ≥ 5 または n(1-p) ≥ 5"] },
+    { category: "dist", question: "排反事象A, Bについて P(A∪B) は？", correct: "P(A) + P(B)", wrong: ["P(A) × P(B)", "P(A) + P(B) - P(A∩B)", "0"] },
+    { category: "dist", question: "任意の事象Aについて P(A) の範囲は？", correct: "0 ≤ P(A) ≤ 1", wrong: ["-1 ≤ P(A) ≤ 1", "0 < P(A) < 1", "P(A) ≥ 0"] },
+    { category: "dist", question: "全事象Ωについて P(Ω) は？", correct: "1", wrong: ["0", "∞", "不定"] },
+    { category: "dist", question: "空事象φについて P(φ) は？", correct: "0", wrong: ["1", "不定", "∞"] },
+
+    // ===== 仮説検定系 =====
+    { category: "test", question: "P値が0.03、有意水準5%のとき？", correct: "帰無仮説を棄却", wrong: ["帰無仮説を採択", "判断できない", "有意水準を変更"] },
+    { category: "test", question: "P値が0.08、有意水準5%のとき？", correct: "帰無仮説を棄却しない", wrong: ["帰無仮説を棄却", "対立仮説を採択", "追加実験が必要"] },
+    { category: "test", question: "両側検定の帰無仮説は？", correct: "H₀: μ = μ₀", wrong: ["H₀: μ ≠ μ₀", "H₀: μ > μ₀", "H₀: μ < μ₀"] },
+    { category: "test", question: "片側検定（右側）の対立仮説は？", correct: "H₁: μ > μ₀", wrong: ["H₁: μ < μ₀", "H₁: μ = μ₀", "H₁: μ ≠ μ₀"] },
+    { category: "test", question: "有意水準αとは？", correct: "第一種の過誤を犯す確率の上限", wrong: ["第二種の過誤の確率", "検出力", "信頼度"] },
+    { category: "test", question: "検出力（1-β）とは？", correct: "誤った帰無仮説を正しく棄却する確率", wrong: ["正しい帰無仮説を棄却する確率", "有意水準", "P値"] },
+    { category: "test", question: "両側1%の棄却点 z は？", correct: "2.58", wrong: ["1.96", "2.33", "1.645"] },
+    { category: "test", question: "片側1%の棄却点 z は？", correct: "2.33", wrong: ["2.58", "1.96", "1.645"] },
+    { category: "test", question: "t検定を使うのはどんな時？", correct: "母分散σが未知の時", wrong: ["母分散σが既知の時", "サンプルが大きい時", "正規分布でない時"] },
+    { category: "test", question: "母平均μの95%信頼区間の公式は？（σ既知）", correct: "X̄ ± 1.96 × σ/√n", wrong: ["X̄ ± 1.96 × σ", "X̄ ± 2.58 × σ/√n", "μ ± 1.96 × σ/√n"] },
+    { category: "test", question: "信頼区間を狭くするには？", correct: "サンプルサイズnを大きくする", wrong: ["信頼度を上げる", "σを大きくする", "有意水準を小さくする"] },
+    { category: "test", question: "信頼度を95%から99%に上げると区間は？", correct: "広くなる", wrong: ["狭くなる", "変わらない", "不定"] },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -1413,17 +1466,37 @@ function QuizTab() {
   const [shuffledQuiz, setShuffledQuiz] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null); // null = カテゴリ選択画面
 
-  useEffect(() => {
-    shuffleQuiz();
-  }, []);
+  const startQuiz = (category) => {
+    setSelectedCategory(category);
 
-  const shuffleQuiz = () => {
-    const shuffled = [...quizData].sort(() => Math.random() - 0.5).map(q => ({
+    let filtered;
+    if (category === 'all') {
+      filtered = [...quizData];
+    } else if (category === 'random10') {
+      // 全問からランダムに10問選択
+      const allShuffled = [...quizData].sort(() => Math.random() - 0.5);
+      filtered = allShuffled.slice(0, 10);
+    } else {
+      filtered = quizData.filter(q => q.category === category);
+    }
+
+    const shuffled = filtered.sort(() => Math.random() - 0.5).map(q => ({
       ...q,
       choices: [q.correct, ...q.wrong].sort(() => Math.random() - 0.5)
     }));
+
     setShuffledQuiz(shuffled);
+    setCurrentIndex(0);
+    setScore({ correct: 0, total: 0 });
+    setSelectedAnswer(null);
+    setShowResult(false);
+  };
+
+  const backToCategories = () => {
+    setSelectedCategory(null);
+    setShuffledQuiz([]);
     setCurrentIndex(0);
     setScore({ correct: 0, total: 0 });
     setSelectedAnswer(null);
@@ -1452,15 +1525,51 @@ function QuizTab() {
   const current = shuffledQuiz[currentIndex];
   const isFinished = showResult;
 
+  // 各カテゴリの問題数を計算
+  const getCategoryCount = (cat) => {
+    if (cat === 'all') return quizData.length;
+    if (cat === 'random10') return 10;
+    return quizData.filter(q => q.category === cat).length;
+  };
+
+  // カテゴリ選択画面
+  if (selectedCategory === null) {
+    return (
+      <div className="quiz-tab">
+        <h2>🎯 クイズモード選択</h2>
+        <p className="tab-description">学習したい分野を選んでください</p>
+
+        <div className="category-grid">
+          {Object.entries(quizCategories).map(([key, cat]) => (
+            <button
+              key={key}
+              className="category-btn"
+              onClick={() => startQuiz(key)}
+            >
+              <span className="category-icon">{cat.icon}</span>
+              <span className="category-name">{cat.name.replace(cat.icon + ' ', '')}</span>
+              <span className="category-count">{getCategoryCount(key)}問</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="category-tip">
+          <p>💡 <strong>おすすめ</strong>: まずは「ランダム10問」で力試し、苦手分野を「計算ドリル」や「公式マスター」で克服しよう！</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="quiz-tab">
-      <h2>🎯 公式暗記クイズ</h2>
+      <h2>🎯 {quizCategories[selectedCategory]?.name || 'クイズ'}</h2>
       <p className="tab-description">4択から正しい答えを選んでください</p>
 
       <div className="quiz-stats">
         <span className="quiz-progress">{currentIndex + 1} / {shuffledQuiz.length}</span>
         <span className="quiz-score correct">正解 {score.correct}</span>
-        <button className="shuffle-btn" onClick={shuffleQuiz}>🔀 最初から</button>
+        <button className="shuffle-btn" onClick={backToCategories}>📂 モード選択</button>
+        <button className="shuffle-btn" onClick={() => startQuiz(selectedCategory)}>🔀 最初から</button>
       </div>
 
       {current && !isFinished && (
@@ -1504,7 +1613,10 @@ function QuizTab() {
             {Math.round((score.correct / shuffledQuiz.length) * 100)}%
           </p>
           <p>{score.correct} / {shuffledQuiz.length} 問正解</p>
-          <button className="retry-btn" onClick={shuffleQuiz}>もう一度挑戦</button>
+          <div className="result-buttons">
+            <button className="retry-btn" onClick={() => startQuiz(selectedCategory)}>🔄 同じモードで再挑戦</button>
+            <button className="retry-btn secondary" onClick={backToCategories}>📂 モード選択に戻る</button>
+          </div>
         </div>
       )}
     </div>
@@ -1763,34 +1875,88 @@ function HypothesisTestFlowchart() {
 
 // 標本平均の収束図
 function SampleMeanConvergence() {
+  const [n, setN] = useState(1);
+  const se = 1 / Math.sqrt(n);
+  const barWidth = Math.max(5, 100 * se);
+
   return (
     <div className="visual-card">
       <h3>📉 中心極限定理 - サンプルサイズと分布</h3>
-      <p className="visual-desc">サンプルサイズが大きくなると標本平均の分布が狭くなる</p>
-      <div className="convergence-diagram">
-        <div className="convergence-row">
-          <span className="conv-label">n = 1</span>
-          <div className="conv-bar wide"></div>
-          <span className="conv-se">SE = σ</span>
+      <p className="visual-desc">スライダーを動かして標本平均の分布の変化を観察しよう</p>
+      <div className="convergence-interactive">
+        <div className="slider-container">
+          <label>サンプルサイズ n = <strong>{n}</strong></label>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            value={n}
+            onChange={(e) => setN(Number(e.target.value))}
+            className="n-slider"
+          />
         </div>
-        <div className="convergence-row">
-          <span className="conv-label">n = 4</span>
-          <div className="conv-bar medium"></div>
-          <span className="conv-se">SE = σ/2</span>
+        <div className="convergence-visual">
+          <div className="conv-bar-interactive" style={{ width: `${barWidth}%` }}></div>
         </div>
-        <div className="convergence-row">
-          <span className="conv-label">n = 16</span>
-          <div className="conv-bar narrow"></div>
-          <span className="conv-se">SE = σ/4</span>
+        <div className="se-display">
+          <span>標準誤差 SE = σ/√{n} = <strong>{se.toFixed(3)}σ</strong></span>
         </div>
-        <div className="convergence-row">
-          <span className="conv-label">n = 100</span>
-          <div className="conv-bar very-narrow"></div>
-          <span className="conv-se">SE = σ/10</span>
+        <div className="convergence-comparison">
+          <div className="comparison-item"><span>n=1:</span> <div className="mini-bar" style={{width: '100%'}}></div></div>
+          <div className="comparison-item"><span>n=4:</span> <div className="mini-bar" style={{width: '50%'}}></div></div>
+          <div className="comparison-item"><span>n=25:</span> <div className="mini-bar" style={{width: '20%'}}></div></div>
+          <div className="comparison-item"><span>n=100:</span> <div className="mini-bar" style={{width: '10%'}}></div></div>
         </div>
       </div>
       <div className="visual-note">
         💡 標準誤差 SE = σ/√n → サンプル4倍で精度2倍
+      </div>
+    </div>
+  );
+}
+
+// Zスコア・偏差値計算機
+function ZScoreCalculator() {
+  const [val, setVal] = useState(70);
+  const [mean, setMean] = useState(60);
+  const [sd, setSd] = useState(10);
+
+  const z = sd !== 0 ? (val - mean) / sd : 0;
+  const tScore = z * 10 + 50;
+
+  return (
+    <div className="visual-card calculator-card">
+      <h3>🧮 Zスコア・偏差値 計算機</h3>
+      <p className="visual-desc">自分の値を入力して標準化スコアを確認しよう</p>
+      <div className="calc-inputs">
+        <div className="calc-row">
+          <label>値 (X):</label>
+          <input type="number" value={val} onChange={e => setVal(Number(e.target.value))} />
+        </div>
+        <div className="calc-row">
+          <label>平均 (μ):</label>
+          <input type="number" value={mean} onChange={e => setMean(Number(e.target.value))} />
+        </div>
+        <div className="calc-row">
+          <label>標準偏差 (σ):</label>
+          <input type="number" value={sd} onChange={e => setSd(Number(e.target.value))} step="0.1" />
+        </div>
+      </div>
+      <div className="calc-formula">
+        <MathFormula>{"Z = \\frac{X - \\mu}{\\sigma} = \\frac{" + val + " - " + mean + "}{" + sd + "} = " + z.toFixed(3)}</MathFormula>
+      </div>
+      <div className="calc-results">
+        <div className="result-item">
+          <span className="result-label">Zスコア</span>
+          <span className="result-value" style={{color: z >= 0 ? 'var(--text-success)' : 'var(--text-danger)'}}>{z.toFixed(3)}</span>
+        </div>
+        <div className="result-item">
+          <span className="result-label">偏差値</span>
+          <span className="result-value">{tScore.toFixed(1)}</span>
+        </div>
+      </div>
+      <div className="visual-note">
+        💡 Z = (X-μ)/σ, 偏差値 = 10Z + 50
       </div>
     </div>
   );
@@ -1899,6 +2065,106 @@ function DistributionShapes() {
   );
 }
 
+// t分布表・カイ二乗分布表 検索機能
+function StatTableLookup() {
+  const [tableType, setTableType] = useState('t');
+  const [df, setDf] = useState(10);
+  const [alpha, setAlpha] = useState(0.05);
+
+  // t分布表（両側検定の臨界値）
+  const tTable = {
+    1: { 0.1: 6.314, 0.05: 12.706, 0.025: 25.452, 0.01: 63.657 },
+    2: { 0.1: 2.920, 0.05: 4.303, 0.025: 6.205, 0.01: 9.925 },
+    3: { 0.1: 2.353, 0.05: 3.182, 0.025: 4.177, 0.01: 5.841 },
+    4: { 0.1: 2.132, 0.05: 2.776, 0.025: 3.495, 0.01: 4.604 },
+    5: { 0.1: 2.015, 0.05: 2.571, 0.025: 3.163, 0.01: 4.032 },
+    6: { 0.1: 1.943, 0.05: 2.447, 0.025: 2.969, 0.01: 3.707 },
+    7: { 0.1: 1.895, 0.05: 2.365, 0.025: 2.841, 0.01: 3.499 },
+    8: { 0.1: 1.860, 0.05: 2.306, 0.025: 2.752, 0.01: 3.355 },
+    9: { 0.1: 1.833, 0.05: 2.262, 0.025: 2.685, 0.01: 3.250 },
+    10: { 0.1: 1.812, 0.05: 2.228, 0.025: 2.634, 0.01: 3.169 },
+    15: { 0.1: 1.753, 0.05: 2.131, 0.025: 2.490, 0.01: 2.947 },
+    20: { 0.1: 1.725, 0.05: 2.086, 0.025: 2.423, 0.01: 2.845 },
+    25: { 0.1: 1.708, 0.05: 2.060, 0.025: 2.385, 0.01: 2.787 },
+    30: { 0.1: 1.697, 0.05: 2.042, 0.025: 2.360, 0.01: 2.750 },
+    40: { 0.1: 1.684, 0.05: 2.021, 0.025: 2.329, 0.01: 2.704 },
+    60: { 0.1: 1.671, 0.05: 2.000, 0.025: 2.299, 0.01: 2.660 },
+    120: { 0.1: 1.658, 0.05: 1.980, 0.025: 2.270, 0.01: 2.617 },
+    999: { 0.1: 1.645, 0.05: 1.960, 0.025: 2.241, 0.01: 2.576 }
+  };
+
+  // カイ二乗分布表
+  const chiTable = {
+    1: { 0.1: 2.706, 0.05: 3.841, 0.025: 5.024, 0.01: 6.635 },
+    2: { 0.1: 4.605, 0.05: 5.991, 0.025: 7.378, 0.01: 9.210 },
+    3: { 0.1: 6.251, 0.05: 7.815, 0.025: 9.348, 0.01: 11.345 },
+    4: { 0.1: 7.779, 0.05: 9.488, 0.025: 11.143, 0.01: 13.277 },
+    5: { 0.1: 9.236, 0.05: 11.070, 0.025: 12.833, 0.01: 15.086 },
+    6: { 0.1: 10.645, 0.05: 12.592, 0.025: 14.449, 0.01: 16.812 },
+    7: { 0.1: 12.017, 0.05: 14.067, 0.025: 16.013, 0.01: 18.475 },
+    8: { 0.1: 13.362, 0.05: 15.507, 0.025: 17.535, 0.01: 20.090 },
+    9: { 0.1: 14.684, 0.05: 16.919, 0.025: 19.023, 0.01: 21.666 },
+    10: { 0.1: 15.987, 0.05: 18.307, 0.025: 20.483, 0.01: 23.209 },
+    15: { 0.1: 22.307, 0.05: 24.996, 0.025: 27.488, 0.01: 30.578 },
+    20: { 0.1: 28.412, 0.05: 31.410, 0.025: 34.170, 0.01: 37.566 },
+    25: { 0.1: 34.382, 0.05: 37.652, 0.025: 40.646, 0.01: 44.314 },
+    30: { 0.1: 40.256, 0.05: 43.773, 0.025: 46.979, 0.01: 50.892 }
+  };
+
+  const table = tableType === 't' ? tTable : chiTable;
+  const availableDfs = Object.keys(table).map(Number).sort((a, b) => a - b);
+
+  // 近い自由度を探す
+  const closestDf = availableDfs.reduce((prev, curr) =>
+    Math.abs(curr - df) < Math.abs(prev - df) ? curr : prev
+  );
+
+  const value = table[closestDf] ? table[closestDf][alpha] : null;
+
+  return (
+    <div className="visual-card calculator-card">
+      <h3>📊 統計数表検索</h3>
+      <p className="visual-desc">t分布・カイ二乗分布の臨界値を検索</p>
+      <div className="calc-inputs">
+        <div className="calc-row">
+          <label>分布:</label>
+          <select value={tableType} onChange={e => setTableType(e.target.value)}>
+            <option value="t">t分布</option>
+            <option value="chi">カイ二乗分布</option>
+          </select>
+        </div>
+        <div className="calc-row">
+          <label>自由度 (df):</label>
+          <input type="number" min="1" max="120" value={df} onChange={e => setDf(Number(e.target.value))} />
+        </div>
+        <div className="calc-row">
+          <label>有意水準 (α):</label>
+          <select value={alpha} onChange={e => setAlpha(Number(e.target.value))}>
+            <option value="0.1">0.10 (10%)</option>
+            <option value="0.05">0.05 (5%)</option>
+            <option value="0.025">0.025 (2.5%)</option>
+            <option value="0.01">0.01 (1%)</option>
+          </select>
+        </div>
+      </div>
+      <div className="calc-results">
+        <div className="result-item">
+          <span className="result-label">
+            {tableType === 't' ? `t(${closestDf}, ${alpha})` : `χ²(${closestDf}, ${alpha})`}
+          </span>
+          <span className="result-value">{value !== null ? value.toFixed(3) : 'N/A'}</span>
+        </div>
+        {df !== closestDf && (
+          <div className="result-note">※ df={closestDf} の値を表示（近似値）</div>
+        )}
+      </div>
+      <div className="visual-note">
+        💡 {tableType === 't' ? 't分布は両側検定の臨界値' : 'カイ二乗分布は右側検定の臨界値'}
+      </div>
+    </div>
+  );
+}
+
 // 視覚学習タブ
 function VisualLearningTab() {
   return (
@@ -1906,6 +2172,13 @@ function VisualLearningTab() {
       <h2>📊 視覚的に学ぶ統計学</h2>
       <p className="tab-description">図と表で直感的に理解しよう</p>
 
+      <h3 className="section-subtitle">🔧 計算ツール</h3>
+      <div className="visual-grid tools-grid">
+        <ZScoreCalculator />
+        <StatTableLookup />
+      </div>
+
+      <h3 className="section-subtitle">📈 視覚的解説</h3>
       <div className="visual-grid">
         <BayesTreeDiagram />
         <NormalDistributionDiagram />
@@ -1942,6 +2215,18 @@ function LearnTab({ sections, openSections, toggleSection, expandAll, collapseAl
 function App() {
   const [activeTab, setActiveTab] = useState('learn');
   const [openSections, setOpenSections] = useState(new Set([1]));
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('stats-dark-mode');
+      return saved === 'true';
+    } catch { return false; }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('stats-dark-mode', darkMode);
+    } catch {}
+  }, [darkMode]);
 
   const toggleSection = (id) => {
     setOpenSections(prev => {
@@ -1958,11 +2243,71 @@ function App() {
   const totalProblems = sections.reduce((sum, s) => sum + s.problems.length, 0);
 
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? 'dark' : ''}`}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* CSS変数（ライトモード） */
+        .app {
+          --bg-primary: #f1f5f9;
+          --bg-secondary: white;
+          --bg-card: white;
+          --bg-accent: #f0fdfa;
+          --bg-tertiary: #f8fafc;
+          --bg-warning: #fffbeb;
+          --bg-success: #f0fdf4;
+          --bg-danger: #fef2f2;
+          --text-primary: #334155;
+          --text-secondary: #64748b;
+          --text-accent: #0f766e;
+          --text-warning: #92400e;
+          --text-success: #166534;
+          --text-danger: #dc2626;
+          --border-color: #e2e8f0;
+          --border-warning: #fbbf24;
+          --border-success: #22c55e;
+          --border-danger: #ef4444;
+          --accent-color: #14b8a6;
+          --accent-dark: #0f766e;
+          --accent-light: #99f6e4;
+          --info-bg: #eff6ff;
+          --info-border: #3b82f6;
+          --success-light: #dcfce7;
+          --shadow-color: rgba(0,0,0,0.1);
+          --formula-bg: rgba(0,0,0,0.08);
+        }
+
+        /* ダークモード */
+        .app.dark {
+          --bg-primary: #0f172a;
+          --bg-secondary: #1e293b;
+          --bg-card: #1e293b;
+          --bg-accent: #134e4a;
+          --bg-tertiary: #1e293b;
+          --bg-warning: #422006;
+          --bg-success: #14532d;
+          --bg-danger: #450a0a;
+          --text-primary: #e2e8f0;
+          --text-secondary: #94a3b8;
+          --text-accent: #5eead4;
+          --text-warning: #fcd34d;
+          --text-success: #86efac;
+          --text-danger: #fca5a5;
+          --border-color: #334155;
+          --border-warning: #f59e0b;
+          --border-success: #10b981;
+          --border-danger: #f87171;
+          --accent-color: #2dd4bf;
+          --accent-dark: #14b8a6;
+          --accent-light: #134e4a;
+          --info-bg: #1e3a5f;
+          --info-border: #60a5fa;
+          --success-light: #14532d;
+          --shadow-color: rgba(0,0,0,0.3);
+          --formula-bg: rgba(255,255,255,0.1);
+        }
 
         /* MathJax数式スタイル */
         .math-display {
@@ -1982,7 +2327,7 @@ function App() {
           align-items: center;
           min-height: 60px;
           padding: 10px;
-          background: rgba(0,0,0,0.2);
+          background: var(--formula-bg);
           border-radius: 8px;
           margin: 10px 0;
         }
@@ -1995,21 +2340,23 @@ function App() {
 
         .app {
           min-height: 100vh;
-          background: #f1f5f9;
-          color: #334155;
+          background: var(--bg-primary);
+          color: var(--text-primary);
           font-family: 'Noto Sans JP', sans-serif;
+          transition: background 0.3s, color 0.3s;
         }
 
         .header {
           text-align: center;
           padding: 40px 20px 20px;
-          background: linear-gradient(135deg, #f0fdfa 0%, #e2e8f0 100%);
-          border-bottom: 1px solid #e2e8f0;
+          background: linear-gradient(135deg, var(--bg-accent) 0%, var(--bg-secondary) 100%);
+          border-bottom: 1px solid var(--border-color);
+          position: relative;
         }
 
         .header h1 {
           font-size: 2.5rem;
-          color: #0f766e;
+          color: var(--text-accent);
           margin-bottom: 10px;
         }
 
@@ -2018,13 +2365,32 @@ function App() {
           justify-content: center;
           gap: 30px;
           margin-top: 15px;
-          color: #64748b;
+          color: var(--text-secondary);
         }
 
         .header .stat-number {
           font-size: 1.3rem;
           font-weight: 700;
-          color: #14b8a6;
+          color: var(--text-accent);
+        }
+
+        .dark-toggle {
+          position: absolute;
+          top: 15px;
+          right: 20px;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 20px;
+          cursor: pointer;
+          font-size: 1.2rem;
+          background: var(--bg-card);
+          color: var(--text-primary);
+          box-shadow: 0 2px 8px var(--shadow-color);
+          transition: all 0.3s;
+        }
+
+        .dark-toggle:hover {
+          transform: scale(1.1);
         }
 
         .tab-nav {
@@ -2032,9 +2398,13 @@ function App() {
           justify-content: center;
           gap: 10px;
           padding: 15px 20px;
-          background: white;
-          border-bottom: 1px solid #e2e8f0;
+          background: var(--bg-secondary);
+          border-bottom: 1px solid var(--border-color);
           flex-wrap: wrap;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          box-shadow: 0 2px 5px var(--shadow-color);
         }
 
         .tab-btn {
@@ -2044,18 +2414,18 @@ function App() {
           cursor: pointer;
           font-family: inherit;
           font-size: 1rem;
-          background: #e2e8f0;
-          color: #64748b;
+          background: var(--border-color);
+          color: var(--text-secondary);
           transition: all 0.3s;
         }
 
         .tab-btn.active {
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
         }
 
         .tab-btn:hover:not(.active) {
-          background: #cbd5e1;
+          background: var(--bg-accent);
         }
 
         .main-content {
@@ -2082,22 +2452,22 @@ function App() {
         }
 
         .expand-btn {
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
         }
 
         .collapse-btn {
-          background: #e2e8f0;
-          color: #64748b;
+          background: var(--border-color);
+          color: var(--text-secondary);
         }
 
         .section {
           margin-bottom: 15px;
-          background: white;
+          background: var(--bg-card);
           border-radius: 16px;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           overflow: hidden;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .section:hover {
@@ -2113,7 +2483,7 @@ function App() {
         }
 
         .section-header:hover {
-          background: #f8fafc;
+          background: var(--bg-tertiary);
         }
 
         .section-title {
@@ -2144,7 +2514,7 @@ function App() {
         }
 
         .arrow {
-          color: #94a3b8;
+          color: var(--text-secondary);
           transition: transform 0.3s;
         }
 
@@ -2163,10 +2533,10 @@ function App() {
 
         .sub-tabs button {
           padding: 8px 16px;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           border-radius: 15px;
-          background: #f8fafc;
-          color: #64748b;
+          background: var(--bg-tertiary);
+          color: var(--text-secondary);
           cursor: pointer;
           font-family: inherit;
           font-size: 0.9rem;
@@ -2186,18 +2556,18 @@ function App() {
         }
 
         .theory-background {
-          background: #f0fdfa;
-          border-left: 4px solid #14b8a6;
+          background: var(--bg-accent);
+          border-left: 4px solid var(--accent-color);
         }
 
         .theory-insight {
-          background: #f0fdf4;
-          border-left: 4px solid #22c55e;
+          background: var(--bg-success);
+          border-left: 4px solid var(--border-success);
         }
 
         .theory-mistakes {
-          background: #fef2f2;
-          border-left: 4px solid #ef4444;
+          background: var(--bg-danger);
+          border-left: 4px solid var(--border-danger);
         }
 
         .theory-section h4 {
@@ -2205,9 +2575,9 @@ function App() {
           color: inherit;
         }
 
-        .theory-background h4 { color: #0f766e; }
-        .theory-insight h4 { color: #16a34a; }
-        .theory-mistakes h4 { color: #dc2626; }
+        .theory-background h4 { color: var(--text-accent); }
+        .theory-insight h4 { color: var(--text-success); }
+        .theory-mistakes h4 { color: var(--text-danger); }
 
         .theory-mistakes ul {
           list-style: none;
@@ -2217,7 +2587,7 @@ function App() {
         .theory-mistakes li {
           padding: 8px 0 8px 25px;
           position: relative;
-          color: #b91c1c;
+          color: var(--text-danger);
         }
 
         .theory-mistakes li::before {
@@ -2227,13 +2597,13 @@ function App() {
         }
 
         .concepts-section {
-          background: #f0fdfa;
+          background: var(--bg-accent);
           padding: 18px;
           border-radius: 12px;
         }
 
         .concepts-section h4 {
-          color: #0f766e;
+          color: var(--text-accent);
           margin-bottom: 12px;
         }
 
@@ -2244,14 +2614,14 @@ function App() {
         .concepts-list li {
           padding: 8px 0 8px 25px;
           position: relative;
-          color: #475569;
+          color: var(--text-secondary);
         }
 
         .concepts-list li::before {
           content: '→';
           position: absolute;
           left: 0;
-          color: #14b8a6;
+          color: var(--text-accent);
         }
 
         .formulas-grid {
@@ -2263,13 +2633,13 @@ function App() {
         .formula-card {
           padding: 15px;
           border-radius: 12px;
-          background: #f0fdfa;
-          border: 1px solid #99f6e4;
+          background: var(--bg-accent);
+          border: 1px solid var(--border-color);
         }
 
         .formula-card.importance-3 {
-          border-color: #fbbf24;
-          background: #fffbeb;
+          border-color: var(--border-warning);
+          background: var(--bg-warning);
         }
 
         .formula-header {
@@ -2280,18 +2650,18 @@ function App() {
 
         .formula-name {
           font-size: 0.85rem;
-          color: #64748b;
+          color: var(--text-secondary);
         }
 
         .importance {
-          color: #d97706;
+          color: var(--text-warning);
           font-size: 0.8rem;
         }
 
         .formula-eq {
           font-family: 'JetBrains Mono', monospace;
           font-size: 1rem;
-          color: #115e59;
+          color: var(--text-accent);
           display: block;
           margin-bottom: 5px;
         }
@@ -2302,18 +2672,18 @@ function App() {
 
         .formula-note {
           font-size: 0.8rem;
-          color: #64748b;
+          color: var(--text-secondary);
         }
 
         .procedure-section {
-          background: #eff6ff;
+          background: var(--info-bg);
           padding: 20px;
           border-radius: 12px;
-          border-left: 4px solid #3b82f6;
+          border-left: 4px solid var(--info-border);
         }
 
         .procedure-section h4 {
-          color: #1d4ed8;
+          color: var(--text-accent);
           margin-bottom: 15px;
         }
 
@@ -2324,20 +2694,20 @@ function App() {
 
         .procedure-list li {
           padding: 8px 0;
-          color: #475569;
+          color: var(--text-secondary);
         }
 
         .procedure-list li.step {
           font-weight: 500;
-          color: #1e293b;
+          color: var(--text-primary);
         }
 
         .procedure-list li.check {
-          color: #16a34a;
+          color: var(--text-success);
         }
 
         .procedure-list li.warning {
-          color: #d97706;
+          color: var(--text-warning);
           font-weight: 500;
         }
 
@@ -2353,11 +2723,11 @@ function App() {
         }
 
         .problem-card {
-          background: white;
+          background: var(--bg-card);
           border-radius: 14px;
           padding: 20px;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          border: 1px solid var(--border-color);
+          box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .problem-card:hover {
@@ -2379,7 +2749,7 @@ function App() {
         .problem-question {
           font-size: 0.95rem;
           line-height: 1.7;
-          color: #334155;
+          color: var(--text-primary);
           margin-bottom: 15px;
         }
 
@@ -2396,24 +2766,24 @@ function App() {
           cursor: pointer;
           font-family: inherit;
           font-size: 0.9rem;
-          background: #e2e8f0;
-          color: #64748b;
+          background: var(--border-color);
+          color: var(--text-secondary);
           transition: all 0.3s;
         }
 
         .hint-btn.active {
-          background: #fef3c7;
-          color: #b45309;
+          background: var(--bg-warning);
+          color: var(--text-warning);
         }
 
         .solution-btn.active {
-          background: #dcfce7;
-          color: #16a34a;
+          background: var(--success-light);
+          color: var(--text-success);
         }
 
         .hint-box {
-          background: #fffbeb;
-          border-left: 4px solid #f59e0b;
+          background: var(--bg-warning);
+          border-left: 4px solid var(--border-warning);
           padding: 15px;
           border-radius: 0 10px 10px 0;
           margin: 15px 0;
@@ -2421,8 +2791,8 @@ function App() {
         }
 
         .solution-box {
-          background: #f0fdf4;
-          border-left: 4px solid #22c55e;
+          background: var(--bg-success);
+          border-left: 4px solid var(--border-success);
           padding: 15px;
           border-radius: 0 10px 10px 0;
           margin: 15px 0;
@@ -2433,29 +2803,29 @@ function App() {
           white-space: pre-wrap;
           margin: 10px 0;
           padding: 15px;
-          background: #f1f5f9;
+          background: var(--bg-tertiary);
           border-radius: 8px;
           font-size: 0.9rem;
           line-height: 1.6;
-          color: #334155;
+          color: var(--text-primary);
         }
 
         .answer-box {
           margin-top: 15px;
           padding: 12px 15px;
-          background: #dcfce7;
+          background: var(--success-light);
           border-radius: 8px;
           font-family: 'JetBrains Mono', monospace;
-          color: #166534;
+          color: var(--text-success);
         }
 
         .insight-box {
           margin-top: 12px;
           padding: 12px 15px;
-          background: #f0fdfa;
+          background: var(--bg-accent);
           border-radius: 8px;
           font-size: 0.9rem;
-          color: #0f766e;
+          color: var(--text-accent);
         }
 
         /* Formulas Tab */
@@ -2467,12 +2837,12 @@ function App() {
           text-align: center;
           font-size: 1.8rem;
           margin-bottom: 10px;
-          color: #0f766e;
+          color: var(--text-accent);
         }
 
         .tab-description {
           text-align: center;
-          color: #64748b;
+          color: var(--text-secondary);
           margin-bottom: 25px;
         }
 
@@ -2485,14 +2855,14 @@ function App() {
         .essential-table, .approx-table {
           width: 100%;
           border-collapse: collapse;
-          background: white;
+          background: var(--bg-card);
           border-radius: 10px;
           overflow: hidden;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .essential-table th, .approx-table th {
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
           padding: 15px 10px;
           text-align: left;
@@ -2501,20 +2871,20 @@ function App() {
 
         .essential-table td, .approx-table td {
           padding: 12px 10px;
-          border-bottom: 1px solid #e2e8f0;
-          color: #334155;
+          border-bottom: 1px solid var(--border-color);
+          color: var(--text-primary);
         }
 
         .essential-table tr:hover, .approx-table tr:hover {
-          background: #f0fdfa;
+          background: var(--bg-accent);
         }
 
-        .category-cell { color: #0891b2; font-weight: 500; }
+        .category-cell { color: var(--text-accent); font-weight: 500; }
         .name-cell { font-weight: 500; }
         .formula-cell { min-width: 200px; }
         .formula-cell .math-inline { font-size: 1em; }
-        .importance-cell { color: #d97706; text-align: center; }
-        .note-cell { color: #64748b; font-size: 0.9rem; }
+        .importance-cell { color: var(--text-warning); text-align: center; }
+        .note-cell { color: var(--text-secondary); font-size: 0.9rem; }
 
         /* Glossary */
         .glossary-grid {
@@ -2524,34 +2894,34 @@ function App() {
         }
 
         .glossary-card {
-          background: white;
+          background: var(--bg-card);
           padding: 20px;
           border-radius: 15px;
-          border-left: 4px solid #14b8a6;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          border-left: 4px solid var(--accent-color);
+          box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .glossary-term {
-          color: #0f766e;
+          color: var(--text-accent);
           font-size: 1.1rem;
           margin-bottom: 10px;
         }
 
         .glossary-definition {
-          color: #334155;
+          color: var(--text-primary);
           line-height: 1.6;
           margin-bottom: 10px;
         }
 
         .glossary-example {
-          color: #64748b;
+          color: var(--text-secondary);
           font-size: 0.9rem;
           padding-top: 10px;
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid var(--border-color);
         }
 
         .section-subtitle {
-          color: #0891b2;
+          color: var(--text-accent);
           font-size: 1.3rem;
           margin: 30px 0 15px;
         }
@@ -2563,17 +2933,17 @@ function App() {
         }
 
         .ref-category {
-          background: white;
+          background: var(--bg-card);
           padding: 20px;
           border-radius: 15px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .ref-category h4 {
-          color: #0891b2;
+          color: var(--text-accent);
           margin-bottom: 15px;
           padding-bottom: 10px;
-          border-bottom: 1px solid #e2e8f0;
+          border-bottom: 1px solid var(--border-color);
         }
 
         .ref-items {
@@ -2591,15 +2961,15 @@ function App() {
         .ref-item code {
           font-family: 'JetBrains Mono', monospace;
           font-size: 0.9rem;
-          color: #115e59;
-          background: #f0fdfa;
+          color: var(--text-accent);
+          background: var(--bg-accent);
           padding: 6px 10px;
           border-radius: 6px;
         }
 
         .ref-item span {
           font-size: 0.8rem;
-          color: #64748b;
+          color: var(--text-secondary);
           padding-left: 10px;
         }
 
@@ -2612,11 +2982,11 @@ function App() {
         }
 
         .relation-card {
-          background: white;
+          background: var(--bg-card);
           border-radius: 15px;
           padding: 20px;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          border: 1px solid var(--border-color);
+          box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .relation-flow {
@@ -2628,8 +2998,8 @@ function App() {
         }
 
         .dist-from, .dist-to {
-          background: #f0fdfa;
-          color: #115e59;
+          background: var(--bg-accent);
+          color: var(--text-accent);
           padding: 8px 15px;
           border-radius: 20px;
           font-family: 'JetBrains Mono', monospace;
@@ -2637,29 +3007,29 @@ function App() {
         }
 
         .arrow-right {
-          color: #14b8a6;
+          color: var(--text-accent);
           font-size: 1.5rem;
         }
 
         .relation-condition, .relation-desc, .relation-example {
           margin: 8px 0;
           font-size: 0.9rem;
-          color: #64748b;
+          color: var(--text-secondary);
         }
 
         .relation-condition strong, .relation-desc strong, .relation-example strong {
-          color: #0f766e;
+          color: var(--text-accent);
         }
 
         .approximation-summary {
-          background: #fffbeb;
+          background: var(--bg-warning);
           border-radius: 15px;
           padding: 25px;
-          border: 1px solid #fde68a;
+          border: 1px solid var(--border-warning);
         }
 
         .approximation-summary h3 {
-          color: #b45309;
+          color: var(--text-warning);
           margin-bottom: 20px;
           text-align: center;
         }
@@ -2672,8 +3042,8 @@ function App() {
         }
 
         .flow-box {
-          background: #f0fdfa;
-          color: #115e59;
+          background: var(--bg-accent);
+          color: var(--text-accent);
           padding: 15px 30px;
           border-radius: 10px;
           font-family: 'JetBrains Mono', monospace;
@@ -2696,20 +3066,20 @@ function App() {
         .flow-condition {
           text-align: center;
           font-size: 0.85rem;
-          color: #64748b;
-          background: #f1f5f9;
+          color: var(--text-secondary);
+          background: var(--bg-tertiary);
           padding: 10px 15px;
           border-radius: 8px;
         }
 
         .flow-arrow {
-          color: #14b8a6;
+          color: var(--text-accent);
           font-size: 1.5rem;
         }
 
         .flow-result {
-          background: #dcfce7;
-          color: #166534;
+          background: var(--success-light);
+          color: var(--text-success);
           padding: 12px 20px;
           border-radius: 8px;
           font-family: 'JetBrains Mono', monospace;
@@ -2718,7 +3088,7 @@ function App() {
 
         /* Checklist Tab */
         .progress-bar {
-          background: #e2e8f0;
+          background: var(--border-color);
           border-radius: 10px;
           height: 30px;
           margin-bottom: 25px;
@@ -2728,7 +3098,7 @@ function App() {
 
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #14b8a6, #22c55e);
+          background: linear-gradient(90deg, var(--accent-color), var(--border-success));
           transition: width 0.5s ease;
           border-radius: 10px;
         }
@@ -2739,7 +3109,7 @@ function App() {
           left: 50%;
           transform: translate(-50%, -50%);
           font-size: 0.9rem;
-          color: #1e293b;
+          color: var(--text-primary);
           font-weight: 500;
         }
 
@@ -2750,17 +3120,17 @@ function App() {
         }
 
         .checklist-category {
-          background: white;
+          background: var(--bg-card);
           padding: 20px;
           border-radius: 15px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .checklist-category h4 {
-          color: #0891b2;
+          color: var(--text-accent);
           margin-bottom: 15px;
           padding-bottom: 10px;
-          border-bottom: 1px solid #e2e8f0;
+          border-bottom: 1px solid var(--border-color);
         }
 
         .checklist-item {
@@ -2775,16 +3145,16 @@ function App() {
         }
 
         .checklist-item:hover {
-          background: #f1f5f9;
+          background: var(--bg-tertiary);
         }
 
         .checklist-item.checked {
-          background: #dcfce7;
+          background: var(--success-light);
         }
 
         .checklist-item.checked span {
           text-decoration: line-through;
-          color: #94a3b8;
+          color: var(--text-secondary);
         }
 
         .checklist-item input {
@@ -2799,7 +3169,7 @@ function App() {
         }
 
         .critical-badge {
-          background: #ef4444;
+          background: var(--border-danger);
           color: white;
           padding: 2px 8px;
           border-radius: 10px;
@@ -2807,7 +3177,7 @@ function App() {
         }
 
         .checklist-item.critical {
-          border-left: 3px solid #ef4444;
+          border-left: 3px solid var(--border-danger);
         }
 
         /* 視覚学習タブのスタイル */
@@ -2823,14 +3193,14 @@ function App() {
         }
 
         .visual-card {
-          background: white;
+          background: var(--bg-card);
           border-radius: 15px;
           padding: 20px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+          box-shadow: 0 4px 15px var(--shadow-color);
         }
 
         .visual-card h3 {
-          color: #0f766e;
+          color: var(--text-accent);
           margin-bottom: 15px;
           display: flex;
           align-items: center;
@@ -2838,7 +3208,7 @@ function App() {
         }
 
         .visual-desc {
-          color: #64748b;
+          color: var(--text-secondary);
           font-size: 0.9rem;
           margin-bottom: 15px;
         }
@@ -2864,7 +3234,7 @@ function App() {
           gap: 15px;
           margin-top: 15px;
           padding: 10px;
-          background: #f8f9fa;
+          background: var(--bg-tertiary);
           border-radius: 8px;
         }
 
@@ -2905,7 +3275,7 @@ function App() {
 
         .convergence-controls button {
           padding: 8px 16px;
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
           border: none;
           border-radius: 8px;
@@ -2913,7 +3283,7 @@ function App() {
         }
 
         .convergence-controls button:hover {
-          background: #0f766e;
+          background: var(--accent-dark);
         }
 
         .convergence-stats {
@@ -2924,7 +3294,7 @@ function App() {
         }
 
         .stat-item {
-          background: #f0fdfa;
+          background: var(--bg-accent);
           padding: 10px;
           border-radius: 8px;
           text-align: center;
@@ -2932,13 +3302,13 @@ function App() {
 
         .stat-item .label {
           font-size: 0.8rem;
-          color: #64748b;
+          color: var(--text-secondary);
         }
 
         .stat-item .value {
           font-size: 1.2rem;
           font-weight: bold;
-          color: #0f766e;
+          color: var(--text-accent);
         }
 
         .param-table {
@@ -2948,77 +3318,223 @@ function App() {
 
         .param-table th, .param-table td {
           padding: 10px;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           text-align: center;
         }
 
         .param-table th {
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
         }
 
         .param-table tr:nth-child(even) {
-          background: #f0fdfa;
+          background: var(--bg-accent);
         }
 
-        .convergence-diagram {
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
+        /* インタラクティブ中心極限定理 */
+        .convergence-interactive {
           padding: 20px;
-          background: #f8fafc;
+          background: var(--bg-tertiary);
           border-radius: 10px;
         }
 
-        .convergence-row {
+        .slider-container {
+          margin-bottom: 20px;
+        }
+
+        .slider-container label {
+          display: block;
+          margin-bottom: 10px;
+          color: var(--text-primary);
+        }
+
+        .n-slider {
+          width: 100%;
+          height: 8px;
+          border-radius: 4px;
+          background: var(--border-color);
+          outline: none;
+          -webkit-appearance: none;
+        }
+
+        .n-slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: var(--accent-color);
+          cursor: pointer;
+        }
+
+        .convergence-visual {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 60px;
+          background: var(--info-bg);
+          border-radius: 8px;
+          margin-bottom: 15px;
+        }
+
+        .conv-bar-interactive {
+          height: 40px;
+          background: linear-gradient(90deg, var(--accent-color), var(--accent-light));
+          border-radius: 20px;
+          transition: width 0.3s ease;
+        }
+
+        .se-display {
+          text-align: center;
+          font-family: 'JetBrains Mono', monospace;
+          color: var(--text-accent);
+          margin-bottom: 15px;
+        }
+
+        .convergence-comparison {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding: 10px;
+          background: var(--bg-card);
+          border-radius: 8px;
+        }
+
+        .comparison-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .comparison-item span {
+          width: 50px;
+          font-size: 0.8rem;
+          color: var(--text-secondary);
+          font-family: 'JetBrains Mono', monospace;
+        }
+
+        .mini-bar {
+          height: 12px;
+          background: linear-gradient(90deg, var(--text-secondary), var(--border-color));
+          border-radius: 6px;
+        }
+
+        /* 計算ツール */
+        .tools-grid {
+          margin-bottom: 30px;
+        }
+
+        .calculator-card {
+          background: linear-gradient(135deg, var(--bg-accent) 0%, var(--accent-light) 100%);
+        }
+
+        .calc-inputs {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 15px;
+        }
+
+        .calc-row {
           display: flex;
           align-items: center;
           gap: 15px;
         }
 
-        .conv-label {
-          width: 70px;
-          font-weight: 600;
-          color: #0f766e;
+        .calc-row label {
+          min-width: 120px;
+          color: var(--text-primary);
+          font-weight: 500;
+        }
+
+        .calc-row input, .calc-row select {
+          flex: 1;
+          padding: 8px 12px;
+          border: 2px solid var(--border-color);
+          border-radius: 8px;
+          font-size: 1rem;
+          max-width: 200px;
+          background: var(--bg-card);
+          color: var(--text-primary);
+        }
+
+        .calc-row input:focus, .calc-row select:focus {
+          outline: none;
+          border-color: var(--text-accent);
+        }
+
+        .calc-formula {
+          text-align: center;
+          padding: 15px;
+          background: var(--bg-card);
+          border-radius: 8px;
+          margin-bottom: 15px;
+          color: var(--text-primary);
+        }
+
+        .calc-formula .math-inline {
+          font-size: 1.3em;
+        }
+
+        .calc-results {
+          display: flex;
+          gap: 20px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .result-item {
+          text-align: center;
+          padding: 15px 25px;
+          background: var(--bg-card);
+          border-radius: 10px;
+          box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .result-label {
+          display: block;
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          margin-bottom: 5px;
+        }
+
+        .result-value {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: var(--text-accent);
           font-family: 'JetBrains Mono', monospace;
         }
 
-        .conv-bar {
-          height: 30px;
-          background: linear-gradient(90deg, #14b8a6, #99f6e4);
-          border-radius: 15px;
-          position: relative;
+        .result-note {
+          text-align: center;
+          font-size: 0.85rem;
+          color: var(--text-warning);
+          margin-top: 10px;
         }
 
-        .conv-bar.wide { width: 300px; }
-        .conv-bar.medium { width: 150px; }
-        .conv-bar.narrow { width: 75px; }
-        .conv-bar.very-narrow { width: 30px; }
-
-        .conv-se {
-          color: #64748b;
-          font-size: 0.9rem;
-          font-family: 'JetBrains Mono', monospace;
+        .section-subtitle {
+          color: var(--text-accent);
+          margin: 25px 0 15px;
+          font-size: 1.2rem;
         }
 
         .visual-note {
           margin-top: 15px;
           padding: 12px 15px;
-          background: #fffbeb;
+          background: var(--bg-warning);
           border-radius: 8px;
-          color: #92400e;
+          color: var(--text-warning);
           font-size: 0.9rem;
         }
 
         .total-row {
           font-weight: 600;
-          background: #f0fdfa !important;
+          background: var(--bg-accent) !important;
         }
 
         .footer {
           text-align: center;
           padding: 40px;
-          color: #64748b;
+          color: var(--text-secondary);
         }
 
         .footer .emoji {
@@ -3041,7 +3557,7 @@ function App() {
 
         .reset-btn {
           padding: 8px 16px;
-          background: #ef4444;
+          background: var(--border-danger);
           color: white;
           border: none;
           border-radius: 8px;
@@ -3050,7 +3566,7 @@ function App() {
         }
 
         .reset-btn:hover {
-          background: #dc2626;
+          background: var(--text-danger);
         }
 
         /* クイズタブ */
@@ -3071,7 +3587,7 @@ function App() {
         .quiz-progress {
           font-size: 1.2rem;
           font-weight: 600;
-          color: #0f766e;
+          color: var(--text-accent);
         }
 
         .quiz-score {
@@ -3081,18 +3597,18 @@ function App() {
         }
 
         .quiz-score.correct {
-          background: #dcfce7;
-          color: #166534;
+          background: var(--success-light);
+          color: var(--text-success);
         }
 
         .quiz-score.incorrect {
-          background: #fef2f2;
-          color: #dc2626;
+          background: var(--bg-danger);
+          color: var(--text-danger);
         }
 
         .shuffle-btn {
           padding: 8px 16px;
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
           border: none;
           border-radius: 8px;
@@ -3100,22 +3616,23 @@ function App() {
         }
 
         .quiz-card {
-          background: white;
+          background: var(--bg-card);
           border-radius: 15px;
           padding: 30px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+          box-shadow: 0 4px 15px var(--shadow-color);
           text-align: center;
         }
 
         .quiz-question h3 {
-          color: #0f766e;
+          color: var(--text-accent);
           font-size: 1.5rem;
           margin-bottom: 10px;
         }
 
         .quiz-question p {
-          color: #64748b;
+          color: var(--text-primary);
           margin-bottom: 25px;
+          line-height: 1.6;
         }
 
         .quiz-choices {
@@ -3127,18 +3644,19 @@ function App() {
 
         .quiz-choice {
           padding: 15px 20px;
-          background: #f8fafc;
-          border: 2px solid #e2e8f0;
+          background: var(--bg-tertiary);
+          border: 2px solid var(--border-color);
           border-radius: 10px;
           font-size: 1rem;
           cursor: pointer;
           transition: all 0.2s;
           text-align: left;
+          color: var(--text-primary);
         }
 
         .quiz-choice:hover:not(:disabled) {
-          border-color: #14b8a6;
-          background: #f0fdfa;
+          border-color: var(--text-accent);
+          background: var(--bg-accent);
         }
 
         .quiz-choice:disabled {
@@ -3146,20 +3664,20 @@ function App() {
         }
 
         .quiz-choice.correct {
-          background: #dcfce7;
-          border-color: #22c55e;
-          color: #166534;
+          background: var(--success-light);
+          border-color: var(--border-success);
+          color: var(--text-success);
         }
 
         .quiz-choice.wrong {
-          background: #fef2f2;
-          border-color: #ef4444;
-          color: #dc2626;
+          background: var(--bg-danger);
+          border-color: var(--border-danger);
+          color: var(--text-danger);
         }
 
         .next-btn {
           padding: 12px 30px;
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
           border: none;
           border-radius: 8px;
@@ -3169,15 +3687,15 @@ function App() {
         }
 
         .next-btn:hover {
-          background: #0f766e;
+          background: var(--accent-dark);
         }
 
         .quiz-result {
-          background: white;
+          background: var(--bg-card);
           border-radius: 15px;
           padding: 40px;
           text-align: center;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+          box-shadow: 0 4px 15px var(--shadow-color);
         }
 
         .quiz-result h3 {
@@ -3188,18 +3706,100 @@ function App() {
         .result-score {
           font-size: 2.5rem;
           font-weight: 700;
-          color: #0f766e;
+          color: var(--text-accent);
         }
 
         .retry-btn {
           margin-top: 20px;
           padding: 15px 40px;
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
           border: none;
           border-radius: 10px;
           font-size: 1.1rem;
           cursor: pointer;
+        }
+
+        .retry-btn.secondary {
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+          border: 2px solid var(--border-color);
+          margin-left: 10px;
+        }
+
+        .retry-btn.secondary:hover {
+          background: var(--bg-accent);
+          border-color: var(--accent-color);
+        }
+
+        .result-buttons {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        /* カテゴリ選択グリッド */
+        .category-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 15px;
+          margin: 30px 0;
+        }
+
+        .category-btn {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 20px 15px;
+          background: var(--bg-card);
+          border: 2px solid var(--border-color);
+          border-radius: 15px;
+          cursor: pointer;
+          transition: all 0.2s;
+          box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .category-btn:hover {
+          border-color: var(--accent-color);
+          background: var(--bg-accent);
+          transform: translateY(-3px);
+          box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .category-icon {
+          font-size: 2.5rem;
+          margin-bottom: 10px;
+        }
+
+        .category-name {
+          font-size: 1rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          text-align: center;
+          margin-bottom: 5px;
+        }
+
+        .category-count {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          padding: 3px 10px;
+          background: var(--bg-tertiary);
+          border-radius: 12px;
+        }
+
+        .category-tip {
+          background: var(--bg-accent);
+          border: 1px solid var(--accent-color);
+          border-radius: 10px;
+          padding: 15px 20px;
+          margin-top: 20px;
+        }
+
+        .category-tip p {
+          margin: 0;
+          color: var(--text-primary);
+          font-size: 0.95rem;
         }
 
         /* カンペタブ */
@@ -3216,14 +3816,14 @@ function App() {
         }
 
         .cheat-section {
-          background: white;
+          background: var(--bg-card);
           border-radius: 12px;
           padding: 20px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .cheat-section h3 {
-          color: #0f766e;
+          color: var(--text-accent);
           margin-bottom: 15px;
           font-size: 1.1rem;
         }
@@ -3236,12 +3836,12 @@ function App() {
 
         .cheat-table th, .cheat-table td {
           padding: 8px;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           text-align: center;
         }
 
         .cheat-table th {
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
         }
 
@@ -3255,18 +3855,18 @@ function App() {
           display: flex;
           justify-content: space-between;
           padding: 8px 12px;
-          background: #f0fdfa;
+          background: var(--bg-accent);
           border-radius: 6px;
         }
 
         .cheat-label {
-          color: #64748b;
+          color: var(--text-secondary);
           font-size: 0.85rem;
         }
 
         .cheat-value {
           font-weight: 600;
-          color: #0f766e;
+          color: var(--text-accent);
           font-family: 'JetBrains Mono', monospace;
         }
 
@@ -3281,13 +3881,13 @@ function App() {
           align-items: center;
           gap: 10px;
           padding: 10px;
-          background: #f0fdfa;
+          background: var(--bg-accent);
           border-radius: 8px;
           overflow-x: auto;
         }
 
         .cheat-formula .formula-label {
-          color: #64748b;
+          color: var(--text-secondary);
           font-size: 0.85rem;
           min-width: 70px;
           flex-shrink: 0;
@@ -3304,8 +3904,8 @@ function App() {
 
         .cheat-mistakes li {
           padding: 8px 0;
-          border-bottom: 1px solid #e2e8f0;
-          color: #475569;
+          border-bottom: 1px solid var(--border-color);
+          color: var(--text-secondary);
         }
 
         .cheat-mistakes li:last-child {
@@ -3313,7 +3913,7 @@ function App() {
         }
 
         .cheat-mistakes strong {
-          color: #dc2626;
+          color: var(--text-danger);
         }
 
         .cheat-approx {
@@ -3327,7 +3927,7 @@ function App() {
           align-items: center;
           gap: 8px;
           padding: 8px;
-          background: #f0fdfa;
+          background: var(--bg-accent);
           border-radius: 6px;
           font-size: 0.9rem;
         }
@@ -3335,15 +3935,15 @@ function App() {
         .approx-from, .approx-to {
           font-family: 'JetBrains Mono', monospace;
           font-weight: 500;
-          color: #115e59;
+          color: var(--text-accent);
         }
 
         .approx-arrow {
-          color: #14b8a6;
+          color: var(--text-accent);
         }
 
         .approx-cond {
-          color: #64748b;
+          color: var(--text-secondary);
           font-size: 0.8rem;
           margin-left: auto;
         }
@@ -3352,7 +3952,7 @@ function App() {
           display: block;
           margin: 30px auto 0;
           padding: 15px 40px;
-          background: #14b8a6;
+          background: var(--accent-color);
           color: white;
           border: none;
           border-radius: 10px;
@@ -3388,22 +3988,82 @@ function App() {
         }
 
         @media (max-width: 768px) {
-          .header h1 { font-size: 1.8rem; }
+          /* ヘッダー調整 */
+          .header {
+            padding-top: 50px;
+          }
+          .header h1 { font-size: 1.5rem; }
+          .header .stats { gap: 15px; font-size: 0.9rem; }
+          .dark-toggle {
+            top: 10px;
+            right: 10px;
+            padding: 6px 12px;
+            font-size: 1rem;
+          }
+
+          /* タブナビを横スクロールに */
+          .tab-nav {
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 10px 15px;
+            gap: 8px;
+            -webkit-overflow-scrolling: touch;
+          }
+          .tab-nav::-webkit-scrollbar {
+            display: none;
+          }
+          .tab-btn {
+            flex: 0 0 auto;
+            white-space: nowrap;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+          }
+
+          /* グリッドを1列に */
           .formulas-grid, .problems-grid, .relations-grid, .checklist-grid, .visual-grid {
             grid-template-columns: 1fr;
           }
-          .tab-nav { gap: 5px; }
-          .tab-btn { padding: 10px 15px; font-size: 0.9rem; }
           .visual-grid { grid-template-columns: 1fr; }
-          .convergence-controls { flex-direction: column; align-items: flex-start; }
           .quiz-choices { grid-template-columns: 1fr; }
           .cheat-grid { grid-template-columns: 1fr; }
+          .convergence-controls { flex-direction: column; align-items: flex-start; }
+
+          /* 計算ツール調整 */
+          .calc-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          .calc-row input, .calc-row select {
+            max-width: 100%;
+            width: 100%;
+          }
+          .calc-formula .math-inline {
+            font-size: 1em;
+          }
+
+          /* セクション調整 */
+          .section-header {
+            padding: 15px;
+          }
+          .section-content {
+            padding: 15px;
+          }
+
+          /* フッター */
+          .footer {
+            padding: 20px 15px;
+          }
         }
       `}</style>
 
       <header className="header">
+        <button className="dark-toggle" onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? '☀️' : '🌙'}
+        </button>
         <h1>📚 数理情報Ⅱ 完全対策</h1>
-        <p style={{color: '#64748b'}}>確率・統計の理論から例題まで徹底解説</p>
+        <p style={{color: 'var(--text-secondary)'}}>確率・統計の理論から例題まで徹底解説</p>
         <div className="stats">
           <div><span className="stat-number">{sections.length}</span> セクション</div>
           <div><span className="stat-number">{totalProblems}</span> 例題</div>
