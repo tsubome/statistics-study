@@ -3402,8 +3402,8 @@ function App() {
       `}</style>
 
       <header className="header">
-        <h1>📚 確率・統計学 完全対策</h1>
-        <p style={{color: '#64748b'}}>理論的背景から例題まで徹底解説</p>
+        <h1>📚 数理情報Ⅱ 完全対策</h1>
+        <p style={{color: '#64748b'}}>確率・統計の理論から例題まで徹底解説</p>
         <div className="stats">
           <div><span className="stat-number">{sections.length}</span> セクション</div>
           <div><span className="stat-number">{totalProblems}</span> 例題</div>
