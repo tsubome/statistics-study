@@ -2707,6 +2707,60 @@ function App() {
           background: #f0fdfa;
         }
 
+        .convergence-diagram {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          padding: 20px;
+          background: #f8fafc;
+          border-radius: 10px;
+        }
+
+        .convergence-row {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+
+        .conv-label {
+          width: 70px;
+          font-weight: 600;
+          color: #0f766e;
+          font-family: 'JetBrains Mono', monospace;
+        }
+
+        .conv-bar {
+          height: 30px;
+          background: linear-gradient(90deg, #14b8a6, #99f6e4);
+          border-radius: 15px;
+          position: relative;
+        }
+
+        .conv-bar.wide { width: 300px; }
+        .conv-bar.medium { width: 150px; }
+        .conv-bar.narrow { width: 75px; }
+        .conv-bar.very-narrow { width: 30px; }
+
+        .conv-se {
+          color: #64748b;
+          font-size: 0.9rem;
+          font-family: 'JetBrains Mono', monospace;
+        }
+
+        .visual-note {
+          margin-top: 15px;
+          padding: 12px 15px;
+          background: #fffbeb;
+          border-radius: 8px;
+          color: #92400e;
+          font-size: 0.9rem;
+        }
+
+        .total-row {
+          font-weight: 600;
+          background: #f0fdfa !important;
+        }
+
         .footer {
           text-align: center;
           padding: 40px;
