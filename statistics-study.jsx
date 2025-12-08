@@ -945,6 +945,8 @@ function TabNav({ activeTab, setActiveTab }) {
     { id: 'essential', label: '⭐ 最重要公式', icon: '⭐' },
     { id: 'glossary', label: '📖 用語集', icon: '📖' },
     { id: 'relations', label: '🔗 分布関係', icon: '🔗' },
+    { id: 'quiz', label: '🎯 クイズ', icon: '🎯' },
+    { id: 'cheatsheet', label: '📋 カンペ', icon: '📋' },
     { id: 'checklist', label: '✅ チェックリスト', icon: '✅' },
   ];
 
@@ -1321,11 +1323,28 @@ function ChecklistTab() {
     ]},
   ];
 
-  const [checked, setChecked] = useState({});
+  const [checked, setChecked] = useState(() => {
+    try {
+      const saved = localStorage.getItem('stats-checklist');
+      return saved ? JSON.parse(saved) : {};
+    } catch { return {}; }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('stats-checklist', JSON.stringify(checked));
+    } catch {}
+  }, [checked]);
 
   const toggleCheck = (catIdx, itemIdx) => {
     const key = `${catIdx}-${itemIdx}`;
     setChecked(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const resetChecklist = () => {
+    if (confirm('チェックリストをリセットしますか？')) {
+      setChecked({});
+    }
   };
 
   const totalItems = checklist.reduce((sum, cat) => sum + cat.items.length, 0);
@@ -1334,11 +1353,15 @@ function ChecklistTab() {
   return (
     <div className="checklist-tab">
       <h2>✅ 試験直前チェックリスト</h2>
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${(checkedCount/totalItems)*100}%` }}></div>
-        <span className="progress-text">{checkedCount}/{totalItems} 確認済み</span>
+      <p className="tab-description">進捗は自動保存されます</p>
+      <div className="checklist-header">
+        <div className="progress-bar">
+          <div className="progress-fill" style={{ width: `${(checkedCount/totalItems)*100}%` }}></div>
+          <span className="progress-text">{checkedCount}/{totalItems} 確認済み</span>
+        </div>
+        <button className="reset-btn" onClick={resetChecklist}>リセット</button>
       </div>
-      
+
       <div className="checklist-grid">
         {checklist.map((cat, catIdx) => (
           <div key={catIdx} className="checklist-category">
@@ -1360,6 +1383,237 @@ function ChecklistTab() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// クイズモードコンポーネント
+function QuizTab() {
+  const quizData = [
+    { question: "二項分布 B(n,p) の期待値は？", correct: "np", wrong: ["n/p", "np(1-p)", "n(1-p)"] },
+    { question: "二項分布 B(n,p) の分散は？", correct: "np(1-p)", wrong: ["np", "np²", "(1-p)/n"] },
+    { question: "ポアソン分布 Po(λ) の期待値と分散は？", correct: "E[X] = V[X] = λ", wrong: ["E[X] = λ, V[X] = λ²", "E[X] = 1/λ, V[X] = λ", "E[X] = λ², V[X] = λ"] },
+    { question: "標準化の公式は？", correct: "Z = (X - μ) / σ", wrong: ["Z = (X - μ) / σ²", "Z = (X + μ) / σ", "Z = X / σ"] },
+    { question: "標本平均の標準化は？", correct: "Z = (X̄ - μ) / (σ/√n)", wrong: ["Z = (X̄ - μ) / σ", "Z = (X̄ - μ) / (σ²/n)", "Z = (X̄ + μ) / (σ/√n)"] },
+    { question: "不偏分散の分母は？", correct: "n - 1", wrong: ["n", "n + 1", "n²"] },
+    { question: "チェビシェフの不等式は？", correct: "P(|X-μ| ≥ kσ) ≤ 1/k²", wrong: ["P(|X-μ| ≥ kσ) ≤ 1/k", "P(|X-μ| ≤ kσ) ≥ 1/k²", "P(|X-μ| ≥ kσ) ≤ k²"] },
+    { question: "ベイズの定理の分子は？", correct: "P(B|A) × P(A)", wrong: ["P(A|B) × P(B)", "P(A) × P(B)", "P(A∩B) / P(B)"] },
+    { question: "加法定理 P(A∪B) は？", correct: "P(A) + P(B) - P(A∩B)", wrong: ["P(A) + P(B)", "P(A) × P(B)", "P(A) + P(B) + P(A∩B)"] },
+    { question: "V[aX + b] は？", correct: "a²V[X]", wrong: ["aV[X] + b", "a²V[X] + b", "aV[X]"] },
+    { question: "幾何分布 Ge(p) の期待値は？", correct: "1/p", wrong: ["p", "1-p", "p/(1-p)"] },
+    { question: "指数分布 Ex(λ) の期待値は？", correct: "1/λ", wrong: ["λ", "λ²", "1/λ²"] },
+    { question: "二項分布の正規近似の条件は？", correct: "np ≥ 5 かつ n(1-p) ≥ 5", wrong: ["np ≥ 10", "n ≥ 30", "np ≥ 5 または n(1-p) ≥ 5"] },
+    { question: "両側5%の棄却点 z は？", correct: "1.96", wrong: ["1.645", "2.58", "2.33"] },
+    { question: "片側5%の棄却点 z は？", correct: "1.645", wrong: ["1.96", "2.58", "1.28"] },
+    { question: "e⁻³ の近似値は？", correct: "≈ 0.05", wrong: ["≈ 0.37", "≈ 0.14", "≈ 0.01"] },
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [shuffledQuiz, setShuffledQuiz] = useState([]);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+
+  useEffect(() => {
+    shuffleQuiz();
+  }, []);
+
+  const shuffleQuiz = () => {
+    const shuffled = [...quizData].sort(() => Math.random() - 0.5).map(q => ({
+      ...q,
+      choices: [q.correct, ...q.wrong].sort(() => Math.random() - 0.5)
+    }));
+    setShuffledQuiz(shuffled);
+    setCurrentIndex(0);
+    setScore({ correct: 0, total: 0 });
+    setSelectedAnswer(null);
+    setShowResult(false);
+  };
+
+  const handleSelect = (choice) => {
+    if (selectedAnswer !== null) return;
+    setSelectedAnswer(choice);
+    const isCorrect = choice === shuffledQuiz[currentIndex].correct;
+    setScore(prev => ({
+      correct: prev.correct + (isCorrect ? 1 : 0),
+      total: prev.total + 1
+    }));
+  };
+
+  const nextQuestion = () => {
+    if (currentIndex < shuffledQuiz.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+      setSelectedAnswer(null);
+    } else {
+      setShowResult(true);
+    }
+  };
+
+  const current = shuffledQuiz[currentIndex];
+  const isFinished = showResult;
+
+  return (
+    <div className="quiz-tab">
+      <h2>🎯 公式暗記クイズ</h2>
+      <p className="tab-description">4択から正しい答えを選んでください</p>
+
+      <div className="quiz-stats">
+        <span className="quiz-progress">{currentIndex + 1} / {shuffledQuiz.length}</span>
+        <span className="quiz-score correct">正解 {score.correct}</span>
+        <button className="shuffle-btn" onClick={shuffleQuiz}>🔀 最初から</button>
+      </div>
+
+      {current && !isFinished && (
+        <div className="quiz-card">
+          <div className="quiz-question">
+            <h3>{current.question}</h3>
+          </div>
+
+          <div className="quiz-choices">
+            {current.choices.map((choice, idx) => {
+              let className = "quiz-choice";
+              if (selectedAnswer !== null) {
+                if (choice === current.correct) className += " correct";
+                else if (choice === selectedAnswer) className += " wrong";
+              }
+              return (
+                <button
+                  key={idx}
+                  className={className}
+                  onClick={() => handleSelect(choice)}
+                  disabled={selectedAnswer !== null}
+                >
+                  {choice}
+                </button>
+              );
+            })}
+          </div>
+
+          {selectedAnswer !== null && (
+            <button className="next-btn" onClick={nextQuestion}>
+              {currentIndex < shuffledQuiz.length - 1 ? "次の問題 →" : "結果を見る"}
+            </button>
+          )}
+        </div>
+      )}
+
+      {isFinished && (
+        <div className="quiz-result">
+          <h3>🎉 終了！</h3>
+          <p className="result-score">
+            {Math.round((score.correct / shuffledQuiz.length) * 100)}%
+          </p>
+          <p>{score.correct} / {shuffledQuiz.length} 問正解</p>
+          <button className="retry-btn" onClick={shuffleQuiz}>もう一度挑戦</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// カンペ（一覧復習）タブ
+function CheatSheetTab() {
+  return (
+    <div className="cheatsheet-tab">
+      <h2>📋 試験直前カンペ</h2>
+      <p className="tab-description">1ページで全重要事項を確認 ・ 印刷推奨</p>
+
+      <div className="cheatsheet-content">
+        <div className="cheat-section">
+          <h3>📊 主要分布の期待値・分散</h3>
+          <table className="cheat-table">
+            <thead><tr><th>分布</th><th>E[X]</th><th>V[X]</th><th>用途</th></tr></thead>
+            <tbody>
+              <tr><td>二項 B(n,p)</td><td>np</td><td>np(1-p)</td><td>成功回数</td></tr>
+              <tr><td>ポアソン Po(λ)</td><td>λ</td><td>λ</td><td>稀な事象</td></tr>
+              <tr><td>幾何 Ge(p)</td><td>1/p</td><td>(1-p)/p²</td><td>初成功まで</td></tr>
+              <tr><td>指数 Ex(λ)</td><td>1/λ</td><td>1/λ²</td><td>待ち時間</td></tr>
+              <tr><td>正規 N(μ,σ²)</td><td>μ</td><td>σ²</td><td>連続量</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="cheat-section">
+          <h3>🔢 必須暗記数値</h3>
+          <div className="cheat-grid">
+            <div className="cheat-item"><span className="cheat-label">z (片側5%)</span><span className="cheat-value">1.645</span></div>
+            <div className="cheat-item"><span className="cheat-label">z (両側5%)</span><span className="cheat-value">1.96</span></div>
+            <div className="cheat-item"><span className="cheat-label">z (両側1%)</span><span className="cheat-value">2.58</span></div>
+            <div className="cheat-item"><span className="cheat-label">e⁻¹</span><span className="cheat-value">≈ 0.368</span></div>
+            <div className="cheat-item"><span className="cheat-label">e⁻²</span><span className="cheat-value">≈ 0.135</span></div>
+            <div className="cheat-item"><span className="cheat-label">e⁻³</span><span className="cheat-value">≈ 0.05</span></div>
+          </div>
+        </div>
+
+        <div className="cheat-section">
+          <h3>📐 標準正規分布の確率</h3>
+          <div className="cheat-grid">
+            <div className="cheat-item"><span className="cheat-label">P(|Z| ≤ 1)</span><span className="cheat-value">≈ 68%</span></div>
+            <div className="cheat-item"><span className="cheat-label">P(|Z| ≤ 2)</span><span className="cheat-value">≈ 95%</span></div>
+            <div className="cheat-item"><span className="cheat-label">P(|Z| ≤ 3)</span><span className="cheat-value">≈ 99.7%</span></div>
+            <div className="cheat-item"><span className="cheat-label">P(Z ≤ 0)</span><span className="cheat-value">= 50%</span></div>
+          </div>
+        </div>
+
+        <div className="cheat-section">
+          <h3>⚡ 重要公式</h3>
+          <div className="cheat-formulas">
+            <div className="cheat-formula">
+              <span className="formula-label">標準化:</span>
+              <MathFormula>{"Z = \\frac{X - \\mu}{\\sigma}"}</MathFormula>
+            </div>
+            <div className="cheat-formula">
+              <span className="formula-label">標本平均:</span>
+              <MathFormula>{"Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}"}</MathFormula>
+            </div>
+            <div className="cheat-formula">
+              <span className="formula-label">信頼区間:</span>
+              <MathFormula>{"\\bar{X} \\pm z_{\\alpha/2} \\cdot \\frac{\\sigma}{\\sqrt{n}}"}</MathFormula>
+            </div>
+            <div className="cheat-formula">
+              <span className="formula-label">ベイズ:</span>
+              <MathFormula>{"P(A|B) = \\frac{P(B|A) \\cdot P(A)}{P(B)}"}</MathFormula>
+            </div>
+          </div>
+        </div>
+
+        <div className="cheat-section">
+          <h3>⚠️ よくある間違い</h3>
+          <ul className="cheat-mistakes">
+            <li>標準化で σ² ではなく <strong>σ</strong> で割る</li>
+            <li>V[aX+b] = a²V[X]（定数bは消える）</li>
+            <li>V[X+Y] = V[X]+V[Y] は<strong>独立のとき限定</strong></li>
+            <li>不偏分散は <strong>n-1</strong> で割る</li>
+            <li>正規近似は np≥5 <strong>かつ</strong> n(1-p)≥5</li>
+          </ul>
+        </div>
+
+        <div className="cheat-section">
+          <h3>🔄 分布の近似条件</h3>
+          <div className="cheat-approx">
+            <div className="approx-item">
+              <span className="approx-from">B(n,p)</span>
+              <span className="approx-arrow">→</span>
+              <span className="approx-to">Po(np)</span>
+              <span className="approx-cond">n大, p小</span>
+            </div>
+            <div className="approx-item">
+              <span className="approx-from">B(n,p)</span>
+              <span className="approx-arrow">→</span>
+              <span className="approx-to">N(np, np(1-p))</span>
+              <span className="approx-cond">np≥5, n(1-p)≥5</span>
+            </div>
+            <div className="approx-item">
+              <span className="approx-from">Po(λ)</span>
+              <span className="approx-arrow">→</span>
+              <span className="approx-to">N(λ, λ)</span>
+              <span className="approx-cond">λ≥10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button className="print-btn" onClick={() => window.print()}>🖨️ 印刷する</button>
     </div>
   );
 }
@@ -2772,6 +3026,367 @@ function App() {
           margin-bottom: 10px;
         }
 
+        /* チェックリストヘッダー */
+        .checklist-header {
+          display: flex;
+          gap: 15px;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+
+        .checklist-header .progress-bar {
+          flex: 1;
+          margin-bottom: 0;
+        }
+
+        .reset-btn {
+          padding: 8px 16px;
+          background: #ef4444;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 0.9rem;
+        }
+
+        .reset-btn:hover {
+          background: #dc2626;
+        }
+
+        /* クイズタブ */
+        .quiz-tab {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+
+        .quiz-stats {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          margin-bottom: 20px;
+          flex-wrap: wrap;
+        }
+
+        .quiz-progress {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: #0f766e;
+        }
+
+        .quiz-score {
+          padding: 5px 12px;
+          border-radius: 20px;
+          font-weight: 500;
+        }
+
+        .quiz-score.correct {
+          background: #dcfce7;
+          color: #166534;
+        }
+
+        .quiz-score.incorrect {
+          background: #fef2f2;
+          color: #dc2626;
+        }
+
+        .shuffle-btn {
+          padding: 8px 16px;
+          background: #14b8a6;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+
+        .quiz-card {
+          background: white;
+          border-radius: 15px;
+          padding: 30px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+          text-align: center;
+        }
+
+        .quiz-question h3 {
+          color: #0f766e;
+          font-size: 1.5rem;
+          margin-bottom: 10px;
+        }
+
+        .quiz-question p {
+          color: #64748b;
+          margin-bottom: 25px;
+        }
+
+        .quiz-choices {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+          margin-bottom: 20px;
+        }
+
+        .quiz-choice {
+          padding: 15px 20px;
+          background: #f8fafc;
+          border: 2px solid #e2e8f0;
+          border-radius: 10px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-align: left;
+        }
+
+        .quiz-choice:hover:not(:disabled) {
+          border-color: #14b8a6;
+          background: #f0fdfa;
+        }
+
+        .quiz-choice:disabled {
+          cursor: default;
+        }
+
+        .quiz-choice.correct {
+          background: #dcfce7;
+          border-color: #22c55e;
+          color: #166534;
+        }
+
+        .quiz-choice.wrong {
+          background: #fef2f2;
+          border-color: #ef4444;
+          color: #dc2626;
+        }
+
+        .next-btn {
+          padding: 12px 30px;
+          background: #14b8a6;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1rem;
+          cursor: pointer;
+          margin-top: 10px;
+        }
+
+        .next-btn:hover {
+          background: #0f766e;
+        }
+
+        .quiz-result {
+          background: white;
+          border-radius: 15px;
+          padding: 40px;
+          text-align: center;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .quiz-result h3 {
+          font-size: 2rem;
+          margin-bottom: 20px;
+        }
+
+        .result-score {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #0f766e;
+        }
+
+        .retry-btn {
+          margin-top: 20px;
+          padding: 15px 40px;
+          background: #14b8a6;
+          color: white;
+          border: none;
+          border-radius: 10px;
+          font-size: 1.1rem;
+          cursor: pointer;
+        }
+
+        /* カンペタブ */
+        .cheatsheet-tab {
+          max-width: 1000px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+
+        .cheatsheet-content {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 20px;
+        }
+
+        .cheat-section {
+          background: white;
+          border-radius: 12px;
+          padding: 20px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .cheat-section h3 {
+          color: #0f766e;
+          margin-bottom: 15px;
+          font-size: 1.1rem;
+        }
+
+        .cheat-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.9rem;
+        }
+
+        .cheat-table th, .cheat-table td {
+          padding: 8px;
+          border: 1px solid #e2e8f0;
+          text-align: center;
+        }
+
+        .cheat-table th {
+          background: #14b8a6;
+          color: white;
+        }
+
+        .cheat-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+        }
+
+        .cheat-item {
+          display: flex;
+          justify-content: space-between;
+          padding: 8px 12px;
+          background: #f0fdfa;
+          border-radius: 6px;
+        }
+
+        .cheat-label {
+          color: #64748b;
+          font-size: 0.85rem;
+        }
+
+        .cheat-value {
+          font-weight: 600;
+          color: #0f766e;
+          font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cheat-formulas {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .cheat-formula {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px;
+          background: #f0fdfa;
+          border-radius: 8px;
+          overflow-x: auto;
+        }
+
+        .cheat-formula .formula-label {
+          color: #64748b;
+          font-size: 0.85rem;
+          min-width: 70px;
+          flex-shrink: 0;
+        }
+
+        .cheat-formula .math-inline {
+          font-size: 0.9em;
+        }
+
+        .cheat-mistakes {
+          list-style: none;
+          padding: 0;
+        }
+
+        .cheat-mistakes li {
+          padding: 8px 0;
+          border-bottom: 1px solid #e2e8f0;
+          color: #475569;
+        }
+
+        .cheat-mistakes li:last-child {
+          border-bottom: none;
+        }
+
+        .cheat-mistakes strong {
+          color: #dc2626;
+        }
+
+        .cheat-approx {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .approx-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px;
+          background: #f0fdfa;
+          border-radius: 6px;
+          font-size: 0.9rem;
+        }
+
+        .approx-from, .approx-to {
+          font-family: 'JetBrains Mono', monospace;
+          font-weight: 500;
+          color: #115e59;
+        }
+
+        .approx-arrow {
+          color: #14b8a6;
+        }
+
+        .approx-cond {
+          color: #64748b;
+          font-size: 0.8rem;
+          margin-left: auto;
+        }
+
+        .print-btn {
+          display: block;
+          margin: 30px auto 0;
+          padding: 15px 40px;
+          background: #14b8a6;
+          color: white;
+          border: none;
+          border-radius: 10px;
+          font-size: 1.1rem;
+          cursor: pointer;
+        }
+
+        /* 印刷用スタイル */
+        @media print {
+          .app {
+            background: white !important;
+          }
+          .header, .tab-nav, .footer, .print-btn {
+            display: none !important;
+          }
+          .main-content {
+            padding: 0 !important;
+          }
+          .cheatsheet-tab {
+            max-width: 100% !important;
+          }
+          .cheat-section {
+            break-inside: avoid;
+            box-shadow: none !important;
+            border: 1px solid #ddd;
+          }
+          .cheatsheet-content {
+            display: block;
+          }
+          .cheat-section {
+            margin-bottom: 15px;
+          }
+        }
+
         @media (max-width: 768px) {
           .header h1 { font-size: 1.8rem; }
           .formulas-grid, .problems-grid, .relations-grid, .checklist-grid, .visual-grid {
@@ -2781,6 +3396,8 @@ function App() {
           .tab-btn { padding: 10px 15px; font-size: 0.9rem; }
           .visual-grid { grid-template-columns: 1fr; }
           .convergence-controls { flex-direction: column; align-items: flex-start; }
+          .quiz-choices { grid-template-columns: 1fr; }
+          .cheat-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -2811,6 +3428,8 @@ function App() {
         {activeTab === 'glossary' && <GlossaryTab />}
         {activeTab === 'relations' && <RelationsTab />}
         {activeTab === 'visual' && <VisualLearningTab />}
+        {activeTab === 'quiz' && <QuizTab />}
+        {activeTab === 'cheatsheet' && <CheatSheetTab />}
         {activeTab === 'checklist' && <ChecklistTab />}
       </main>
 
