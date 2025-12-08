@@ -2582,6 +2582,10 @@ function App() {
           margin: 15px 0;
         }
 
+        .visual-formula .math-inline {
+          font-size: 1em;
+        }
+
         .diagram-container svg {
           max-width: 100%;
           height: auto;
