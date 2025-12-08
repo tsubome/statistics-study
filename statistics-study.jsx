@@ -1741,23 +1741,21 @@ function App() {
 
         .app {
           min-height: 100vh;
-          background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 50%, #24243e 100%);
-          color: #e8e8e8;
+          background: #f1f5f9;
+          color: #334155;
           font-family: 'Noto Sans JP', sans-serif;
         }
 
         .header {
           text-align: center;
           padding: 40px 20px 20px;
-          background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%);
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          background: linear-gradient(135deg, #f0fdfa 0%, #e2e8f0 100%);
+          border-bottom: 1px solid #e2e8f0;
         }
 
         .header h1 {
           font-size: 2.5rem;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          color: #0f766e;
           margin-bottom: 10px;
         }
 
@@ -1766,13 +1764,13 @@ function App() {
           justify-content: center;
           gap: 30px;
           margin-top: 15px;
-          color: #888;
+          color: #64748b;
         }
 
         .header .stat-number {
           font-size: 1.3rem;
           font-weight: 700;
-          color: #667eea;
+          color: #14b8a6;
         }
 
         .tab-nav {
@@ -1780,8 +1778,8 @@ function App() {
           justify-content: center;
           gap: 10px;
           padding: 15px 20px;
-          background: rgba(0,0,0,0.3);
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          background: white;
+          border-bottom: 1px solid #e2e8f0;
           flex-wrap: wrap;
         }
 
@@ -1792,18 +1790,18 @@ function App() {
           cursor: pointer;
           font-family: inherit;
           font-size: 1rem;
-          background: rgba(255,255,255,0.05);
-          color: #aaa;
+          background: #e2e8f0;
+          color: #64748b;
           transition: all 0.3s;
         }
 
         .tab-btn.active {
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: #14b8a6;
           color: white;
         }
 
         .tab-btn:hover:not(.active) {
-          background: rgba(255,255,255,0.1);
+          background: #cbd5e1;
         }
 
         .main-content {
@@ -1830,21 +1828,22 @@ function App() {
         }
 
         .expand-btn {
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: #14b8a6;
           color: white;
         }
 
         .collapse-btn {
-          background: rgba(255,255,255,0.08);
-          color: #ccc;
+          background: #e2e8f0;
+          color: #64748b;
         }
 
         .section {
           margin-bottom: 15px;
-          background: rgba(255,255,255,0.02);
+          background: white;
           border-radius: 16px;
-          border: 1px solid rgba(255,255,255,0.06);
+          border: 1px solid #e2e8f0;
           overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .section:hover {
@@ -1860,7 +1859,7 @@ function App() {
         }
 
         .section-header:hover {
-          background: rgba(255,255,255,0.03);
+          background: #f8fafc;
         }
 
         .section-title {
@@ -1891,7 +1890,7 @@ function App() {
         }
 
         .arrow {
-          color: #666;
+          color: #94a3b8;
           transition: transform 0.3s;
         }
 
@@ -1910,10 +1909,10 @@ function App() {
 
         .sub-tabs button {
           padding: 8px 16px;
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid #e2e8f0;
           border-radius: 15px;
-          background: transparent;
-          color: #aaa;
+          background: #f8fafc;
+          color: #64748b;
           cursor: pointer;
           font-family: inherit;
           font-size: 0.9rem;
@@ -1933,18 +1932,18 @@ function App() {
         }
 
         .theory-background {
-          background: rgba(102,126,234,0.1);
-          border-left: 4px solid #667eea;
+          background: #f0fdfa;
+          border-left: 4px solid #14b8a6;
         }
 
         .theory-insight {
-          background: rgba(38,222,129,0.1);
-          border-left: 4px solid #26de81;
+          background: #f0fdf4;
+          border-left: 4px solid #22c55e;
         }
 
         .theory-mistakes {
-          background: rgba(235,59,90,0.1);
-          border-left: 4px solid #eb3b5a;
+          background: #fef2f2;
+          border-left: 4px solid #ef4444;
         }
 
         .theory-section h4 {
@@ -1952,9 +1951,9 @@ function App() {
           color: inherit;
         }
 
-        .theory-background h4 { color: #667eea; }
-        .theory-insight h4 { color: #26de81; }
-        .theory-mistakes h4 { color: #eb3b5a; }
+        .theory-background h4 { color: #0f766e; }
+        .theory-insight h4 { color: #16a34a; }
+        .theory-mistakes h4 { color: #dc2626; }
 
         .theory-mistakes ul {
           list-style: none;
@@ -1964,7 +1963,7 @@ function App() {
         .theory-mistakes li {
           padding: 8px 0 8px 25px;
           position: relative;
-          color: #f0a0a0;
+          color: #b91c1c;
         }
 
         .theory-mistakes li::before {
@@ -1974,13 +1973,13 @@ function App() {
         }
 
         .concepts-section {
-          background: rgba(102,126,234,0.08);
+          background: #f0fdfa;
           padding: 18px;
           border-radius: 12px;
         }
 
         .concepts-section h4 {
-          color: #667eea;
+          color: #0f766e;
           margin-bottom: 12px;
         }
 
@@ -1991,14 +1990,14 @@ function App() {
         .concepts-list li {
           padding: 8px 0 8px 25px;
           position: relative;
-          color: #ccc;
+          color: #475569;
         }
 
         .concepts-list li::before {
           content: '→';
           position: absolute;
           left: 0;
-          color: #667eea;
+          color: #14b8a6;
         }
 
         .formulas-grid {
@@ -2010,13 +2009,13 @@ function App() {
         .formula-card {
           padding: 15px;
           border-radius: 12px;
-          background: rgba(102,126,234,0.1);
-          border: 1px solid rgba(102,126,234,0.2);
+          background: #f0fdfa;
+          border: 1px solid #99f6e4;
         }
 
         .formula-card.importance-3 {
-          border-color: #f7b731;
-          background: rgba(247,183,49,0.1);
+          border-color: #fbbf24;
+          background: #fffbeb;
         }
 
         .formula-header {
@@ -2027,36 +2026,40 @@ function App() {
 
         .formula-name {
           font-size: 0.85rem;
-          color: #888;
+          color: #64748b;
         }
 
         .importance {
-          color: #f7b731;
+          color: #d97706;
           font-size: 0.8rem;
         }
 
         .formula-eq {
           font-family: 'JetBrains Mono', monospace;
           font-size: 1rem;
-          color: #fff;
+          color: #115e59;
           display: block;
           margin-bottom: 5px;
         }
 
+        .formula-eq .math-display, .formula-eq .math-inline {
+          font-size: 1em;
+        }
+
         .formula-note {
           font-size: 0.8rem;
-          color: #888;
+          color: #64748b;
         }
 
         .procedure-section {
-          background: rgba(69,170,242,0.1);
+          background: #eff6ff;
           padding: 20px;
           border-radius: 12px;
-          border-left: 4px solid #45aaf2;
+          border-left: 4px solid #3b82f6;
         }
 
         .procedure-section h4 {
-          color: #45aaf2;
+          color: #1d4ed8;
           margin-bottom: 15px;
         }
 
@@ -2067,20 +2070,20 @@ function App() {
 
         .procedure-list li {
           padding: 8px 0;
-          color: #ccc;
+          color: #475569;
         }
 
         .procedure-list li.step {
           font-weight: 500;
-          color: #fff;
+          color: #1e293b;
         }
 
         .procedure-list li.check {
-          color: #26de81;
+          color: #16a34a;
         }
 
         .procedure-list li.warning {
-          color: #f7b731;
+          color: #d97706;
           font-weight: 500;
         }
 
@@ -2096,10 +2099,11 @@ function App() {
         }
 
         .problem-card {
-          background: rgba(255,255,255,0.03);
+          background: white;
           border-radius: 14px;
           padding: 20px;
-          border: 1px solid rgba(255,255,255,0.06);
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .problem-card:hover {
@@ -2121,7 +2125,7 @@ function App() {
         .problem-question {
           font-size: 0.95rem;
           line-height: 1.7;
-          color: #ddd;
+          color: #334155;
           margin-bottom: 15px;
         }
 
@@ -2138,24 +2142,24 @@ function App() {
           cursor: pointer;
           font-family: inherit;
           font-size: 0.9rem;
-          background: rgba(255,255,255,0.06);
-          color: #bbb;
+          background: #e2e8f0;
+          color: #64748b;
           transition: all 0.3s;
         }
 
         .hint-btn.active {
-          background: rgba(247,183,49,0.2);
-          color: #f7b731;
+          background: #fef3c7;
+          color: #b45309;
         }
 
         .solution-btn.active {
-          background: rgba(38,222,129,0.2);
-          color: #26de81;
+          background: #dcfce7;
+          color: #16a34a;
         }
 
         .hint-box {
-          background: rgba(247,183,49,0.1);
-          border-left: 4px solid #f7b731;
+          background: #fffbeb;
+          border-left: 4px solid #f59e0b;
           padding: 15px;
           border-radius: 0 10px 10px 0;
           margin: 15px 0;
@@ -2163,8 +2167,8 @@ function App() {
         }
 
         .solution-box {
-          background: rgba(38,222,129,0.06);
-          border-left: 4px solid #26de81;
+          background: #f0fdf4;
+          border-left: 4px solid #22c55e;
           padding: 15px;
           border-radius: 0 10px 10px 0;
           margin: 15px 0;
@@ -2175,27 +2179,29 @@ function App() {
           white-space: pre-wrap;
           margin: 10px 0;
           padding: 15px;
-          background: rgba(0,0,0,0.3);
+          background: #f1f5f9;
           border-radius: 8px;
           font-size: 0.9rem;
           line-height: 1.6;
+          color: #334155;
         }
 
         .answer-box {
           margin-top: 15px;
           padding: 12px 15px;
-          background: rgba(38,222,129,0.15);
+          background: #dcfce7;
           border-radius: 8px;
           font-family: 'JetBrains Mono', monospace;
+          color: #166534;
         }
 
         .insight-box {
           margin-top: 12px;
           padding: 12px 15px;
-          background: rgba(102,126,234,0.15);
+          background: #f0fdfa;
           border-radius: 8px;
           font-size: 0.9rem;
-          color: #a8c0ff;
+          color: #0f766e;
         }
 
         /* Formulas Tab */
@@ -2207,14 +2213,12 @@ function App() {
           text-align: center;
           font-size: 1.8rem;
           margin-bottom: 10px;
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          color: #0f766e;
         }
 
         .tab-description {
           text-align: center;
-          color: #888;
+          color: #64748b;
           margin-bottom: 25px;
         }
 
@@ -2227,13 +2231,14 @@ function App() {
         .essential-table, .approx-table {
           width: 100%;
           border-collapse: collapse;
-          background: rgba(0,0,0,0.3);
+          background: white;
           border-radius: 10px;
           overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         .essential-table th, .approx-table th {
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: #14b8a6;
           color: white;
           padding: 15px 10px;
           text-align: left;
@@ -2242,20 +2247,20 @@ function App() {
 
         .essential-table td, .approx-table td {
           padding: 12px 10px;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
-          color: #e8e8e8;
+          border-bottom: 1px solid #e2e8f0;
+          color: #334155;
         }
 
         .essential-table tr:hover, .approx-table tr:hover {
-          background: rgba(102,126,234,0.1);
+          background: #f0fdfa;
         }
 
-        .category-cell { color: #45aaf2; font-weight: 500; }
+        .category-cell { color: #0891b2; font-weight: 500; }
         .name-cell { font-weight: 500; }
         .formula-cell { min-width: 200px; }
         .formula-cell .math-inline { font-size: 1em; }
-        .importance-cell { color: #f7b731; text-align: center; }
-        .note-cell { color: #aaa; font-size: 0.9rem; }
+        .importance-cell { color: #d97706; text-align: center; }
+        .note-cell { color: #64748b; font-size: 0.9rem; }
 
         /* Glossary */
         .glossary-grid {
@@ -2265,33 +2270,34 @@ function App() {
         }
 
         .glossary-card {
-          background: rgba(0,0,0,0.3);
+          background: white;
           padding: 20px;
           border-radius: 15px;
-          border-left: 4px solid #667eea;
+          border-left: 4px solid #14b8a6;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         .glossary-term {
-          color: #667eea;
+          color: #0f766e;
           font-size: 1.1rem;
           margin-bottom: 10px;
         }
 
         .glossary-definition {
-          color: #e8e8e8;
+          color: #334155;
           line-height: 1.6;
           margin-bottom: 10px;
         }
 
         .glossary-example {
-          color: #888;
+          color: #64748b;
           font-size: 0.9rem;
           padding-top: 10px;
-          border-top: 1px solid rgba(255,255,255,0.1);
+          border-top: 1px solid #e2e8f0;
         }
 
         .section-subtitle {
-          color: #45aaf2;
+          color: #0891b2;
           font-size: 1.3rem;
           margin: 30px 0 15px;
         }
@@ -2303,16 +2309,17 @@ function App() {
         }
 
         .ref-category {
-          background: rgba(0,0,0,0.2);
+          background: white;
           padding: 20px;
           border-radius: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         .ref-category h4 {
-          color: #45aaf2;
+          color: #0891b2;
           margin-bottom: 15px;
           padding-bottom: 10px;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid #e2e8f0;
         }
 
         .ref-items {
@@ -2330,15 +2337,15 @@ function App() {
         .ref-item code {
           font-family: 'JetBrains Mono', monospace;
           font-size: 0.9rem;
-          color: #fff;
-          background: rgba(102,126,234,0.2);
+          color: #115e59;
+          background: #f0fdfa;
           padding: 6px 10px;
           border-radius: 6px;
         }
 
         .ref-item span {
           font-size: 0.8rem;
-          color: #888;
+          color: #64748b;
           padding-left: 10px;
         }
 
@@ -2351,10 +2358,11 @@ function App() {
         }
 
         .relation-card {
-          background: rgba(255,255,255,0.03);
+          background: white;
           border-radius: 15px;
           padding: 20px;
-          border: 1px solid rgba(255,255,255,0.08);
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         .relation-flow {
@@ -2366,7 +2374,8 @@ function App() {
         }
 
         .dist-from, .dist-to {
-          background: rgba(102,126,234,0.2);
+          background: #f0fdfa;
+          color: #115e59;
           padding: 8px 15px;
           border-radius: 20px;
           font-family: 'JetBrains Mono', monospace;
@@ -2374,29 +2383,29 @@ function App() {
         }
 
         .arrow-right {
-          color: #f7b731;
+          color: #14b8a6;
           font-size: 1.5rem;
         }
 
         .relation-condition, .relation-desc, .relation-example {
           margin: 8px 0;
           font-size: 0.9rem;
-          color: #aaa;
+          color: #64748b;
         }
 
         .relation-condition strong, .relation-desc strong, .relation-example strong {
-          color: #f7b731;
+          color: #0f766e;
         }
 
         .approximation-summary {
-          background: rgba(247,183,49,0.1);
+          background: #fffbeb;
           border-radius: 15px;
           padding: 25px;
-          border: 1px solid rgba(247,183,49,0.2);
+          border: 1px solid #fde68a;
         }
 
         .approximation-summary h3 {
-          color: #f7b731;
+          color: #b45309;
           margin-bottom: 20px;
           text-align: center;
         }
@@ -2409,7 +2418,8 @@ function App() {
         }
 
         .flow-box {
-          background: rgba(102,126,234,0.3);
+          background: #f0fdfa;
+          color: #115e59;
           padding: 15px 30px;
           border-radius: 10px;
           font-family: 'JetBrains Mono', monospace;
@@ -2432,19 +2442,20 @@ function App() {
         .flow-condition {
           text-align: center;
           font-size: 0.85rem;
-          color: #aaa;
-          background: rgba(255,255,255,0.05);
+          color: #64748b;
+          background: #f1f5f9;
           padding: 10px 15px;
           border-radius: 8px;
         }
 
         .flow-arrow {
-          color: #f7b731;
+          color: #14b8a6;
           font-size: 1.5rem;
         }
 
         .flow-result {
-          background: rgba(38,222,129,0.2);
+          background: #dcfce7;
+          color: #166534;
           padding: 12px 20px;
           border-radius: 8px;
           font-family: 'JetBrains Mono', monospace;
@@ -2453,7 +2464,7 @@ function App() {
 
         /* Checklist Tab */
         .progress-bar {
-          background: rgba(255,255,255,0.1);
+          background: #e2e8f0;
           border-radius: 10px;
           height: 30px;
           margin-bottom: 25px;
@@ -2463,7 +2474,7 @@ function App() {
 
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #667eea, #26de81);
+          background: linear-gradient(90deg, #14b8a6, #22c55e);
           transition: width 0.5s ease;
           border-radius: 10px;
         }
@@ -2474,7 +2485,8 @@ function App() {
           left: 50%;
           transform: translate(-50%, -50%);
           font-size: 0.9rem;
-          color: #fff;
+          color: #1e293b;
+          font-weight: 500;
         }
 
         .checklist-grid {
@@ -2484,16 +2496,17 @@ function App() {
         }
 
         .checklist-category {
-          background: rgba(0,0,0,0.2);
+          background: white;
           padding: 20px;
           border-radius: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         .checklist-category h4 {
-          color: #45aaf2;
+          color: #0891b2;
           margin-bottom: 15px;
           padding-bottom: 10px;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid #e2e8f0;
         }
 
         .checklist-item {
@@ -2508,16 +2521,16 @@ function App() {
         }
 
         .checklist-item:hover {
-          background: rgba(255,255,255,0.05);
+          background: #f1f5f9;
         }
 
         .checklist-item.checked {
-          background: rgba(38,222,129,0.1);
+          background: #dcfce7;
         }
 
         .checklist-item.checked span {
           text-decoration: line-through;
-          color: #888;
+          color: #94a3b8;
         }
 
         .checklist-item input {
@@ -2532,7 +2545,7 @@ function App() {
         }
 
         .critical-badge {
-          background: #eb3b5a;
+          background: #ef4444;
           color: white;
           padding: 2px 8px;
           border-radius: 10px;
@@ -2540,7 +2553,7 @@ function App() {
         }
 
         .checklist-item.critical {
-          border-left: 3px solid #eb3b5a;
+          border-left: 3px solid #ef4444;
         }
 
         /* 視覚学習タブのスタイル */
@@ -2563,7 +2576,7 @@ function App() {
         }
 
         .visual-card h3 {
-          color: #2c3e50;
+          color: #0f766e;
           margin-bottom: 15px;
           display: flex;
           align-items: center;
@@ -2571,7 +2584,7 @@ function App() {
         }
 
         .visual-desc {
-          color: #666;
+          color: #64748b;
           font-size: 0.9rem;
           margin-bottom: 15px;
         }
@@ -2638,7 +2651,7 @@ function App() {
 
         .convergence-controls button {
           padding: 8px 16px;
-          background: #6c5ce7;
+          background: #14b8a6;
           color: white;
           border: none;
           border-radius: 8px;
@@ -2646,7 +2659,7 @@ function App() {
         }
 
         .convergence-controls button:hover {
-          background: #5b4bc7;
+          background: #0f766e;
         }
 
         .convergence-stats {
@@ -2657,7 +2670,7 @@ function App() {
         }
 
         .stat-item {
-          background: #f8f9fa;
+          background: #f0fdfa;
           padding: 10px;
           border-radius: 8px;
           text-align: center;
@@ -2665,13 +2678,13 @@ function App() {
 
         .stat-item .label {
           font-size: 0.8rem;
-          color: #666;
+          color: #64748b;
         }
 
         .stat-item .value {
           font-size: 1.2rem;
           font-weight: bold;
-          color: #2c3e50;
+          color: #0f766e;
         }
 
         .param-table {
@@ -2681,23 +2694,23 @@ function App() {
 
         .param-table th, .param-table td {
           padding: 10px;
-          border: 1px solid #ddd;
+          border: 1px solid #e2e8f0;
           text-align: center;
         }
 
         .param-table th {
-          background: #6c5ce7;
+          background: #14b8a6;
           color: white;
         }
 
         .param-table tr:nth-child(even) {
-          background: #f8f9fa;
+          background: #f0fdfa;
         }
 
         .footer {
           text-align: center;
           padding: 40px;
-          color: #555;
+          color: #64748b;
         }
 
         .footer .emoji {
@@ -2719,7 +2732,7 @@ function App() {
 
       <header className="header">
         <h1>📚 確率・統計学 完全対策</h1>
-        <p style={{color: '#aaa'}}>理論的背景から例題まで徹底解説</p>
+        <p style={{color: '#64748b'}}>理論的背景から例題まで徹底解説</p>
         <div className="stats">
           <div><span className="stat-number">{sections.length}</span> セクション</div>
           <div><span className="stat-number">{totalProblems}</span> 例題</div>
