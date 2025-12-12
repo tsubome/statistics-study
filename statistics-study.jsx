@@ -1759,22 +1759,80 @@ function ExamTab() {
             </div>
           </div>
 
-          {/* スペース5：記述問題の答え */}
+          {/* スペース5：区間推定（信頼区間） */}
           <div className="cheat-section">
-            <h3>【スペース5：記述問題の答え（丸写し用）】</h3>
+            <h3>【スペース5：区間推定（信頼区間）】</h3>
+            <p className="section-note">「95%の確率で平均はこの範囲にある」と推定する問題用です。</p>
+            <div className="quote-box">
+              <h4>■ 母平均の信頼区間テンプレート</h4>
+              <p className="step-title">1. 使う公式（95%なら1.96）</p>
+              <div className="formula-display">
+                <MathFormula>{"\\left[ \\bar{X} - 1.96 \\times \\sqrt{\\frac{\\sigma^2}{n}}, \\quad \\bar{X} + 1.96 \\times \\sqrt{\\frac{\\sigma^2}{n}} \\right]"}</MathFormula>
+              </div>
+              <p className="step-title">2. 計算手順</p>
+              <ul>
+                <li>誤差部分: <MathFormula>{"1.96 \\times \\sqrt{\\frac{\\sigma^2}{n}}"}</MathFormula> を計算</li>
+                <li>区間下限: <MathFormula>{"\\bar{X} - \\text{誤差}"}</MathFormula></li>
+                <li>区間上限: <MathFormula>{"\\bar{X} + \\text{誤差}"}</MathFormula></li>
+              </ul>
+              <p className="step-title">3. 係数の使い分け</p>
+              <ul>
+                <li>95%信頼区間 → <strong>1.96</strong></li>
+                <li>99%信頼区間 → <strong>2.58</strong></li>
+                <li className="note-text">※「母標準偏差」が与えられたら2乗して分散にする</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース6：記述問題の答え */}
+          <div className="cheat-section">
+            <h3>【スペース6：記述問題の答え（丸写し用）】</h3>
             <p className="section-note">定義を聞かれたらこれをそのまま書きます。</p>
             <div className="quote-box">
               <h4>■ 記述問題カンペ</h4>
               <ul className="definition-list">
                 <li><strong>ランダムサンプリングとは？</strong>
-                  <ul><li>「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」</li></ul>
+                  <ul><li>「母集団を構成している各々の要素が、<strong>等確率で選ばれる</strong>ように抽出手法を設計すること」</li></ul>
                 </li>
                 <li><strong>最尤推定とは？</strong>
-                  <ul><li>「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」</li></ul>
+                  <ul><li>「何らかの確率モデルを仮定した上で、<strong>実際に起こったことが最も起こりやすくなるように</strong>母数（パラメータ）を推定すること」</li></ul>
                 </li>
                 <li><strong>偏差値の基準は？</strong>
-                  <ul><li>「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」</li></ul>
+                  <ul><li>「<strong>平均が50、分散が100（標準偏差10）</strong>になるようにデータを標準化したもの」</li></ul>
                 </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース7：平均・分散の計算ルール */}
+          <div className="cheat-section">
+            <h3>【スペース7：平均・分散の計算ルール】</h3>
+            <p className="section-note">変数変換 <MathFormula>{"Y = aX + b"}</MathFormula> のときの計算用です。</p>
+            <div className="quote-box">
+              <h4>■ 変数変換の公式</h4>
+              <p className="step-title">1. 平均 E[Y]（そのまま代入）</p>
+              <ul>
+                <li>公式: <MathFormula>{"E[aX+b] = aE[X] + b"}</MathFormula></li>
+              </ul>
+              <p className="step-title">2. 分散 V[Y]（係数を2乗！足し算は消える）</p>
+              <ul>
+                <li>公式: <MathFormula>{"V[aX+b] = \\mathbf{a^2} V[X]"}</MathFormula></li>
+                <li className="note-text">※後ろの「+b」は分散（ばらつき）には影響しないので無視する</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース8：独立性の定義 */}
+          <div className="cheat-section">
+            <h3>【スペース8：独立性の定義】</h3>
+            <p className="section-note">基礎問題用。式で示せと言われたらこれを書く。</p>
+            <div className="quote-box">
+              <h4>■ 独立性の判定</h4>
+              <p>事象Aと事象Bが「独立である」とは：</p>
+              <ul>
+                <li>積事象の確率が、それぞれの確率の積になること</li>
+                <li>式: <MathFormula>{"P(A \\cap B) = P(A) \\times P(B)"}</MathFormula></li>
+                <li className="note-text">（または条件付き確率で: <MathFormula>{"P(B|A) = P(B)"}</MathFormula>）</li>
               </ul>
             </div>
           </div>
@@ -1932,31 +1990,132 @@ function ExamTab() {
             </div>
           </div>
 
-          {/* スペース5：記述問題の答え（例題付き） */}
+          {/* スペース5：区間推定（例題付き） */}
           <div className="cheat-section">
-            <h3>【スペース5：記述問題の答え（丸写し用）】</h3>
+            <h3>【スペース5：区間推定（信頼区間）】</h3>
             <p className="section-note">
-              ※講義資料・過去問の模範解答です。一字一句このまま書けば満点です。
+              ※2021年 問6 の過去問をモデルにしています。「95%の確率で平均はこの範囲にある」と推定する問題です。
             </p>
             <div className="quote-box">
-              <h4>■ 記述問題カンペ</h4>
+              <h4>■ 例題：母平均の95%信頼区間</h4>
 
-              <ul className="definition-list">
-                <li>
-                  <strong>ランダムサンプリングとは？</strong>
-                  <ul><li>「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」</li></ul>
-                </li>
-                <li>
-                  <strong>最尤推定とは？</strong>
-                  <ul><li>「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」</li></ul>
-                </li>
-                <li>
-                  <strong>偏差値の定義・基準は？</strong>
-                  <ul>
-                    <li>「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」</li>
-                    <li>式: <MathFormula>{"T = \\frac{10(X - \\text{平均})}{\\text{標準偏差}} + 50"}</MathFormula></li>
-                  </ul>
-                </li>
+              <div className="problem-box">
+                <strong>【問題例】</strong><br/>
+                <MathFormula>{"n=10000"}</MathFormula>人のテスト結果、平均点は <MathFormula>{"\\bar{X}=65"}</MathFormula>点。母分散 <MathFormula>{"\\sigma^2=100"}</MathFormula> とする。母平均の95%信頼区間を求めよ。<br/>
+                <span className="note-text">※「母標準偏差」なら2乗して分散にする点に注意</span>
+              </div>
+
+              <p className="step-title">【解答記述テンプレート】</p>
+
+              <p className="step-title">1. 使う公式（95%なら1.96）</p>
+              <ul>
+                <li>公式: <MathFormula>{"\\left[ \\bar{X} - 1.96 \\times \\sqrt{\\frac{\\sigma^2}{n}}, \\quad \\bar{X} + 1.96 \\times \\sqrt{\\frac{\\sigma^2}{n}} \\right]"}</MathFormula></li>
+              </ul>
+
+              <p className="step-title">2. 計算</p>
+              <ul>
+                <li>誤差部分: <MathFormula>{"1.96 \\times \\sqrt{\\frac{100}{10000}} = 1.96 \\times \\frac{10}{100} = 1.96 \\times 0.1 = \\mathbf{0.196}"}</MathFormula></li>
+                <li>区間下限: <MathFormula>{"65 - 0.196 = 64.804"}</MathFormula></li>
+                <li>区間上限: <MathFormula>{"65 + 0.196 = 65.196"}</MathFormula></li>
+              </ul>
+
+              <p className="step-title">3. 答え</p>
+              <ul>
+                <li><MathFormula>{"[64.804, \\quad 65.196]"}</MathFormula></li>
+                <li className="note-text">※もし99%信頼区間なら係数は <strong>2.58</strong> に変える</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース6：記述問題の答え（例題付き） */}
+          <div className="cheat-section">
+            <h3>【スペース6：記述問題（丸暗記セット）】</h3>
+            <p className="section-note">
+              ※2021〜2024年ですべて出題されている「言葉で説明せよ」問題の正解例です。
+            </p>
+            <div className="quote-box">
+              <h4>■ 例題：用語の説明</h4>
+
+              <div className="problem-box">
+                <strong>【問題例1】</strong><br/>
+                標本調査における「ランダムサンプリング」の設計方針を説明せよ。
+              </div>
+              <ul>
+                <li><strong>【解答】</strong></li>
+                <li>「母集団の構成要素が<strong>等確率で選ばれる</strong>ように抽出手法を設計すること。」</li>
+              </ul>
+
+              <div className="problem-box" style={{marginTop: '15px'}}>
+                <strong>【問題例2】</strong><br/>
+                「最尤推定」における母数推定の考え方を説明せよ。
+              </div>
+              <ul>
+                <li><strong>【解答】</strong></li>
+                <li>「何らかの確率モデルを仮定した上で、<strong>実際に起こったことが最も起こりやすくなるように</strong>母数（パラメータ）を推定すること。」</li>
+              </ul>
+
+              <div className="problem-box" style={{marginTop: '15px'}}>
+                <strong>【問題例3】</strong><br/>
+                試験の得点を標準化する「偏差値」はどのような基準で定められているか。
+              </div>
+              <ul>
+                <li><strong>【解答】</strong></li>
+                <li>「<strong>平均が50、分散が100（標準偏差10）</strong>になるように定めている。」</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース7：平均・分散の計算ルール（例題付き） */}
+          <div className="cheat-section">
+            <h3>【スペース7：平均・分散の計算ルール】</h3>
+            <p className="section-note">
+              ※2024年 問2(5) などの小問でよく出る計算です。
+            </p>
+            <div className="quote-box">
+              <h4>■ 例題：変数の変換（<MathFormula>{"Y = aX + b"}</MathFormula>）</h4>
+
+              <div className="problem-box">
+                <strong>【問題例】</strong><br/>
+                確率変数 <MathFormula>{"X"}</MathFormula> の平均が <MathFormula>{"E[X]=1.8"}</MathFormula>、分散が <MathFormula>{"V[X]=0.72"}</MathFormula> のとき、<br/>
+                <MathFormula>{"Y = 5X + 2"}</MathFormula> の平均 <MathFormula>{"E[Y]"}</MathFormula> と分散 <MathFormula>{"V[Y]"}</MathFormula> は？
+              </div>
+
+              <p className="step-title">【解答記述テンプレート】</p>
+
+              <p className="step-title">1. 平均 E[Y]（そのまま代入）</p>
+              <ul>
+                <li>公式: <MathFormula>{"E[aX+b] = aE[X] + b"}</MathFormula></li>
+                <li>計算: <MathFormula>{"5 \\times 1.8 + 2 = 9 + 2 = \\mathbf{11}"}</MathFormula></li>
+              </ul>
+
+              <p className="step-title">2. 分散 V[Y]（係数を2乗！足し算は消える）</p>
+              <ul>
+                <li>公式: <MathFormula>{"V[aX+b] = \\mathbf{a^2} V[X]"}</MathFormula></li>
+                <li>計算: <MathFormula>{"\\mathbf{5^2} \\times 0.72 = 25 \\times 0.72 = \\mathbf{18}"}</MathFormula></li>
+                <li className="note-text">※後ろの「+2」は分散（ばらつき）には影響しないので無視する</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース8：独立性の定義（例題付き） */}
+          <div className="cheat-section">
+            <h3>【スペース8：独立性の定義】</h3>
+            <p className="section-note">
+              ※たまにポツンと出る基礎問題用です。
+            </p>
+            <div className="quote-box">
+              <h4>■ 例題：独立性の判定</h4>
+
+              <div className="problem-box">
+                <strong>【問題例】</strong><br/>
+                事象Aと事象Bが「独立である」とはどういうことか。式で示せ。
+              </div>
+
+              <p className="step-title">【解答】</p>
+              <ul>
+                <li>積事象の確率が、それぞれの確率の積になること。</li>
+                <li>式: <MathFormula>{"P(A \\cap B) = P(A) \\times P(B)"}</MathFormula></li>
+                <li className="note-text">（または条件付き確率で: <MathFormula>{"P(B|A) = P(B)"}</MathFormula>）</li>
               </ul>
             </div>
           </div>
@@ -1966,7 +2125,8 @@ function ExamTab() {
       {/* 合格のポイント */}
       <div className="cheat-section" style={{ marginTop: '20px', borderLeft: '4px solid var(--success-color)', background: 'var(--success-light)' }}>
         <p style={{margin: 0, lineHeight: '1.8'}}>
-          この5つのブロックを教科書に書き込んでおけば、試験範囲の計算・記述のほとんどに対応できます。<strong>健闘を祈ります！</strong>
+          スペース1〜8を教科書に書き込んでおけば、過去4年分の試験範囲をほぼ100%カバーできます。<br/>
+          あとは試験開始の合図とともに、<strong>問題文の数字をこの「書き込んだ式」に当てはめて計算するだけ</strong>です。<strong>健闘を祈ります！</strong>
         </p>
       </div>
     </div>
