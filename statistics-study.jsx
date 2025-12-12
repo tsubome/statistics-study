@@ -1625,308 +1625,403 @@ function QuizTab() {
 }
 
 // ===== 過去問対策データ =====
-// 教科書書き込み用カンペデータ（例題＋汎用テンプレート形式）
-const examData = {
-  spaces: [
-    {
-      id: 'hypothesis',
-      title: '仮説検定（一番重要）',
-      icon: '📊',
-      location: '教科書の正規分布表（巻末など）の近くに書くと便利',
-      example: {
-        title: '例題：仮説検定（全国平均との比較）',
-        problem: '全国の平均点が 66点、標準偏差が 36点 の試験がある。ある県の 144人 を調査したら、平均 60.6点 だった。全国と学力差はあるか？（有意水準5%）',
-        solution: [
-          { step: '1. 仮説の設定', lines: [
-            { type: 'formula', content: 'H_0: \\mu = 66' }, { type: 'text', content: '（全国と同じ）' },
-            { type: 'formula', content: 'H_1: \\mu \\neq 66' }, { type: 'text', content: '（全国と異なる）' }
-          ]},
-          { step: '2. 統計量 Z の計算', lines: [
-            { type: 'text', content: '公式:' }, { type: 'formula', content: 'Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}' },
-            { type: 'text', content: '代入:' }, { type: 'formula', content: 'Z = \\frac{60.6 - 66}{36 / \\sqrt{144}} = \\frac{-5.4}{3} = -1.8' }
-          ]},
-          { step: '3. 判定（棄却域 R）', lines: [
-            { type: 'text', content: '基準: 有意水準5%なら' }, { type: 'formula', content: '|Z| \\ge 1.96' }, { type: 'text', content: 'なら棄却' },
-            { type: 'text', content: '結論:' }, { type: 'formula', content: '|-1.8| < 1.96' }, { type: 'text', content: 'なので棄却されない（採択）' },
-            { type: 'text', content: '文言: 「H₀が採択される。学力レベルは全国平均と異なるとは言えない。」' }
-          ]}
-        ]
-      },
-      template: {
-        title: '仮説検定のテンプレート',
-        steps: [
-          { step: '1. 仮説の設定', lines: [
-            { type: 'formula', content: 'H_0: \\mu = [\\text{全国平均}]' }, { type: 'text', content: '（差がない）' },
-            { type: 'formula', content: 'H_1: \\mu \\neq [\\text{全国平均}]' }, { type: 'text', content: '（差がある）' }
-          ]},
-          { step: '2. 統計量 Z の計算', lines: [
-            { type: 'formula', content: 'Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}' },
-            { type: 'text', content: '・X̄: 今回の平均点　・μ: 全国の平均点' },
-            { type: 'text', content: '・σ: 標準偏差（分散ならルート！）　・n: 人数' }
-          ]},
-          { step: '3. 判定（有意水準5%）', lines: [
-            { type: 'text', content: '棄却域:' }, { type: 'formula', content: '|Z| \\ge 1.96' },
-            { type: 'text', content: '・範囲に入った → 「棄却される（差があると言える）」' },
-            { type: 'text', content: '・入らなかった → 「棄却されない（差があるとは言えない）」' }
-          ]}
-        ]
-      }
-    },
-    {
-      id: 'bayes',
-      title: 'ベイズの定理（A社・B社・C社）',
-      icon: '🎯',
-      location: '確率の計算スペースや、第1章のあたりに',
-      example: {
-        title: '例題：ベイズの定理（原因の確率）',
-        problem: 'シェアは A社20%, B社30%, C社50%。不良品率は A:0.8%, B:0.4%, C:0.3%。\n(1) 不良品である確率は？ (2) 不良品のとき、それがA社製である確率は？',
-        solution: [
-          { step: '手順1：各社の積を計算', lines: [
-            { type: 'formula', content: '(A) = 0.2 \\times 0.008 = 0.0016' },
-            { type: 'formula', content: '(B) = 0.3 \\times 0.004 = 0.0012' },
-            { type: 'formula', content: '(C) = 0.5 \\times 0.003 = 0.0015' }
-          ]},
-          { step: '手順2：問1「不良品である確率は？」', lines: [
-            { type: 'formula', content: 'P(E) = (A) + (B) + (C) = 0.0016 + 0.0012 + 0.0015 = 0.0043' }
-          ]},
-          { step: '手順3：問2「不良品だった時、A社である確率は？」', lines: [
-            { type: 'formula', content: 'P(A|E) = \\frac{(A)}{(A)+(B)+(C)} = \\frac{0.0016}{0.0043} = \\frac{16}{43}' }
-          ]}
-        ]
-      },
-      template: {
-        title: '不良品・原因の確率（ベイズ）',
-        steps: [
-          { step: '手順1：各社の積を計算', lines: [
-            { type: 'text', content: '(A) = (A社のシェア) × (Aの不良率)' },
-            { type: 'text', content: '(B) = (B社のシェア) × (Bの不良率)' },
-            { type: 'text', content: '(C) = (C社のシェア) × (Cの不良率)' }
-          ]},
-          { step: '手順2：問1「不良品である確率は？」', lines: [
-            { type: 'formula', content: 'P(E) = (A) + (B) + (C)' }
-          ]},
-          { step: '手順3：問2「X社である確率は？」', lines: [
-            { type: 'formula', content: 'P(X|E) = \\frac{(X)}{(A)+(B)+(C)}' },
-            { type: 'text', content: '※分子は聞かれている会社、分母は合計' }
-          ]}
-        ]
-      }
-    },
-    {
-      id: 'estimator',
-      title: '推定量の良し悪し（K, L, M）',
-      icon: '⚖️',
-      location: '「係数の2乗」を忘れないためのメモ',
-      example: {
-        title: '例題：良い推定量はどっち？',
-        problem: 'K = (2X₁ - X₂ + X₃)/2 と M = (X₁ - X₂ + 3X₃)/3、平均の推定量として良いのは？',
-        solution: [
-          { step: '1. 不偏性の確認 (期待値 E をとる)', lines: [
-            { type: 'formula', content: 'E[K] = \\frac{2-1+1}{2} E[X] = E[X]' }, { type: 'text', content: '(OK)' },
-            { type: 'formula', content: 'E[M] = \\frac{1-1+3}{3} E[X] = E[X]' }, { type: 'text', content: '(OK)' },
-            { type: 'text', content: '結論: 両方とも不偏推定量' }
-          ]},
-          { step: '2. 有効性の確認 (分散 V を計算)', lines: [
-            { type: 'text', content: '★重要: 係数は2乗して出す！' }, { type: 'formula', content: 'V[aX] = a^2 V[X]' },
-            { type: 'formula', content: 'V[K] = \\frac{2^2 + (-1)^2 + 1^2}{2^2} V[X] = \\frac{6}{4} V[X]' },
-            { type: 'formula', content: 'V[M] = \\frac{1^2 + (-1)^2 + 3^2}{3^2} V[X] = \\frac{11}{9} V[X]' },
-            { type: 'text', content: '結論: V[M] < V[K] なので、Mの方が有効（最良）' }
-          ]}
-        ]
-      },
-      template: {
-        title: '推定量の判定（平均・分散）',
-        steps: [
-          { step: '1. 不偏性（期待値が一致するか）', lines: [
-            { type: 'text', content: '係数をそのまま足して「1」になればOK' },
-            { type: 'formula', content: 'E[K] = E[X]' }, { type: 'text', content: 'となるか確認' }
-          ]},
-          { step: '2. 有効性（分散が小さいか）', lines: [
-            { type: 'text', content: '★重要公式: 係数を2乗して足す！' },
-            { type: 'formula', content: 'V[aX + bY] = a^2 V[X] + b^2 V[Y]' },
-            { type: 'text', content: '計算結果が一番小さいものが「最も良い推定量」' }
-          ]}
-        ]
-      }
-    },
-    {
-      id: 'distribution',
-      title: '分布・公式まとめ',
-      icon: '📐',
-      location: '教科書の「分布」の章か、表紙裏のメインスペースに',
-      example: {
-        title: '例題：分布と確率計算',
-        problem: '【ポアソン分布】1ヶ月(30日)に平均60件の事故。1日の件数Xは？\n【指数分布】事故から次の事故までの時間Tは？',
-        solution: [
-          { step: 'ポアソン分布の解答', lines: [
-            { type: 'text', content: '1日平均 = 60 ÷ 30 = 2件' },
-            { type: 'formula', content: 'X \\sim Po(2)' },
-            { type: 'formula', content: 'P(X=0) = e^{-2} \\cdot \\frac{2^0}{0!} = e^{-2} \\approx 0.135' }
-          ]},
-          { step: '指数分布の解答', lines: [
-            { type: 'text', content: '1日(24h)で平均2件 → 平均間隔 = 12時間' },
-            { type: 'text', content: '★重要: パラメータは「平均の逆数」= 1/12' },
-            { type: 'text', content: '答え: パラメータ 1/12 の指数分布に従う' }
-          ]}
-        ]
-      },
-      template: {
-        title: '分布とパラメータ',
-        steps: [
-          { step: 'ポアソン分布 Po(λ)', lines: [
-            { type: 'text', content: '「平均λ回起きる」→ パラメータはλ' },
-            { type: 'formula', content: 'P(X=k) = e^{-\\lambda} \\frac{\\lambda^k}{k!}' }
-          ]},
-          { step: '指数分布（待ち時間）', lines: [
-            { type: 'text', content: '「平均A時間」→ パラメータは 1/A (★逆数!!)' },
-            { type: 'text', content: '※平均12ならパラメータは1/12' }
-          ]},
-          { step: '二項分布の正規近似', lines: [
-            { type: 'text', content: 'n回投げて確率p →' }, { type: 'formula', content: 'N(np, np(1-p))' }, { type: 'text', content: 'で近似' },
-            { type: 'formula', content: 'Z = \\frac{X - np}{\\sqrt{np(1-p)}}' }
-          ]},
-          { step: '偏差値', lines: [
-            { type: 'formula', content: 'T = \\frac{10(X - \\mu)}{\\sigma} + 50' }
-          ]},
-          { step: 'カイ二乗分布（的当て）', lines: [
-            { type: 'formula', content: 'X^2 + Y^2 \\le r^2' }, { type: 'text', content: 'の確率 → 自由度2のχ²分布' },
-            { type: 'formula', content: 'P = 1 - e^{-r^2/(2\\sigma^2)}' }
-          ]}
-        ]
-      }
-    },
-    {
-      id: 'descriptive',
-      title: '記述問題の答え（丸写し用）',
-      icon: '✏️',
-      location: '定義を聞かれたらこれをそのまま書く',
-      example: null,
-      template: {
-        title: '記述問題カンペ',
-        steps: [
-          { step: 'ランダムサンプリングとは？', lines: [
-            { type: 'text', content: '「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」' }
-          ]},
-          { step: '最尤推定とは？', lines: [
-            { type: 'text', content: '「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」' }
-          ]},
-          { step: '偏差値の定義・基準は？', lines: [
-            { type: 'text', content: '「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」' },
-            { type: 'formula', content: 'T = \\frac{10(X - \\mu)}{\\sigma} + 50' }
-          ]}
-        ]
-      }
-    }
-  ]
-};
+// Geminiが生成した教科書書き込み用カンペ（そのまま表示）
 
 // 過去問対策タブ（教科書書き込み用カンペ形式）
 function ExamTab() {
-  const [activeSpace, setActiveSpace] = useState('hypothesis');
-  const currentSpace = examData.spaces.find(s => s.id === activeSpace);
+  const [activeTab, setActiveTab] = useState('template'); // 'template' or 'example'
 
-  // 行をレンダリング（テキストと数式を混在表示）
-  const renderLines = (lines) => {
-    return lines.map((item, j) => {
-      if (item.type === 'formula') {
-        return <span key={j} style={{ margin: '0 4px' }}><MathFormula>{item.content}</MathFormula></span>;
-      } else {
-        const isWarning = item.content.includes('★');
-        return (
-          <span key={j} style={{
-            color: isWarning ? 'var(--text-warning)' : 'inherit',
-            fontWeight: isWarning ? '600' : '400'
-          }}>{item.content}</span>
-        );
-      }
-    });
+  // 引用ボックススタイル
+  const quoteStyle = {
+    background: 'var(--bg-accent)',
+    borderLeft: '4px solid var(--accent-color)',
+    padding: '15px 20px',
+    borderRadius: '0 8px 8px 0',
+    margin: '10px 0'
+  };
+
+  const stepStyle = {
+    fontWeight: '600',
+    color: 'var(--text-accent)',
+    marginTop: '15px',
+    marginBottom: '8px'
+  };
+
+  const bulletStyle = {
+    marginLeft: '20px',
+    lineHeight: '1.8'
   };
 
   return (
     <div className="exam-tab">
       <h2>📝 教科書書き込み用カンペ</h2>
-      <p className="tab-description">試験中に「数字をどこに当てはめればいいか」が一目でわかる、例題＋テンプレート集</p>
+      <p className="tab-description">試験中に「数字をどこに当てはめればいいか」が一目でわかる、最強の書き込み用カンペ</p>
 
       <div className="info-box" style={{ marginBottom: '20px' }}>
-        <strong>💡 使い方:</strong> 教科書の表紙裏や空白ページにこのままブロックごとに書き写してください。数字が変わってもこの手順でいけます。
+        教科書の表紙裏や空白ページにこのままブロックごとに書き写してください。数字が変わってもこの手順でいけます。
       </div>
 
-      {/* スペース選択タブ */}
-      <div className="sub-tabs" style={{ justifyContent: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
-        {examData.spaces.map(space => (
-          <button
-            key={space.id}
-            className={activeSpace === space.id ? 'active' : ''}
-            onClick={() => setActiveSpace(space.id)}
-          >
-            {space.icon} {space.title.split('（')[0]}
-          </button>
-        ))}
+      {/* タブ切り替え */}
+      <div className="sub-tabs" style={{ justifyContent: 'center', marginBottom: '25px' }}>
+        <button className={activeTab === 'template' ? 'active' : ''} onClick={() => setActiveTab('template')}>
+          📋 汎用テンプレート
+        </button>
+        <button className={activeTab === 'example' ? 'active' : ''} onClick={() => setActiveTab('example')}>
+          📘 例題付き解説
+        </button>
       </div>
 
-      {currentSpace && (
+      {activeTab === 'template' && (
         <div className="cheatsheet-content">
-          {/* スペースヘッダー */}
-          <div className="cheat-section" style={{ borderLeft: '4px solid var(--accent-color)' }}>
-            <h3>{currentSpace.icon} 【スペース{examData.spaces.findIndex(s => s.id === activeSpace) + 1}：{currentSpace.title}】</h3>
-            <p style={{ color: 'var(--text-secondary)', margin: '5px 0 0 0', fontSize: '0.9rem' }}>📍 {currentSpace.location}</p>
+          {/* スペース1：仮説検定 */}
+          <div className="cheat-section">
+            <h3>【スペース1：仮説検定（一番重要）】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              毎年必ず出る「全国平均との比較」問題用です。教科書の<strong>正規分布表（巻末など）の近く</strong>に書くと便利です。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 仮説検定のテンプレート</div>
+
+              <div style={stepStyle}>1. 仮説の設定</div>
+              <ul style={bulletStyle}>
+                <li><MathFormula>{"H_0: \\mu = [\\text{全国平均の数値}]"}</MathFormula>（差がない）</li>
+                <li><MathFormula>{"H_1: \\mu \\neq [\\text{全国平均の数値}]"}</MathFormula>（差がある）</li>
+              </ul>
+
+              <div style={stepStyle}>2. 統計量 Z の計算</div>
+              <div style={{marginLeft: '20px', marginBottom: '10px'}}>
+                <MathFormula display>{"Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}"}</MathFormula>
+              </div>
+              <ul style={bulletStyle}>
+                <li><MathFormula>{"\\bar{X}"}</MathFormula>: 今回の平均点</li>
+                <li><MathFormula>{"\\mu"}</MathFormula>: 全国の平均点</li>
+                <li><MathFormula>{"\\sigma"}</MathFormula>: 全国の<strong>標準偏差</strong>（分散ならルートする！）</li>
+                <li><MathFormula>{"n"}</MathFormula>: 人数</li>
+              </ul>
+
+              <div style={stepStyle}>3. 判定（有意水準5%）</div>
+              <ul style={bulletStyle}>
+                <li><strong>棄却域:</strong> <MathFormula>{"|Z| \\ge 1.96"}</MathFormula>（つまり 1.96 以上 または -1.96 以下）</li>
+                <li><strong>結論:</strong>
+                  <ul>
+                    <li>範囲に入った → 「棄却される（差があると言える）」</li>
+                    <li>入らなかった → 「棄却されない（差があるとは言えない）」</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          {/* 例題セクション */}
-          {currentSpace.example && (
-            <div className="cheat-section" style={{ borderLeft: '4px solid var(--success-color)' }}>
-              <h3 style={{ color: 'var(--text-success)' }}>📘 {currentSpace.example.title}</h3>
+          {/* スペース2：ベイズの定理 */}
+          <div className="cheat-section">
+            <h3>【スペース2：ベイズの定理（A社・B社・C社）】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              確率の計算スペースや、第1章のあたりに書きましょう。表形式ではなく、<strong>計算リスト</strong>形式にしました。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 不良品・原因の確率（ベイズ）</div>
 
-              <div style={{ background: 'var(--bg-accent)', padding: '12px 15px', borderRadius: '8px', marginBottom: '15px' }}>
-                <div style={{ fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '5px', fontSize: '0.85rem' }}>【問題例】</div>
-                {currentSpace.example.problem.split('\n').map((line, i) => (
-                  <div key={i} style={{ color: 'var(--text-primary)', lineHeight: '1.6' }}>{line}</div>
-                ))}
-              </div>
+              <div style={stepStyle}>手順1：以下の3つを計算して並べる</div>
+              <ul style={bulletStyle}>
+                <li>(A) = (A社のシェア) × (Aの不良率)</li>
+                <li>(B) = (B社のシェア) × (Bの不良率)</li>
+                <li>(C) = (C社のシェア) × (Cの不良率)</li>
+                <li style={{fontStyle: 'italic', color: 'var(--text-secondary)'}}>例: <MathFormula>{"0.35 \\times 0.008 = 0.0028"}</MathFormula></li>
+              </ul>
 
-              <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '10px', fontSize: '0.9rem' }}>【解答記述テンプレート】</div>
-              {currentSpace.example.solution.map((sol, i) => (
-                <div key={i} style={{ marginBottom: '12px', paddingLeft: '10px', borderLeft: '2px solid var(--success-color)' }}>
-                  <div style={{ fontWeight: '600', color: 'var(--text-success)', marginBottom: '8px', fontSize: '0.9rem' }}>{sol.step}</div>
-                  <div style={{ lineHeight: '1.8', fontSize: '0.9rem' }}>
-                    {renderLines(sol.lines)}
-                  </div>
-                </div>
-              ))}
+              <div style={stepStyle}>手順2：問1「不良品である確率は？」</div>
+              <ul style={bulletStyle}>
+                <li>答え = <MathFormula>{"(A) + (B) + (C)"}</MathFormula></li>
+              </ul>
+
+              <div style={stepStyle}>手順3：問2「不良品だった時、それがC社である確率は？」</div>
+              <ul style={bulletStyle}>
+                <li>答え = <MathFormula>{"\\frac{(C)}{(A)+(B)+(C)}"}</MathFormula></li>
+                <li style={{fontStyle: 'italic', color: 'var(--text-secondary)'}}>※分子は聞かれている会社の数値、分母は合計</li>
+              </ul>
             </div>
-          )}
+          </div>
 
-          {/* 汎用テンプレートセクション */}
-          <div className="cheat-section" style={{ borderLeft: '4px solid var(--border-warning)', background: 'var(--bg-warning)' }}>
-            <h3 style={{ color: 'var(--text-warning)' }}>📋 {currentSpace.template.title}</h3>
+          {/* スペース3：推定量の良し悪し */}
+          <div className="cheat-section">
+            <h3>【スペース3：推定量の良し悪し】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              「<MathFormula>{"K, L, M"}</MathFormula> のうちどれが良い推定量か？」という問題用です。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 推定量の判定（平均・分散）</div>
 
-            {currentSpace.template.steps.map((step, i) => (
-              <div key={i} style={{
-                marginBottom: '12px',
-                padding: '10px 12px',
-                background: 'var(--bg-card)',
-                borderRadius: '6px',
-                borderLeft: '3px solid var(--accent-color)'
-              }}>
-                <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '8px', fontSize: '0.9rem' }}>{step.step}</div>
-                <div style={{ lineHeight: '1.8', fontSize: '0.9rem' }}>
-                  {renderLines(step.lines)}
-                </div>
+              <div style={stepStyle}>1. 不偏性（平均が一致するか）</div>
+              <ul style={bulletStyle}>
+                <li>係数をそのまま足して「1」になればOK。</li>
+                <li><MathFormula>{"E[K] = E[X]"}</MathFormula> となるか確認。</li>
+              </ul>
+
+              <div style={stepStyle}>2. 有効性（分散が小さいか）</div>
+              <ul style={bulletStyle}>
+                <li><strong>重要公式:</strong> 係数を<strong>2乗</strong>して足す！</li>
+                <li><MathFormula display>{"V[aX + bY] = a^2 V[X] + b^2 V[Y]"}</MathFormula></li>
+                <li>計算結果が<strong>一番小さいもの</strong>が「最も良い（有効な）推定量」。</li>
+                <li style={{fontStyle: 'italic', color: 'var(--text-secondary)'}}>例: <MathFormula>{"\\frac{1}{2}X_1 + \\frac{1}{2}X_2 \\rightarrow (\\frac{1}{4} + \\frac{1}{4})V[X] = \\frac{1}{2}V[X]"}</MathFormula></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース4：分布・公式まとめ */}
+          <div className="cheat-section">
+            <h3>【スペース4：分布・公式まとめ】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              教科書の「分布」の章か、表紙裏のメインスペースに。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 分布とパラメータ</div>
+
+              <div style={stepStyle}>1. ポアソン分布 <MathFormula>{"Po(\\lambda)"}</MathFormula></div>
+              <ul style={bulletStyle}>
+                <li>「平均 <MathFormula>{"\\lambda"}</MathFormula> 回起きる」 → パラメータは <MathFormula>{"\\lambda"}</MathFormula></li>
+                <li>確率: <MathFormula>{"P(X=k) = e^{-\\lambda} \\frac{\\lambda^k}{k!}"}</MathFormula></li>
+              </ul>
+
+              <div style={stepStyle}>2. 指数分布（待ち時間）</div>
+              <ul style={bulletStyle}>
+                <li>「平均 <MathFormula>{"A"}</MathFormula> 時間」 → パラメータは <MathFormula>{"\\frac{1}{A}"}</MathFormula> (<strong>逆数!!</strong>)</li>
+                <li style={{fontStyle: 'italic', color: 'var(--text-secondary)'}}>※平均12ならパラメータは1/12</li>
+              </ul>
+
+              <div style={stepStyle}>3. 二項分布の正規近似</div>
+              <ul style={bulletStyle}>
+                <li><MathFormula>{"n"}</MathFormula>回投げて確率<MathFormula>{"p"}</MathFormula> → <MathFormula>{"N(np, np(1-p))"}</MathFormula> で近似</li>
+                <li>標準化: <MathFormula>{"Z = \\frac{X - np}{\\sqrt{np(1-p)}}"}</MathFormula></li>
+              </ul>
+
+              <div style={stepStyle}>4. 偏差値</div>
+              <ul style={bulletStyle}>
+                <li><MathFormula display>{"T = \\frac{10(X - \\text{平均})}{\\text{標準偏差}} + 50"}</MathFormula></li>
+              </ul>
+
+              <div style={stepStyle}>5. カイ二乗分布（的当て）</div>
+              <ul style={bulletStyle}>
+                <li><MathFormula>{"X^2 + Y^2 \\le r^2"}</MathFormula> の確率 → 自由度2のカイ二乗分布 <MathFormula>{"\\chi^2(2)"}</MathFormula></li>
+                <li>確率 <MathFormula>{"P = 1 - e^{-\\frac{r^2}{2\\sigma^2}}"}</MathFormula> （または表から読む）</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース5：記述問題の答え */}
+          <div className="cheat-section">
+            <h3>【スペース5：記述問題の答え（丸写し用）】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              定義を聞かれたらこれをそのまま書きます。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 記述問題カンペ</div>
+
+              <ul style={{...bulletStyle, listStyle: 'none', paddingLeft: '0'}}>
+                <li style={{marginBottom: '15px'}}>
+                  <strong>ランダムサンプリングとは？</strong>
+                  <ul><li>「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」</li></ul>
+                </li>
+                <li style={{marginBottom: '15px'}}>
+                  <strong>最尤推定とは？</strong>
+                  <ul><li>「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」</li></ul>
+                </li>
+                <li>
+                  <strong>偏差値の基準は？</strong>
+                  <ul><li>「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」</li></ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'example' && (
+        <div className="cheatsheet-content">
+          {/* スペース1：仮説検定（例題付き） */}
+          <div className="cheat-section">
+            <h3>【スペース1：仮説検定（毎年必出・得点源）】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              ※2024年の過去問をモデルにしています。数字が変わってもこの手順でいけます。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 例題：仮説検定（全国平均との比較）</div>
+
+              <div style={{background: 'var(--bg-card)', padding: '12px', borderRadius: '6px', marginBottom: '15px'}}>
+                <strong>【問題例】</strong><br/>
+                全国の平均点が <strong>66点</strong>、標準偏差が <strong>36点</strong> の試験がある。ある県の <strong>144人</strong> を調査したら、平均 <strong>60.6点</strong> だった。全国と学力差はあるか？（有意水準5%）
               </div>
-            ))}
+
+              <div style={{fontWeight: '600', marginBottom: '10px'}}>【解答記述テンプレート】</div>
+
+              <div style={stepStyle}>1. 仮説の設定</div>
+              <ul style={bulletStyle}>
+                <li><MathFormula>{"H_0: \\mu = 66"}</MathFormula>（全国と同じ）</li>
+                <li><MathFormula>{"H_1: \\mu \\neq 66"}</MathFormula>（全国と異なる）</li>
+              </ul>
+
+              <div style={stepStyle}>2. 統計量 Z の計算</div>
+              <ul style={bulletStyle}>
+                <li>公式: <MathFormula>{"Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}"}</MathFormula></li>
+                <li>代入: <MathFormula>{"Z = \\frac{60.6 - 66}{36 / \\sqrt{144}} = \\frac{-5.4}{36/12} = \\frac{-5.4}{3} = -1.8"}</MathFormula></li>
+              </ul>
+
+              <div style={stepStyle}>3. 判定（棄却域 R）</div>
+              <ul style={bulletStyle}>
+                <li>基準: 有意水準5%なら <MathFormula>{"|Z| \\ge 1.96"}</MathFormula> なら棄却</li>
+                <li>結論: 今回は <MathFormula>{"|-1.8| < 1.96"}</MathFormula> なので <strong>棄却されない（採択）</strong>。</li>
+                <li>文言: 「よって、<MathFormula>{"H_0"}</MathFormula>が採択される。学力レベルは全国平均と異なるとは言えない。」</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース2：ベイズの定理（例題付き） */}
+          <div className="cheat-section">
+            <h3>【スペース2：ベイズの定理（A社・B社・C社）】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              ※2022年の過去問をモデルにしています。表を書くのが一番ミスのない方法です。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 例題：ベイズの定理（原因の確率）</div>
+
+              <div style={{background: 'var(--bg-card)', padding: '12px', borderRadius: '6px', marginBottom: '15px'}}>
+                <strong>【問題例】</strong><br/>
+                シェアは <strong>A社20%, B社30%, C社50%</strong>。不良品率は <strong>A:0.8%, B:0.4%, C:0.3%</strong>。<br/>
+                (1) 不良品である確率は？ (2) 不良品のとき、それがA社製である確率は？
+              </div>
+
+              <div style={{fontWeight: '600', marginBottom: '10px'}}>【解答作成用メモ】</div>
+              <p>まずこの計算をする：</p>
+              <ul style={bulletStyle}>
+                <li>(A) = <MathFormula>{"0.2 \\times 0.008 = 0.0016"}</MathFormula></li>
+                <li>(B) = <MathFormula>{"0.3 \\times 0.004 = 0.0012"}</MathFormula></li>
+                <li>(C) = <MathFormula>{"0.5 \\times 0.003 = 0.0015"}</MathFormula></li>
+                <li>合計 = <MathFormula>{"0.0043"}</MathFormula></li>
+              </ul>
+
+              <div style={{fontWeight: '600', marginTop: '15px', marginBottom: '10px'}}>【解答】</div>
+              <ul style={bulletStyle}>
+                <li><strong>(1) 全体の確率:</strong> 表の「積」を全部足す
+                  <ul><li>答え: <MathFormula>{"0.0016 + 0.0012 + 0.0015 = \\mathbf{0.0043}"}</MathFormula></li></ul>
+                </li>
+                <li><strong>(2) 条件付き確率:</strong> <MathFormula>{"\\frac{\\text{聞かれている会社の積}}{\\text{全体の確率}}"}</MathFormula>
+                  <ul><li>答え: <MathFormula>{"\\frac{0.0016}{0.0043} = \\frac{16}{43}"}</MathFormula></li></ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース3：推定量の比較（例題付き） */}
+          <div className="cheat-section">
+            <h3>【スペース3：推定量の比較（K, L, M）】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              ※2022年の過去問をモデルにしています。「係数の2乗」を忘れないためのメモです。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 例題：良い推定量はどっち？</div>
+
+              <div style={{background: 'var(--bg-card)', padding: '12px', borderRadius: '6px', marginBottom: '15px'}}>
+                <strong>【問題例】</strong><br/>
+                <MathFormula>{"K = \\frac{2X_1 - X_2 + X_3}{2}"}</MathFormula> と <MathFormula>{"M = \\frac{X_1 - X_2 + 3X_3}{3}"}</MathFormula>、平均の推定量として良いのは？
+              </div>
+
+              <div style={{fontWeight: '600', marginBottom: '10px'}}>【解答記述テンプレート】</div>
+
+              <div style={stepStyle}>1. 不偏性の確認 (平均 E をとる)</div>
+              <ul style={bulletStyle}>
+                <li><MathFormula>{"E[K] = \\frac{2E[X] - E[X] + E[X]}{2} = \\frac{2}{2}E[X] = E[X]"}</MathFormula> (OK)</li>
+                <li><MathFormula>{"E[M] = \\frac{E[X] - E[X] + 3E[X]}{3} = \\frac{3}{3}E[X] = E[X]"}</MathFormula> (OK)</li>
+                <li>結論: 「両方とも不偏推定量である」</li>
+              </ul>
+
+              <div style={stepStyle}>2. 有効性の確認 (分散 V を計算)</div>
+              <ul style={bulletStyle}>
+                <li><strong>重要:</strong> 係数は <strong>2乗</strong> して出す！(<MathFormula>{"V[aX] = a^2V[X]"}</MathFormula>)</li>
+                <li><MathFormula>{"V[K] = \\frac{2^2 + (-1)^2 + 1^2}{2^2} V[X] = \\frac{4+1+1}{4}V[X] = \\mathbf{\\frac{6}{4}V[X]}"}</MathFormula></li>
+                <li><MathFormula>{"V[M] = \\frac{1^2 + (-1)^2 + 3^2}{3^2} V[X] = \\frac{1+1+9}{9}V[X] = \\mathbf{\\frac{11}{9}V[X]}"}</MathFormula></li>
+                <li>結論: 1.5 vs 1.22... なので小さい方が勝ち。</li>
+                <li>「<MathFormula>{"V[M] < V[K]"}</MathFormula> なので、Mの方が有効（最良）である」</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース4：分布の計算（例題付き） */}
+          <div className="cheat-section">
+            <h3>【スペース4：分布の計算・パラメータ】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              ※2024年の過去問をモデルにしています。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 例題：分布と確率計算</div>
+
+              <div style={{background: 'var(--bg-card)', padding: '12px', borderRadius: '6px', marginBottom: '15px'}}>
+                <strong>【問題例1：ポアソン分布】</strong><br/>
+                1ヶ月(30日)に平均60件の事故。1日の件数 <MathFormula>{"X"}</MathFormula> は？
+              </div>
+              <ul style={bulletStyle}>
+                <li><strong>分布:</strong> 1日平均 = <MathFormula>{"60 \\div 30 = 2"}</MathFormula>件。よって <MathFormula>{"Po(2)"}</MathFormula> に従う。</li>
+                <li><strong>確率:</strong> 1件も起きない確率は？
+                  <ul><li><MathFormula>{"P(X=0) = e^{-2} \\frac{2^0}{0!} = e^{-2}"}</MathFormula></li></ul>
+                </li>
+              </ul>
+
+              <div style={{background: 'var(--bg-card)', padding: '12px', borderRadius: '6px', marginBottom: '15px', marginTop: '15px'}}>
+                <strong>【問題例2：指数分布（待ち時間）】</strong><br/>
+                事故から次の事故までの時間 <MathFormula>{"T"}</MathFormula> (単位:時間) は？
+              </div>
+              <ul style={bulletStyle}>
+                <li><strong>パラメータ:</strong> 1日(24h)で平均2件 → 平均間隔は <MathFormula>{"24 \\div 2 = 12"}</MathFormula>時間。</li>
+                <li><strong>重要:</strong> 指数分布のパラメータは「平均の逆数」。つまり <MathFormula>{"\\frac{1}{12}"}</MathFormula>。</li>
+                <li>答え: 「パラメータ 1/12 の指数分布に従う」</li>
+              </ul>
+
+              <div style={{background: 'var(--bg-card)', padding: '12px', borderRadius: '6px', marginBottom: '15px', marginTop: '15px'}}>
+                <strong>【問題例3：的当て（カイ二乗）】</strong><br/>
+                <MathFormula>{"X, Y \\sim N(0, 5)"}</MathFormula>。半径 <MathFormula>{"\\sqrt{36.9}"}</MathFormula> の円に入る確率は？
+              </div>
+              <ul style={bulletStyle}>
+                <li>公式: <MathFormula>{"P = 1 - e^{-\\frac{\\text{半径}^2}{2\\sigma^2}}"}</MathFormula></li>
+                <li>計算: <MathFormula>{"1 - e^{-\\frac{36.9}{2 \\times 5}} = 1 - e^{-3.69}"}</MathFormula></li>
+                <li style={{fontStyle: 'italic', color: 'var(--text-secondary)'}}>(または表を使う場合: 自由度2のカイ二乗分布表を見る)</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* スペース5：記述問題の答え（例題付き） */}
+          <div className="cheat-section">
+            <h3>【スペース5：記述問題の答え（丸写し用）】</h3>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '15px'}}>
+              ※講義資料・過去問の模範解答です。一字一句このまま書けば満点です。
+            </p>
+            <div style={quoteStyle}>
+              <div style={{fontWeight: '600', marginBottom: '15px'}}>■ 記述問題カンペ</div>
+
+              <ul style={{...bulletStyle, listStyle: 'none', paddingLeft: '0'}}>
+                <li style={{marginBottom: '15px'}}>
+                  <strong>ランダムサンプリングとは？</strong>
+                  <ul><li>「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」</li></ul>
+                </li>
+                <li style={{marginBottom: '15px'}}>
+                  <strong>最尤推定とは？</strong>
+                  <ul><li>「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」</li></ul>
+                </li>
+                <li>
+                  <strong>偏差値の定義・基準は？</strong>
+                  <ul>
+                    <li>「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」</li>
+                    <li>式: <MathFormula>{"T = \\frac{10(X - \\text{平均})}{\\text{標準偏差}} + 50"}</MathFormula></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       )}
 
       {/* 合格のポイント */}
       <div className="cheat-section" style={{ marginTop: '20px', borderLeft: '4px solid var(--success-color)', background: 'var(--success-light)' }}>
-        <h3 style={{ color: 'var(--text-success)' }}>🎯 この構成で書き込めば試験に勝てる！</h3>
-        <ul className="cheat-mistakes">
-          <li><strong>仮説検定とベイズの定理だけで約30%</strong>の配点。この2つは完璧にする</li>
-          <li>毎年ほぼ<strong>同じ形式・同じ問題</strong>が出る。数字を当てはめるだけで解ける</li>
-          <li>記述問題の答えは<strong>一字一句同じ</strong>でOK。暗記して書き写すだけ</li>
-          <li>試験中に「数字をどこに入れればいいんだっけ？」と迷うことがなくなる</li>
-        </ul>
+        <p style={{margin: 0, lineHeight: '1.8'}}>
+          この5つのブロックを教科書に書き込んでおけば、試験範囲の計算・記述のほとんどに対応できます。<strong>健闘を祈ります！</strong>
+        </p>
       </div>
     </div>
   );
