@@ -4416,6 +4416,18 @@ function App() {
           margin-top: 20px;
         }
 
+        .exam-tab .math-inline {
+          font-size: 1em;
+        }
+
+        .quote-box .math-inline {
+          font-size: 1em;
+        }
+
+        .formula-display .math-inline {
+          font-size: 1.1em;
+        }
+
         .cheat-table {
           width: 100%;
           border-collapse: collapse;
