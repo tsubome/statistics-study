@@ -915,6 +915,7 @@ function TabNav({ activeTab, setActiveTab }) {
     { id: 'glossary', label: '📖 用語集', icon: '📖' },
     { id: 'relations', label: '🔗 分布関係', icon: '🔗' },
     { id: 'quiz', label: '🎯 クイズ', icon: '🎯' },
+    { id: 'exam', label: '📝 過去問対策', icon: '📝' },
     { id: 'cheatsheet', label: '📋 カンペ', icon: '📋' },
     { id: 'checklist', label: '✅ チェックリスト', icon: '✅' },
   ];
@@ -1617,6 +1618,438 @@ function QuizTab() {
             <button className="retry-btn" onClick={() => startQuiz(selectedCategory)}>🔄 同じモードで再挑戦</button>
             <button className="retry-btn secondary" onClick={backToCategories}>📂 モード選択に戻る</button>
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ===== 過去問対策データ =====
+const examData = {
+  trends: {
+    title: "4年分の過去問傾向分析（2021〜2024年）",
+    mustAppear: [
+      { pattern: "仮説検定（全国学力テスト）", frequency: "毎年必出", points: "12〜16点", years: "2021,2022,2023,2024" },
+      { pattern: "ベイズの定理（A社・B社・C社の不良品）", frequency: "毎年必出", points: "8〜10点", years: "2021,2022,2023,2024" },
+      { pattern: "偏差値の計算", frequency: "毎年必出", points: "5点", years: "2021,2022,2023,2024" },
+      { pattern: "ポアソン分布・指数分布", frequency: "毎年必出", points: "6〜10点", years: "2021,2022,2023,2024" },
+      { pattern: "二項分布と正規近似", frequency: "毎年必出", points: "10〜15点", years: "2021,2022,2023,2024" },
+      { pattern: "推定量の比較（K,L,Mの優劣）", frequency: "高頻度", points: "10点", years: "2022,2023" },
+      { pattern: "記述問題（ランダムサンプリング・最尤推定）", frequency: "毎年必出", points: "6〜9点", years: "2021,2022,2023,2024" },
+    ]
+  },
+  essentials: {
+    title: "絶対に覚えなければならないこと",
+    items: [
+      {
+        category: "仮説検定",
+        content: [
+          "帰無仮説 H₀: μ = [全国平均] （差がない）",
+          "対立仮説 H₁: μ ≠ [全国平均] （差がある）",
+          "統計量 Z = (X̄ - μ) / (σ/√n)　★分母はσ/√n（σではない！）",
+          "棄却域（有意水準5%）: |Z| ≥ 1.96",
+          "結論：棄却域に入る→棄却（差がある）、入らない→採択（差があるとは言えない）"
+        ]
+      },
+      {
+        category: "ベイズの定理",
+        content: [
+          "P(E) = P(A)×P(E|A) + P(B)×P(E|B) + P(C)×P(E|C)",
+          "P(A|E) = P(A∩E) / P(E) = P(A)×P(E|A) / P(E)",
+          "★表を作って整理するのが最速・最確実"
+        ]
+      },
+      {
+        category: "分散の計算（超重要）",
+        content: [
+          "V[aX+b] = a²V[X]　★係数は2乗！定数bは消える！",
+          "V[aX+bY] = a²V[X] + b²V[Y]（独立時）　★引き算でも足す！",
+          "E[aX+b] = aE[X] + b　（期待値は素直に計算）"
+        ]
+      },
+      {
+        category: "分布のパラメータ",
+        content: [
+          "ポアソン Po(λ): 平均λ回 → パラメータはλ　E[X]=V[X]=λ",
+          "指数分布: 平均A → パラメータは1/A　★逆数になる！",
+          "二項分布 B(n,p): E[X]=np, V[X]=np(1-p)",
+          "正規近似: np≥5 かつ n(1-p)≥5 のとき N(np, np(1-p))"
+        ]
+      },
+      {
+        category: "偏差値",
+        content: [
+          "T = 10(X-m)/σ + 50　★σは標準偏差（分散ではない！）",
+          "平均が50、分散が100（標準偏差10）"
+        ]
+      },
+      {
+        category: "記述問題の模範解答",
+        content: [
+          "ランダムサンプリング：「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」",
+          "最尤推定：「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」"
+        ]
+      }
+    ]
+  },
+  flows: [
+    {
+      title: "仮説検定の解法フロー",
+      icon: "📊",
+      steps: [
+        { step: 1, action: "母集団の分布を書く", detail: "正規分布 N(μ, σ²) に従う　※σ²は分散（標準偏差の2乗）", example: "N(66, 36²)" },
+        { step: 2, action: "仮説を設定", detail: "H₀: μ = [全国平均]（点）、H₁: μ ≠ [全国平均]（点）", example: "H₀: μ=66, H₁: μ≠66" },
+        { step: 3, action: "統計量Zを定義", detail: "Z = (X̄ - μ) / (σ/√n)　※分母は「標準偏差÷√人数」", example: "Z = (X̄-66)/(36/√144) = (X̄-66)/3" },
+        { step: 4, action: "棄却域を書く", detail: "有意水準5%なら |Z| ≥ 1.96（両側検定）", example: "R = {z | |z| ≥ 1.96}" },
+        { step: 5, action: "計算して判定", detail: "Z値を計算し、棄却域に入るか確認", example: "z = (60.6-66)/3 = -1.8 ∉ R → 採択" }
+      ]
+    },
+    {
+      title: "ベイズの定理の解法フロー",
+      icon: "🎯",
+      steps: [
+        { step: 1, action: "表を作成", detail: "シェア・不良率・積の3行を用意", example: "A社|B社|C社|合計" },
+        { step: 2, action: "シェア(確率)を記入", detail: "P(A), P(B), P(C)を書く", example: "0.2, 0.4, 0.4" },
+        { step: 3, action: "不良率(条件付確率)を記入", detail: "P(E|A), P(E|B), P(E|C)を書く", example: "0.008, 0.004, 0.003" },
+        { step: 4, action: "積を計算", detail: "シェア × 不良率 を各社計算", example: "0.0016, 0.0016, 0.0012" },
+        { step: 5, action: "問題に答える", detail: "P(E)=積の合計、P(A|E)=Aの積/合計", example: "P(E)=0.0044, P(C|E)=0.0012/0.0044=3/11" }
+      ]
+    },
+    {
+      title: "推定量の比較フロー",
+      icon: "⚖️",
+      steps: [
+        { step: 1, action: "期待値E[K]を計算", detail: "係数をそのまま出す（E[aX]=aE[X]）", example: "E[(2X₁-X₂+X₃)/3] = (2-1+1)/3 × E[X] = (2/3)E[X]" },
+        { step: 2, action: "不偏性をチェック", detail: "E[K]=E[X]になれば不偏推定量", example: "2/3 ≠ 1 → 不偏ではない" },
+        { step: 3, action: "分散V[K]を計算", detail: "★係数を2乗して出す（V[aX]=a²V[X]）", example: "V[(2X₁-X₂+X₃)/3] = (4+1+1)/9 × V[X] = (6/9)V[X]" },
+        { step: 4, action: "有効性を比較", detail: "不偏推定量の中で分散が最小のものが最良", example: "V[K] > V[L] → Lの方が有効" }
+      ]
+    },
+    {
+      title: "二項分布の正規近似フロー",
+      icon: "📈",
+      steps: [
+        { step: 1, action: "パラメータを確認", detail: "n回試行、成功確率p → B(n,p)", example: "600回、p=3/5 → B(600, 0.6)" },
+        { step: 2, action: "条件確認", detail: "np≥5 かつ n(1-p)≥5 なら正規近似可能", example: "np=360≥5, n(1-p)=240≥5 → OK" },
+        { step: 3, action: "平均と分散を計算", detail: "E[S]=np, V[S]=np(1-p)", example: "E[S]=360, V[S]=144, σ=12" },
+        { step: 4, action: "正規分布で近似", detail: "S ~ N(np, np(1-p))", example: "S ~ N(360, 144)" },
+        { step: 5, action: "標準化して確率計算", detail: "Z = (S-np)/√(np(1-p))", example: "Z = (348-360)/12 = -1" }
+      ]
+    }
+  ],
+  pastExams: [
+    {
+      year: 2024,
+      problems: [
+        {
+          number: 1,
+          title: "仮説検定",
+          question: "全国平均66点、標準偏差36点。144人を抽出し平均60.6点。全国と差があるか（有意水準5%）",
+          keyPoints: ["母集団分布: N(66, 36²)", "Z = (X̄-66)/(36/√144) = (X̄-66)/3", "棄却域: |Z|≥1.96", "z=-1.8 → 棄却されない"],
+          answer: "学力レベルは全国平均と異なるとは言えない"
+        },
+        {
+          number: 2,
+          title: "歪なサイコロ",
+          question: "偶数の確率、2回で少なくとも1回偶数、3回で偶数1回の確率、二項分布、正規近似",
+          keyPoints: ["偶数確率=3/5", "少なくとも1回 = 1-(2/5)²", "B(3,3/5)でP(X=1)", "E[X]=np, V[X]=np(1-p)"],
+          answer: "複合問題。各設問の公式を適用"
+        },
+        {
+          number: 3,
+          title: "ポアソン分布・指数分布",
+          question: "1ヶ月60件事故。1日の件数X、次の事故までの時間Y",
+          keyPoints: ["1日平均=60/30=2件 → X~Po(2)", "平均間隔=12時間 → Y~指数(1/12)", "P(Y<24) = 1-e^(-2)"],
+          answer: "X~Po(2), Y~指数分布(パラメータ1/12)"
+        },
+        {
+          number: 4,
+          title: "ベイズの定理",
+          question: "A社20%, B社40%, C社40%。不良率A:0.8%, B:0.4%, C:0.3%",
+          keyPoints: ["P(E)=0.2×0.008+0.4×0.004+0.4×0.003=0.0044", "P(C|E)=0.0012/0.0044=3/11"],
+          answer: "P(E)=0.0044, P(C|E)=3/11"
+        }
+      ]
+    },
+    {
+      year: 2023,
+      problems: [
+        {
+          number: 1,
+          title: "ベイズの定理",
+          question: "A社25%, B社25%, C社50%。不良率A:0.8%, B:0.4%, C:0.3%",
+          keyPoints: ["P(E)=0.25×0.008+0.25×0.004+0.5×0.003=0.0045", "P(C|E)=0.0015/0.0045=1/3"],
+          answer: "P(E)=0.0045, P(C|E)=1/3"
+        },
+        {
+          number: 7,
+          title: "推定量の比較",
+          question: "K=(2X₁-X₂+X₃)/3, L=(2X₁+3X₂-X₃)/4, M=(4X₁-X₂-X₃)/2 のうち最良は？",
+          keyPoints: ["E[L]=E[X], E[M]=E[X] → L,Mが不偏", "V[L]=(7/8)V[X], V[M]=(9/2)V[X]", "V[L]<V[M] → Lが有効"],
+          answer: "Lが最良の推定量"
+        },
+        {
+          number: 8,
+          title: "仮説検定",
+          question: "全国平均65点、標準偏差34点。289人を抽出し平均61.2点。",
+          keyPoints: ["Z = (X̄-65)/(34/√289) = (X̄-65)/2", "z=-1.9 → 棄却されない"],
+          answer: "学力レベルは全国平均と異なるとは言えない"
+        }
+      ]
+    },
+    {
+      year: 2022,
+      problems: [
+        {
+          number: 1,
+          title: "複合計算問題",
+          question: "幾何分布、偏差値、二項分布、ポアソン近似、正規近似、指数分布",
+          keyPoints: ["幾何分布: E[X]=1/p, V[X]=(1-p)/p²", "偏差値: T=10(X-m)/σ+50", "ポアソン近似: np<5のとき"],
+          answer: "各分布の公式を適用"
+        },
+        {
+          number: 6,
+          title: "推定量の比較",
+          question: "K=(2X₁-X₂+X₃)/2, L=(2X₁-X₂+2X₃)/4, M=(X₁-X₂+3X₃)/3",
+          keyPoints: ["E[K]=E[X], E[M]=E[X] → K,Mが不偏", "V[K]=(3/2)V[X], V[M]=(11/9)V[X]", "V[M]<V[K] → Mが有効"],
+          answer: "Mが最良の推定量"
+        },
+        {
+          number: 7,
+          title: "仮説検定",
+          question: "全国平均62点、標準偏差16点。256人を抽出し平均60.1点。",
+          keyPoints: ["Z = (X̄-62)/(16/√256) = X̄-62", "z=-1.9 → 棄却されない"],
+          answer: "学力レベルは全国平均と異なるとは言えない"
+        }
+      ]
+    },
+    {
+      year: 2021,
+      problems: [
+        {
+          number: 1,
+          title: "複合計算問題",
+          question: "幾何分布、偏差値、二項分布、ポアソン近似、正規近似、指数分布",
+          keyPoints: ["幾何分布: 3の倍数→p=1/3", "偏差値: 分散121→σ=11", "指数分布: 平均3.5時間→λ=7/48"],
+          answer: "各分布の公式を適用"
+        },
+        {
+          number: 6,
+          title: "信頼区間",
+          question: "10000人、平均65点、母分散100。95%信頼区間",
+          keyPoints: ["SE=√(100/10000)=0.1", "z(0.05)=1.96", "信頼区間: 65±1.96×0.1"],
+          answer: "[64.804, 65.196]"
+        },
+        {
+          number: 7,
+          title: "仮説検定",
+          question: "全国平均48点、標準偏差20点。400人を抽出し平均46.1点。",
+          keyPoints: ["Z = (X̄-48)/(20/√400) = X̄-48", "z=-1.9 → 棄却されない"],
+          answer: "学力レベルは全国平均と異なるとは言えない"
+        }
+      ]
+    }
+  ]
+};
+
+// 過去問対策タブ
+function ExamTab() {
+  const [activeSubTab, setActiveSubTab] = useState('trends');
+
+  return (
+    <div className="exam-tab">
+      <h2>📝 過去問対策（2021〜2024年）</h2>
+      <p className="tab-description">4年分の過去問を分析。傾向・頻出パターン・解法フローを完全網羅</p>
+
+      <div className="sub-tabs" style={{justifyContent: 'center', marginBottom: '25px'}}>
+        <button className={activeSubTab === 'trends' ? 'active' : ''} onClick={() => setActiveSubTab('trends')}>📊 傾向分析</button>
+        <button className={activeSubTab === 'essentials' ? 'active' : ''} onClick={() => setActiveSubTab('essentials')}>⭐ 絶対暗記</button>
+        <button className={activeSubTab === 'flows' ? 'active' : ''} onClick={() => setActiveSubTab('flows')}>🔄 解法フロー</button>
+        <button className={activeSubTab === 'past' ? 'active' : ''} onClick={() => setActiveSubTab('past')}>📄 年度別過去問</button>
+      </div>
+
+      {activeSubTab === 'trends' && (
+        <div className="trends-section">
+          <h3 style={{color: 'var(--text-accent)', marginBottom: '20px'}}>🎯 {examData.trends.title}</h3>
+          <div className="essential-table-container">
+            <table className="essential-table">
+              <thead>
+                <tr>
+                  <th>出題パターン</th>
+                  <th>出題頻度</th>
+                  <th>配点目安</th>
+                  <th>出題年度</th>
+                </tr>
+              </thead>
+              <tbody>
+                {examData.trends.mustAppear.map((item, i) => (
+                  <tr key={i} style={{background: item.frequency === '毎年必出' ? 'var(--bg-warning)' : 'transparent'}}>
+                    <td style={{fontWeight: item.frequency === '毎年必出' ? '600' : '400'}}>{item.pattern}</td>
+                    <td><span style={{
+                      background: item.frequency === '毎年必出' ? 'var(--border-danger)' : 'var(--accent-color)',
+                      color: 'white',
+                      padding: '3px 10px',
+                      borderRadius: '12px',
+                      fontSize: '0.85rem'
+                    }}>{item.frequency}</span></td>
+                    <td>{item.points}</td>
+                    <td style={{fontSize: '0.9rem', color: 'var(--text-secondary)'}}>{item.years}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{marginTop: '25px', padding: '20px', background: 'var(--bg-warning)', borderRadius: '12px', borderLeft: '4px solid var(--border-warning)'}}>
+            <h4 style={{color: 'var(--text-warning)', marginBottom: '10px'}}>💡 合格のポイント</h4>
+            <ul style={{color: 'var(--text-primary)', lineHeight: '1.8', paddingLeft: '20px'}}>
+              <li><strong>仮説検定とベイズの定理だけで約30%</strong>の配点。この2つは完璧にする</li>
+              <li>毎年ほぼ<strong>同じ形式・同じ問題</strong>が出る。過去問の解法を教科書に書き込む</li>
+              <li>記述問題の答えは<strong>一字一句同じ</strong>でOK。暗記して書き写すだけ</li>
+              <li>計算問題は<strong>解法フローを覚えて数字を当てはめる</strong>だけで解ける</li>
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === 'essentials' && (
+        <div className="essentials-section">
+          <h3 style={{color: 'var(--text-accent)', marginBottom: '20px'}}>⭐ {examData.essentials.title}</h3>
+          <p style={{color: 'var(--text-secondary)', marginBottom: '20px'}}>これだけは絶対に教科書に書き込んでおくこと！</p>
+          <div style={{display: 'grid', gap: '20px'}}>
+            {examData.essentials.items.map((item, i) => (
+              <div key={i} className="cheat-section" style={{borderLeft: '4px solid var(--accent-color)'}}>
+                <h4 style={{color: 'var(--text-accent)', marginBottom: '12px', fontSize: '1.1rem'}}>{item.category}</h4>
+                <ul style={{listStyle: 'none', padding: 0}}>
+                  {item.content.map((c, j) => (
+                    <li key={j} style={{
+                      padding: '10px 15px',
+                      margin: '8px 0',
+                      background: c.includes('★') ? 'var(--bg-warning)' : 'var(--bg-accent)',
+                      borderRadius: '8px',
+                      color: c.includes('★') ? 'var(--text-warning)' : 'var(--text-primary)',
+                      fontWeight: c.includes('★') ? '600' : '400',
+                      fontFamily: c.includes('=') || c.includes('≠') || c.includes('≥') ? "'JetBrains Mono', monospace" : 'inherit',
+                      fontSize: '0.95rem',
+                      lineHeight: '1.6'
+                    }}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === 'flows' && (
+        <div className="flows-section">
+          <h3 style={{color: 'var(--text-accent)', marginBottom: '20px'}}>🔄 解法フロー（問題を見たらこの手順で解く）</h3>
+          <div style={{display: 'grid', gap: '25px'}}>
+            {examData.flows.map((flow, i) => (
+              <div key={i} className="visual-card">
+                <h3 style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                  <span style={{fontSize: '1.5rem'}}>{flow.icon}</span>
+                  {flow.title}
+                </h3>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px'}}>
+                  {flow.steps.map((step, j) => (
+                    <div key={j} style={{
+                      display: 'grid',
+                      gridTemplateColumns: '40px 1fr',
+                      gap: '15px',
+                      padding: '15px',
+                      background: 'var(--bg-accent)',
+                      borderRadius: '10px',
+                      borderLeft: '3px solid var(--accent-color)'
+                    }}>
+                      <div style={{
+                        width: '35px',
+                        height: '35px',
+                        background: 'var(--accent-color)',
+                        color: 'white',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 'bold'
+                      }}>{step.step}</div>
+                      <div>
+                        <div style={{fontWeight: '600', color: 'var(--text-primary)', marginBottom: '5px'}}>{step.action}</div>
+                        <div style={{fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '5px'}}>{step.detail}</div>
+                        <div style={{
+                          fontSize: '0.85rem',
+                          fontFamily: "'JetBrains Mono', monospace",
+                          color: 'var(--text-accent)',
+                          background: 'var(--bg-card)',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          display: 'inline-block'
+                        }}>例: {step.example}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === 'past' && (
+        <div className="past-section">
+          <h3 style={{color: 'var(--text-accent)', marginBottom: '20px'}}>📄 年度別過去問ハイライト</h3>
+          {examData.pastExams.map((exam, i) => (
+            <div key={i} style={{marginBottom: '30px'}}>
+              <h4 style={{
+                color: 'white',
+                background: 'var(--accent-color)',
+                padding: '12px 20px',
+                borderRadius: '10px 10px 0 0',
+                fontSize: '1.2rem'
+              }}>{exam.year}年 中間試験</h4>
+              <div style={{
+                background: 'var(--bg-card)',
+                borderRadius: '0 0 10px 10px',
+                border: '1px solid var(--border-color)',
+                borderTop: 'none'
+              }}>
+                {exam.problems.map((prob, j) => (
+                  <div key={j} style={{
+                    padding: '20px',
+                    borderBottom: j < exam.problems.length - 1 ? '1px solid var(--border-color)' : 'none'
+                  }}>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px'}}>
+                      <span style={{
+                        background: 'var(--accent-color)',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '15px',
+                        fontSize: '0.85rem'
+                      }}>問{prob.number}</span>
+                      <span style={{fontWeight: '600', color: 'var(--text-primary)'}}>{prob.title}</span>
+                    </div>
+                    <p style={{color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '12px', lineHeight: '1.6'}}>{prob.question}</p>
+                    <div style={{background: 'var(--bg-accent)', padding: '12px', borderRadius: '8px', marginBottom: '10px'}}>
+                      <div style={{fontSize: '0.85rem', color: 'var(--text-accent)', marginBottom: '5px', fontWeight: '500'}}>ポイント:</div>
+                      <ul style={{margin: 0, paddingLeft: '20px', fontSize: '0.9rem', color: 'var(--text-primary)'}}>
+                        {prob.keyPoints.map((point, k) => (
+                          <li key={k} style={{marginBottom: '3px', fontFamily: point.includes('=') ? "'JetBrains Mono', monospace" : 'inherit'}}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div style={{
+                      background: 'var(--success-light)',
+                      padding: '10px 15px',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem'
+                    }}>
+                      <span style={{color: 'var(--text-success)', fontWeight: '500'}}>答え: </span>
+                      <span style={{color: 'var(--text-success)'}}>{prob.answer}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -4089,6 +4522,7 @@ function App() {
         {activeTab === 'relations' && <RelationsTab />}
         {activeTab === 'visual' && <VisualLearningTab />}
         {activeTab === 'quiz' && <QuizTab />}
+        {activeTab === 'exam' && <ExamTab />}
         {activeTab === 'cheatsheet' && <CheatSheetTab />}
         {activeTab === 'checklist' && <ChecklistTab />}
       </main>
