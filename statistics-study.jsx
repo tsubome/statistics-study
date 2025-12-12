@@ -1637,17 +1637,38 @@ const examData = {
         title: '例題：仮説検定（全国平均との比較）',
         problem: '全国の平均点が 66点、標準偏差が 36点 の試験がある。ある県の 144人 を調査したら、平均 60.6点 だった。全国と学力差はあるか？（有意水準5%）',
         solution: [
-          { step: '1. 仮説の設定', lines: ['H₀: μ = 66 （全国と同じ）', 'H₁: μ ≠ 66 （全国と異なる）'] },
-          { step: '2. 統計量 Z の計算', lines: ['公式: Z = (X̄ - μ) / (σ / √n)', '代入: Z = (60.6 - 66) / (36 / √144) = -5.4 / 3 = -1.8'] },
-          { step: '3. 判定（棄却域 R）', lines: ['基準: 有意水準5%なら |Z| ≥ 1.96 なら棄却', '結論: |-1.8| < 1.96 なので 棄却されない（採択）', '文言: 「H₀が採択される。学力レベルは全国平均と異なるとは言えない。」'] }
+          { step: '1. 仮説の設定', lines: [
+            { type: 'formula', content: 'H_0: \\mu = 66' }, { type: 'text', content: '（全国と同じ）' },
+            { type: 'formula', content: 'H_1: \\mu \\neq 66' }, { type: 'text', content: '（全国と異なる）' }
+          ]},
+          { step: '2. 統計量 Z の計算', lines: [
+            { type: 'text', content: '公式:' }, { type: 'formula', content: 'Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}' },
+            { type: 'text', content: '代入:' }, { type: 'formula', content: 'Z = \\frac{60.6 - 66}{36 / \\sqrt{144}} = \\frac{-5.4}{3} = -1.8' }
+          ]},
+          { step: '3. 判定（棄却域 R）', lines: [
+            { type: 'text', content: '基準: 有意水準5%なら' }, { type: 'formula', content: '|Z| \\ge 1.96' }, { type: 'text', content: 'なら棄却' },
+            { type: 'text', content: '結論:' }, { type: 'formula', content: '|-1.8| < 1.96' }, { type: 'text', content: 'なので棄却されない（採択）' },
+            { type: 'text', content: '文言: 「H₀が採択される。学力レベルは全国平均と異なるとは言えない。」' }
+          ]}
         ]
       },
       template: {
         title: '仮説検定のテンプレート',
         steps: [
-          { step: '1. 仮説の設定', lines: ['H₀: μ = [全国平均の数値] （差がない）', 'H₁: μ ≠ [全国平均の数値] （差がある）'] },
-          { step: '2. 統計量 Z の計算', lines: ['Z = (X̄ - μ) / (σ / √n)', '・X̄: 今回の平均点', '・μ: 全国の平均点', '・σ: 全国の標準偏差（分散ならルートする！）', '・n: 人数'] },
-          { step: '3. 判定（有意水準5%）', lines: ['棄却域: |Z| ≥ 1.96', '・範囲に入った → 「棄却される（差があると言える）」', '・入らなかった → 「棄却されない（差があるとは言えない）」'] }
+          { step: '1. 仮説の設定', lines: [
+            { type: 'formula', content: 'H_0: \\mu = [\\text{全国平均}]' }, { type: 'text', content: '（差がない）' },
+            { type: 'formula', content: 'H_1: \\mu \\neq [\\text{全国平均}]' }, { type: 'text', content: '（差がある）' }
+          ]},
+          { step: '2. 統計量 Z の計算', lines: [
+            { type: 'formula', content: 'Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}' },
+            { type: 'text', content: '・X̄: 今回の平均点　・μ: 全国の平均点' },
+            { type: 'text', content: '・σ: 標準偏差（分散ならルート！）　・n: 人数' }
+          ]},
+          { step: '3. 判定（有意水準5%）', lines: [
+            { type: 'text', content: '棄却域:' }, { type: 'formula', content: '|Z| \\ge 1.96' },
+            { type: 'text', content: '・範囲に入った → 「棄却される（差があると言える）」' },
+            { type: 'text', content: '・入らなかった → 「棄却されない（差があるとは言えない）」' }
+          ]}
         ]
       }
     },
@@ -1660,17 +1681,34 @@ const examData = {
         title: '例題：ベイズの定理（原因の確率）',
         problem: 'シェアは A社20%, B社30%, C社50%。不良品率は A:0.8%, B:0.4%, C:0.3%。\n(1) 不良品である確率は？ (2) 不良品のとき、それがA社製である確率は？',
         solution: [
-          { step: '手順1：以下の3つを計算して並べる', lines: ['(A) = 0.2 × 0.008 = 0.0016', '(B) = 0.3 × 0.004 = 0.0012', '(C) = 0.5 × 0.003 = 0.0015'] },
-          { step: '手順2：問1「不良品である確率は？」', lines: ['答え = (A) + (B) + (C) = 0.0016 + 0.0012 + 0.0015 = 0.0043'] },
-          { step: '手順3：問2「不良品だった時、A社である確率は？」', lines: ['答え = (A) / ((A)+(B)+(C)) = 0.0016 / 0.0043 = 16/43'] }
+          { step: '手順1：各社の積を計算', lines: [
+            { type: 'formula', content: '(A) = 0.2 \\times 0.008 = 0.0016' },
+            { type: 'formula', content: '(B) = 0.3 \\times 0.004 = 0.0012' },
+            { type: 'formula', content: '(C) = 0.5 \\times 0.003 = 0.0015' }
+          ]},
+          { step: '手順2：問1「不良品である確率は？」', lines: [
+            { type: 'formula', content: 'P(E) = (A) + (B) + (C) = 0.0016 + 0.0012 + 0.0015 = 0.0043' }
+          ]},
+          { step: '手順3：問2「不良品だった時、A社である確率は？」', lines: [
+            { type: 'formula', content: 'P(A|E) = \\frac{(A)}{(A)+(B)+(C)} = \\frac{0.0016}{0.0043} = \\frac{16}{43}' }
+          ]}
         ]
       },
       template: {
         title: '不良品・原因の確率（ベイズ）',
         steps: [
-          { step: '手順1：以下の3つを計算して並べる', lines: ['(A) = (A社のシェア) × (Aの不良率)', '(B) = (B社のシェア) × (Bの不良率)', '(C) = (C社のシェア) × (Cの不良率)', '例: 0.35 × 0.008 = 0.0028'] },
-          { step: '手順2：問1「不良品である確率は？」', lines: ['答え = (A) + (B) + (C)'] },
-          { step: '手順3：問2「不良品だった時、それがX社である確率は？」', lines: ['答え = (X) / ((A)+(B)+(C))', '※分子は聞かれている会社の数値、分母は合計'] }
+          { step: '手順1：各社の積を計算', lines: [
+            { type: 'text', content: '(A) = (A社のシェア) × (Aの不良率)' },
+            { type: 'text', content: '(B) = (B社のシェア) × (Bの不良率)' },
+            { type: 'text', content: '(C) = (C社のシェア) × (Cの不良率)' }
+          ]},
+          { step: '手順2：問1「不良品である確率は？」', lines: [
+            { type: 'formula', content: 'P(E) = (A) + (B) + (C)' }
+          ]},
+          { step: '手順3：問2「X社である確率は？」', lines: [
+            { type: 'formula', content: 'P(X|E) = \\frac{(X)}{(A)+(B)+(C)}' },
+            { type: 'text', content: '※分子は聞かれている会社、分母は合計' }
+          ]}
         ]
       }
     },
@@ -1683,15 +1721,31 @@ const examData = {
         title: '例題：良い推定量はどっち？',
         problem: 'K = (2X₁ - X₂ + X₃)/2 と M = (X₁ - X₂ + 3X₃)/3、平均の推定量として良いのは？',
         solution: [
-          { step: '1. 不偏性の確認 (平均 E をとる)', lines: ['E[K] = (2-1+1)/2 × E[X] = E[X] (OK)', 'E[M] = (1-1+3)/3 × E[X] = E[X] (OK)', '結論: 「両方とも不偏推定量である」'] },
-          { step: '2. 有効性の確認 (分散 V を計算)', lines: ['★重要: 係数は 2乗 して出す！ V[aX] = a²V[X]', 'V[K] = (2² + (-1)² + 1²) / 2² × V[X] = 6/4 × V[X] = 1.5V[X]', 'V[M] = (1² + (-1)² + 3²) / 3² × V[X] = 11/9 × V[X] ≈ 1.22V[X]', '結論: V[M] < V[K] なので、Mの方が有効（最良）'] }
+          { step: '1. 不偏性の確認 (期待値 E をとる)', lines: [
+            { type: 'formula', content: 'E[K] = \\frac{2-1+1}{2} E[X] = E[X]' }, { type: 'text', content: '(OK)' },
+            { type: 'formula', content: 'E[M] = \\frac{1-1+3}{3} E[X] = E[X]' }, { type: 'text', content: '(OK)' },
+            { type: 'text', content: '結論: 両方とも不偏推定量' }
+          ]},
+          { step: '2. 有効性の確認 (分散 V を計算)', lines: [
+            { type: 'text', content: '★重要: 係数は2乗して出す！' }, { type: 'formula', content: 'V[aX] = a^2 V[X]' },
+            { type: 'formula', content: 'V[K] = \\frac{2^2 + (-1)^2 + 1^2}{2^2} V[X] = \\frac{6}{4} V[X]' },
+            { type: 'formula', content: 'V[M] = \\frac{1^2 + (-1)^2 + 3^2}{3^2} V[X] = \\frac{11}{9} V[X]' },
+            { type: 'text', content: '結論: V[M] < V[K] なので、Mの方が有効（最良）' }
+          ]}
         ]
       },
       template: {
         title: '推定量の判定（平均・分散）',
         steps: [
-          { step: '1. 不偏性（平均が一致するか）', lines: ['係数をそのまま足して「1」になればOK', 'E[K] = E[X] となるか確認'] },
-          { step: '2. 有効性（分散が小さいか）', lines: ['★重要公式: 係数を 2乗 して足す！', 'V[aX + bY] = a²V[X] + b²V[Y]', '計算結果が一番小さいものが「最も良い（有効な）推定量」', '例: (1/2)X₁ + (1/2)X₂ → (1/4 + 1/4)V[X] = (1/2)V[X]'] }
+          { step: '1. 不偏性（期待値が一致するか）', lines: [
+            { type: 'text', content: '係数をそのまま足して「1」になればOK' },
+            { type: 'formula', content: 'E[K] = E[X]' }, { type: 'text', content: 'となるか確認' }
+          ]},
+          { step: '2. 有効性（分散が小さいか）', lines: [
+            { type: 'text', content: '★重要公式: 係数を2乗して足す！' },
+            { type: 'formula', content: 'V[aX + bY] = a^2 V[X] + b^2 V[Y]' },
+            { type: 'text', content: '計算結果が一番小さいものが「最も良い推定量」' }
+          ]}
         ]
       }
     },
@@ -1702,21 +1756,42 @@ const examData = {
       location: '教科書の「分布」の章か、表紙裏のメインスペースに',
       example: {
         title: '例題：分布と確率計算',
-        problem: '【ポアソン分布】1ヶ月(30日)に平均60件の事故。1日の件数Xは？\n【指数分布】事故から次の事故までの時間Tは？\n【的当て】X, Y ~ N(0, 5)。半径√36.9の円に入る確率は？',
+        problem: '【ポアソン分布】1ヶ月(30日)に平均60件の事故。1日の件数Xは？\n【指数分布】事故から次の事故までの時間Tは？',
         solution: [
-          { step: 'ポアソン分布の解答', lines: ['1日平均 = 60 ÷ 30 = 2件 → X ~ Po(2)', 'P(X=0) = e⁻² × 2⁰/0! = e⁻² ≈ 0.135'] },
-          { step: '指数分布の解答', lines: ['1日(24h)で平均2件 → 平均間隔 = 12時間', '★重要: パラメータは「平均の逆数」= 1/12', '答え: パラメータ 1/12 の指数分布に従う'] },
-          { step: '的当て（カイ二乗）の解答', lines: ['公式: P = 1 - e^(-半径²/(2σ²))', '計算: 1 - e^(-36.9/10) = 1 - e^(-3.69)'] }
+          { step: 'ポアソン分布の解答', lines: [
+            { type: 'text', content: '1日平均 = 60 ÷ 30 = 2件' },
+            { type: 'formula', content: 'X \\sim Po(2)' },
+            { type: 'formula', content: 'P(X=0) = e^{-2} \\cdot \\frac{2^0}{0!} = e^{-2} \\approx 0.135' }
+          ]},
+          { step: '指数分布の解答', lines: [
+            { type: 'text', content: '1日(24h)で平均2件 → 平均間隔 = 12時間' },
+            { type: 'text', content: '★重要: パラメータは「平均の逆数」= 1/12' },
+            { type: 'text', content: '答え: パラメータ 1/12 の指数分布に従う' }
+          ]}
         ]
       },
       template: {
         title: '分布とパラメータ',
         steps: [
-          { step: 'ポアソン分布 Po(λ)', lines: ['「平均λ回起きる」→ パラメータはλ', 'P(X=k) = e⁻λ × λᵏ/k!'] },
-          { step: '指数分布（待ち時間）', lines: ['「平均A時間」→ パラメータは 1/A (★逆数!!)', '※平均12ならパラメータは1/12'] },
-          { step: '二項分布の正規近似', lines: ['n回投げて確率p → N(np, np(1-p)) で近似', '標準化: Z = (X - np) / √(np(1-p))'] },
-          { step: '偏差値', lines: ['T = 10(X - 平均) / 標準偏差 + 50'] },
-          { step: 'カイ二乗分布（的当て）', lines: ['X² + Y² ≤ r² の確率 → 自由度2のχ²分布', 'P = 1 - e^(-r²/(2σ²))'] }
+          { step: 'ポアソン分布 Po(λ)', lines: [
+            { type: 'text', content: '「平均λ回起きる」→ パラメータはλ' },
+            { type: 'formula', content: 'P(X=k) = e^{-\\lambda} \\frac{\\lambda^k}{k!}' }
+          ]},
+          { step: '指数分布（待ち時間）', lines: [
+            { type: 'text', content: '「平均A時間」→ パラメータは 1/A (★逆数!!)' },
+            { type: 'text', content: '※平均12ならパラメータは1/12' }
+          ]},
+          { step: '二項分布の正規近似', lines: [
+            { type: 'text', content: 'n回投げて確率p →' }, { type: 'formula', content: 'N(np, np(1-p))' }, { type: 'text', content: 'で近似' },
+            { type: 'formula', content: 'Z = \\frac{X - np}{\\sqrt{np(1-p)}}' }
+          ]},
+          { step: '偏差値', lines: [
+            { type: 'formula', content: 'T = \\frac{10(X - \\mu)}{\\sigma} + 50' }
+          ]},
+          { step: 'カイ二乗分布（的当て）', lines: [
+            { type: 'formula', content: 'X^2 + Y^2 \\le r^2' }, { type: 'text', content: 'の確率 → 自由度2のχ²分布' },
+            { type: 'formula', content: 'P = 1 - e^{-r^2/(2\\sigma^2)}' }
+          ]}
         ]
       }
     },
@@ -1729,9 +1804,16 @@ const examData = {
       template: {
         title: '記述問題カンペ',
         steps: [
-          { step: 'ランダムサンプリングとは？', lines: ['「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」'] },
-          { step: '最尤推定とは？', lines: ['「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」'] },
-          { step: '偏差値の定義・基準は？', lines: ['「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」', '式: T = 10(X - 平均) / 標準偏差 + 50'] }
+          { step: 'ランダムサンプリングとは？', lines: [
+            { type: 'text', content: '「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」' }
+          ]},
+          { step: '最尤推定とは？', lines: [
+            { type: 'text', content: '「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」' }
+          ]},
+          { step: '偏差値の定義・基準は？', lines: [
+            { type: 'text', content: '「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」' },
+            { type: 'formula', content: 'T = \\frac{10(X - \\mu)}{\\sigma} + 50' }
+          ]}
         ]
       }
     }
@@ -1742,6 +1824,23 @@ const examData = {
 function ExamTab() {
   const [activeSpace, setActiveSpace] = useState('hypothesis');
   const currentSpace = examData.spaces.find(s => s.id === activeSpace);
+
+  // 行をレンダリング（テキストと数式を混在表示）
+  const renderLines = (lines) => {
+    return lines.map((item, j) => {
+      if (item.type === 'formula') {
+        return <span key={j} style={{ margin: '0 4px' }}><MathFormula>{item.content}</MathFormula></span>;
+      } else {
+        const isWarning = item.content.includes('★');
+        return (
+          <span key={j} style={{
+            color: isWarning ? 'var(--text-warning)' : 'inherit',
+            fontWeight: isWarning ? '600' : '400'
+          }}>{item.content}</span>
+        );
+      }
+    });
+  };
 
   return (
     <div className="exam-tab">
@@ -1788,18 +1887,10 @@ function ExamTab() {
               <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '10px', fontSize: '0.9rem' }}>【解答記述テンプレート】</div>
               {currentSpace.example.solution.map((sol, i) => (
                 <div key={i} style={{ marginBottom: '12px', paddingLeft: '10px', borderLeft: '2px solid var(--success-color)' }}>
-                  <div style={{ fontWeight: '600', color: 'var(--text-success)', marginBottom: '5px', fontSize: '0.9rem' }}>{sol.step}</div>
-                  <ul style={{ margin: 0, paddingLeft: '20px' }}>
-                    {sol.lines.map((line, j) => (
-                      <li key={j} style={{
-                        color: line.includes('★') ? 'var(--text-warning)' : 'var(--text-primary)',
-                        fontWeight: line.includes('★') ? '600' : '400',
-                        fontSize: '0.9rem',
-                        lineHeight: '1.6',
-                        fontFamily: line.includes('=') || line.includes('≥') || line.includes('≠') ? "'JetBrains Mono', monospace" : 'inherit'
-                      }}>{line}</li>
-                    ))}
-                  </ul>
+                  <div style={{ fontWeight: '600', color: 'var(--text-success)', marginBottom: '8px', fontSize: '0.9rem' }}>{sol.step}</div>
+                  <div style={{ lineHeight: '1.8', fontSize: '0.9rem' }}>
+                    {renderLines(sol.lines)}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1817,18 +1908,10 @@ function ExamTab() {
                 borderRadius: '6px',
                 borderLeft: '3px solid var(--accent-color)'
               }}>
-                <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '5px', fontSize: '0.9rem' }}>{step.step}</div>
-                <ul style={{ margin: 0, paddingLeft: '20px' }}>
-                  {step.lines.map((line, j) => (
-                    <li key={j} style={{
-                      color: line.includes('★') ? 'var(--text-warning)' : 'var(--text-primary)',
-                      fontWeight: line.includes('★') ? '600' : '400',
-                      fontSize: '0.9rem',
-                      lineHeight: '1.6',
-                      fontFamily: line.includes('=') || line.includes('≥') || line.includes('≠') ? "'JetBrains Mono', monospace" : 'inherit'
-                    }}>{line}</li>
-                  ))}
-                </ul>
+                <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '8px', fontSize: '0.9rem' }}>{step.step}</div>
+                <div style={{ lineHeight: '1.8', fontSize: '0.9rem' }}>
+                  {renderLines(step.lines)}
+                </div>
               </div>
             ))}
           </div>
