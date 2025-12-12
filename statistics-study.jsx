@@ -3362,23 +3362,23 @@ function ExamTab() {
       )}
 
       {activeTab === 'pastexam' && (
-        <div className="cheatsheet-content">
+        <div className="past-exam-tab">
           <div className="info-box" style={{ marginBottom: '20px' }}>
             2021年〜2024年の中間試験過去問を年度別に整理しています。問題を解いてから解答を確認しましょう。
           </div>
 
           {/* 年度選択 */}
-          <div className="sub-tabs" style={{ justifyContent: 'center', marginBottom: '20px' }}>
-            <button className={selectedYear === '2024' ? 'active' : ''} onClick={() => setSelectedYear('2024')}>
+          <div className="year-selector">
+            <button className={`year-btn ${selectedYear === '2024' ? 'active' : ''}`} onClick={() => setSelectedYear('2024')}>
               2024年
             </button>
-            <button className={selectedYear === '2023' ? 'active' : ''} onClick={() => setSelectedYear('2023')}>
+            <button className={`year-btn ${selectedYear === '2023' ? 'active' : ''}`} onClick={() => setSelectedYear('2023')}>
               2023年
             </button>
-            <button className={selectedYear === '2022' ? 'active' : ''} onClick={() => setSelectedYear('2022')}>
+            <button className={`year-btn ${selectedYear === '2022' ? 'active' : ''}`} onClick={() => setSelectedYear('2022')}>
               2022年
             </button>
-            <button className={selectedYear === '2021' ? 'active' : ''} onClick={() => setSelectedYear('2021')}>
+            <button className={`year-btn ${selectedYear === '2021' ? 'active' : ''}`} onClick={() => setSelectedYear('2021')}>
               2021年
             </button>
           </div>
@@ -5896,6 +5896,11 @@ function App() {
         }
 
         /* Past Exam Styles */
+        .past-exam-tab {
+          max-width: 900px;
+          margin: 0 auto;
+        }
+
         .past-exam-content {
           padding: 10px 0;
         }
@@ -5912,19 +5917,21 @@ function App() {
         .year-selector {
           display: flex;
           justify-content: center;
+          align-items: center;
           gap: 10px;
           margin-bottom: 25px;
           flex-wrap: wrap;
         }
 
         .year-btn {
-          padding: 10px 24px;
+          padding: 12px 40px;
+          min-width: 140px;
           border: 2px solid var(--border-color);
           border-radius: 25px;
           background: var(--bg-card);
           color: var(--text-secondary);
           font-family: inherit;
-          font-size: 0.95rem;
+          font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s;
