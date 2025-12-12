@@ -1627,6 +1627,1220 @@ function QuizTab() {
 // ===== 過去問対策データ =====
 // Geminiが生成した教科書書き込み用カンペ（そのまま表示）
 
+// 2024年過去問コンポーネント
+function PastExam2024() {
+  const [openProblems, setOpenProblems] = useState({});
+  const toggleProblem = (id) => setOpenProblems(prev => ({ ...prev, [id]: !prev[id] }));
+
+  return (
+    <div className="past-exam-content">
+      <h3>2024年 数理情報II 中間試験</h3>
+
+      {/* 問1 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2024-1')}>
+          <span className="problem-title">問1. 仮説検定（各3点×4問=12点）</span>
+          <span className="toggle-icon">{openProblems['2024-1'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2024-1'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>全国の小学6年生を対象にした学力試験において、得点の全国平均は66点、標準偏差は36点でした。学力試験の得点分布は、正規分布に従うと仮定して、次の設問に答えなさい。</p>
+              <p>ある県でこの試験を受験した144人をランダムサンプリングにより抽出し得点を調査したところ、平均は60.6点であった。この結果を知った県教育委員会は、自県の小学生の学力が他県に比べて低いのではないかと不安になり、検証のため仮説検定をしてみようということになった。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1-a)</strong> 問題文を読んで、全国の小学生の得点分布は、どのような分布に従うか答えなさい。ただし、分布のパラメータを明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>正規分布 <MathFormula>{"N(66, 36^2)"}</MathFormula> に従う</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1-b)</strong> 仮説の設定をしなさい。ただし、基準となる数値を明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>この県の小学6年生の学力が、全国平均と比べて高いか低いかを判断する情報はないので両側検定する。</p>
+                <ul>
+                  <li><MathFormula>{"H_0"}</MathFormula>: この県の小学校6年生の平均は66点（学力レベルは全国平均並み）</li>
+                  <li><MathFormula>{"H_1"}</MathFormula>: この県の小学校6年生の平均は66点ではない（学力レベルは全国平均と異なる）</li>
+                </ul>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 標本平均を <MathFormula>{"\\bar{X}"}</MathFormula> とするとき、設問(1-b)で定めた仮説に対して、適切な統計量Zを定めなさい。ただし、統計量は標準化しておくこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>帰無仮説 <MathFormula>{"H_0"}</MathFormula> の仮定の下で、144人の標本平均 <MathFormula>{"\\bar{X}"}</MathFormula> は、<MathFormula>{"N(66, 3^2)"}</MathFormula> に従う。よって</p>
+                <div className="formula-display"><MathFormula>{"Z = \\frac{\\bar{X} - 66}{3}"}</MathFormula></div>
+                <p>とすると、Zは <MathFormula>{"N(0,1)"}</MathFormula> に従う。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 有意水準を5%とするとき、設問(2)で定めた統計量に関する棄却域Rを答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"R = \\{z \\mid |z| \\geq z(0.05) = 1.96\\} = \\{z \\mid z \\leq -1.96, 1.96 \\leq z\\}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 設問(1-b)で定めた仮説に対して、有意水準5%で判定しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>標本から得られた、標本平均の実現値は60.6より</p>
+                <p><MathFormula>{"z = \\frac{60.6 - 66}{3} = -1.8 \\notin R"}</MathFormula></p>
+                <p>よって、<MathFormula>{"H_0"}</MathFormula> が採択され、<MathFormula>{"H_1"}</MathFormula> は棄却される。</p>
+                <p><strong>以上より、学力レベルは全国平均と異なるとは言えないと結論される。</strong></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問2 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2024-2')}>
+          <span className="problem-title">問2. 歪なサイコロ（各3点×10問=30点）</span>
+          <span className="toggle-icon">{openProblems['2024-2'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2024-2'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>歪なサイコロがある。1～6の各数字が出る確率は次のようになっている。</p>
+              <table className="data-table">
+                <thead><tr><th>出目</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead>
+                <tbody><tr><td>確率</td><td>1/5</td><td>1/10</td><td>1/10</td><td>1/10</td><td>1/10</td><td>2/5</td></tr></tbody>
+              </table>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> このサイコロを1回振ったとき、偶数の目が出る確率を分数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"\\frac{1}{10} + \\frac{1}{10} + \\frac{2}{5} = \\frac{1+1+4}{10} = \\frac{6}{10} = \\frac{3}{5}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> このサイコロを2回振るとき、少なくとも1回偶数の目が出る確率を分数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"1 - \\left(\\frac{2}{5}\\right)^2 = 1 - \\frac{4}{25} = \\frac{21}{25}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> このサイコロを3回振るとき、偶数の目が出た回数をX回とする。Xの値が1となる確率 P(X=1) を分数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> 偶数が出る確率は3/5なので、</p>
+                <p><MathFormula>{"P(X=1) = {}_3C_1 \\left(\\frac{3}{5}\\right)^1 \\left(\\frac{2}{5}\\right)^2 = 3 \\times \\frac{3}{5} \\times \\frac{4}{25} = \\frac{36}{125}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 設問(3)で定めた確率変数Xの平均と分散を分数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> Xは、二項分布 B(3, 3/5) に従うので、</p>
+                <p><MathFormula>{"E[X] = 3 \\times \\frac{3}{5} = \\frac{9}{5}"}</MathFormula></p>
+                <p><MathFormula>{"V[X] = 3 \\times \\frac{3}{5} \\times \\frac{2}{5} = \\frac{18}{25}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(5)</strong> 設問(3)で定めた確率変数Xに対して、Y=5X+2と定める。確率変数Yの平均と分散を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[Y] = 5E[X] + 2 = 5 \\times \\frac{9}{5} + 2 = 11"}</MathFormula></p>
+                <p><MathFormula>{"V[Y] = 5^2 V[X] = 25 \\times \\frac{18}{25} = 18"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(6)</strong> このサイコロを偶数がでるまで振り続けるとする。平均して何回目で偶数が出るか答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"\\frac{1}{3/5} = \\frac{5}{3}"}</MathFormula> 回目</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(7)</strong> サイコロを振り続けて初めての偶数の目が出たとする。このとき、この偶数の目が4以上である確率を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> A：偶数が出る事象、B：4以上が出る事象として、</p>
+                <p><MathFormula>{"P(B|A) = \\frac{P(A \\cap B)}{P(A)} = \\frac{P(\\{4,6\\})}{P(\\{2,4,6\\})} = \\frac{5/10}{3/5} = \\frac{5}{6}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(8)</strong> このサイコロを600回振ったとき、偶数の出た回数をSとする。Sが従う分布を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> 二項分布 <MathFormula>{"B(600, 3/5)"}</MathFormula> に従う</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(9)</strong> 設問(8)で定めた確率変数Sを近似する正規分布に従う確率変数をTとする。また、確率変数Tを標準化（平均0,分散1）した確率変数をZとする。Tを使ってZを表しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"Z = \\frac{T - 360}{12}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(10)</strong> 設問(8)で定めたSを正規分布で近似することにより偶数が出た回数が348回以上になる確率を小数第4位までの小数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> SをTで近似することにより</p>
+                <p><MathFormula>{"P(S \\geq 348) = P(T \\geq 348) = P(Z \\geq -1) = 0.5 + 0.3413 = 0.8413"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問3 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2024-3')}>
+          <span className="problem-title">問3. ポアソン分布・指数分布（各3-5点）</span>
+          <span className="toggle-icon">{openProblems['2024-3'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2024-3'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>M県では、平均すると1月（30日間）の間に60件の人身事故が起きています。ある1日の間にM県で起こる人身事故の件数をX件、人身事故が起こった後、次の人身事故が起こるまでの時間間隔をY時間として次の設問に答えなさい。</p>
+              <p>ただし、<MathFormula>{"e^{-1} = 0.368, e^{-2} = 0.135"}</MathFormula> として計算しなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> Xの平均 E[X] と Yの平均 E[Y] を単位に注意して整数または分数で答えなさい。（3点）</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[X] = 60/30 = 2"}</MathFormula> (件/日)</p>
+                <p><MathFormula>{"E[Y] = 24/2 = 12"}</MathFormula> (時間)</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> XとYはそれぞれ、どのような分布に従うか答えなさい。ただし、分布のパラメータを明示的に示すこと。（3点）</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>Xは <MathFormula>{"Po(2)"}</MathFormula> に従う。</p>
+                <p>Yはパラメータ 1/12 の指数分布に従う。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> M県で人身事故が起こった後、次の人身事故が1日（24時間）以内に起こる確率を答えなさい。ただし、答えは小数第3位を四捨五入して小数第2位までの小数で答えなさい。（5点）</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(Y < 24) = \\int_0^{24} \\frac{1}{12} e^{-\\frac{1}{12}x} dx = 1 - e^{-2} = 1 - 0.135 = 0.865 \\approx 0.87"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問4 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2024-4')}>
+          <span className="problem-title">問4. ベイズの定理（各4点×2問=8点）</span>
+          <span className="toggle-icon">{openProblems['2024-4'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2024-4'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>ある部品を3つの会社（A社、B社、C社）から買い付けている。3つの会社の納品数の割合は、A社：20%、B社：40%、C社：40%であった。それぞれの会社の納品された部品に含まれる不良品の割合は、A社：0.8%、B社：0.4%、C社：0.3%である。</p>
+              <p>部品がA社製、B社製、C社製である事象をそれぞれA, B, Cとし、また、部品が不良品である事象はEとして次の設問に答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 全部の部品が集まったところで、1つ部品を選んだとき、それが不良品である確率を答えなさい。ただし、解答は小数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(E) = P(A)P(E|A) + P(B)P(E|B) + P(C)P(E|C)"}</MathFormula></p>
+                <p><MathFormula>{"= 0.2 \\times 0.008 + 0.4 \\times 0.004 + 0.4 \\times 0.003 = 0.0044"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 全部の部品が集まったところで、1つ部品を選んで検査したところ、不良品であることがわかった。このとき、この不良品がC社製である確率を分数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(C|E) = \\frac{P(C)P(E|C)}{P(E)} = \\frac{0.4 \\times 0.003}{0.0044} = \\frac{0.0012}{0.0044} = \\frac{3}{11}"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問5 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2024-5')}>
+          <span className="problem-title">問5. 分布表の読み取り（各3点×3問=9点）</span>
+          <span className="toggle-icon">{openProblems['2024-5'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2024-5'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p><MathFormula>{"X \\sim N(4,1), Y \\sim \\chi^2_7, Z \\sim t_{10}"}</MathFormula> であるとき次の値を小数で答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> <MathFormula>{"P(3 \\leq X \\leq 5)"}</MathFormula></p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"0.6826"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> <MathFormula>{"P(Y \\leq 16.01)"}</MathFormula></p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"0.975"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> <MathFormula>{"P(-1.093 \\leq Z \\leq 2.228)"}</MathFormula></p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"0.825"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問6 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2024-6')}>
+          <span className="problem-title">問6. 分布の判定（各3点×6問=18点）</span>
+          <span className="toggle-icon">{openProblems['2024-6'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2024-6'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>どのような分布（名称とパラメータ、慣習で使われている記号でも良い）に従うか答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 当選確率が0.00002の宝くじを100枚購入した際、この100枚の宝くじ中に含まれる1等宝くじの本数の分布。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"B(100, 0.00002)"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 1等当選確率が0.00002のスピードくじを当たりがでるまで引き続けた場合、初めて1等を引くまでの回数の分布。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> パラメータが0.00002の幾何分布</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 10分おきにバスが出発するバス停に無作為に到着したときの待ち時間（分）の分布。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> [0,10]上の一様分布</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 50個中に1個当たりが含まれるガムを125個購入した場合、この125個のガム中の当たりの個数を近似する際に用いられるパラメータが1つだけの分布。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"Po(5/2)"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(5)</strong> 平均50分散100の母集団からサンプルサイズ10000のランダムサンプルを抽出した場合の標本平均を近似する正規分布。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> 中心極限定理により <MathFormula>{"N(50, 0.01)"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(6)</strong> 標的の中心を原点とし、その原点を狙って玉を投げる。玉が当たった座標を(X,Y)とする。XとYは独立で正規分布N(0,3)に従うとする。<MathFormula>{"\\frac{X^2}{3} + \\frac{Y^2}{3}"}</MathFormula> が従う分布。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> <MathFormula>{"\\chi^2(2)"}</MathFormula>（自由度2のカイ二乗分布）</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問7 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2024-7')}>
+          <span className="problem-title">問7. 記述問題（各3点×3問=9点）</span>
+          <span className="toggle-icon">{openProblems['2024-7'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2024-7'] && (
+          <div className="problem-content">
+            <div className="sub-problem">
+              <p><strong>(1)</strong> データの標準化は、用途や目的に応じて様々な方法があります。試験の得点を標準化するために考案された偏差値について、どのような基準で定められているのかを簡潔に説明しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> 平均が50、分散が100</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 世論調査や視聴率調査などの標本調査では、ランダムサンプリングが理想的な方法であると考えられています。この手法の設計方針を簡潔に説明しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> 母集団の構成要素が等確率で抽出される</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 最尤推定における「母数推定の考え方」を簡潔に説明しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong> 何らかの確率モデルを仮定した上で実際に起こったことが最も起こりやすくなるように母数（パラメータ）を推定する</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// 2023年過去問コンポーネント
+function PastExam2023() {
+  const [openProblems, setOpenProblems] = useState({});
+  const toggleProblem = (id) => setOpenProblems(prev => ({ ...prev, [id]: !prev[id] }));
+
+  return (
+    <div className="past-exam-content">
+      <h3>2023年 数理情報II 中間試験</h3>
+
+      {/* 問1 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2023-1')}>
+          <span className="problem-title">問1. ベイズの定理（各5点×2問=10点）</span>
+          <span className="toggle-icon">{openProblems['2023-1'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2023-1'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>ある部品を3つの会社（A社、B社、C社）から買い付けている。3つの会社の納品数の割合は、A社：25%、B社：25%、C社：50%であった。それぞれの会社の納品された部品に含まれる不良品の割合は、A社：0.8%、B社：0.4%、C社：0.3%である。</p>
+              <p>部品がA社製、B社製、C社製である事象をそれぞれA, B, Cとし、また、部品が不良品である事象をEとするとき、次の設問に答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 全部の部品が集まったところで、1つ部品を選んだとき、それが不良品である確率を答えなさい。ただし、解答は小数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(E) = P(A)P(E|A) + P(B)P(E|B) + P(C)P(E|C)"}</MathFormula></p>
+                <p><MathFormula>{"= 0.008 \\times 0.25 + 0.004 \\times 0.25 + 0.003 \\times 0.5 = 0.0045"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 全部の部品が集まったところで、1つ部品を選んで検査したところ、不良品であることがわかった。このとき、この不良品がC社製である確率を分数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(C|E) = \\frac{P(C \\cap E)}{P(E)} = \\frac{P(C)P(E|C)}{P(E)}"}</MathFormula></p>
+                <p><MathFormula>{"= \\frac{0.003 \\times 0.5}{0.0045} = \\frac{0.0015}{0.0045} = \\frac{1}{3}"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問2 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2023-2')}>
+          <span className="problem-title">問2. 期待値・分散（各4点×3問=12点）</span>
+          <span className="toggle-icon">{openProblems['2023-2'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2023-2'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>3～6の数字が記されている（正4面体ではない歪な）4面体のサイコロがある。このサイコロを1回振るとき、出た数字を表す確率変数をXとすると、各数字が出る確率は次のようになっている。</p>
+              <table className="data-table">
+                <thead><tr><th>確率変数X</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead>
+                <tbody><tr><td>確率P(X=x)</td><td>0.4</td><td>0.3</td><td>0.2</td><td>0.1</td></tr></tbody>
+              </table>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> E[X] と E[X²] の値を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[X] = 3 \\times 0.4 + 4 \\times 0.3 + 5 \\times 0.2 + 6 \\times 0.1 = 1.2 + 1.2 + 1.0 + 0.6 = 4"}</MathFormula></p>
+                <p><MathFormula>{"E[X^2] = 9 \\times 0.4 + 16 \\times 0.3 + 25 \\times 0.2 + 36 \\times 0.1 = 3.6 + 4.8 + 5.0 + 3.6 = 17"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 確率変数Xの分散 V[X] の値を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"V[X] = E[X^2] - (E[X])^2 = 17 - 4^2 = 1"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 確率変数Zを Z=3X+2 と定めるとき、確率変数Zの平均 E[Z] と分散 V[Z] を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[Z] = 3E[X] + 2 = 12 + 2 = 14"}</MathFormula></p>
+                <p><MathFormula>{"V[Z] = 3^2 V[X] = 9 \\times 1 = 9"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問3 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2023-3')}>
+          <span className="problem-title">問3. 偏差値・標本平均（各5点×2問=10点）</span>
+          <span className="toggle-icon">{openProblems['2023-3'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2023-3'] && (
+          <div className="problem-content">
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 数理情報IIの中間試験を実施したところ、得点の平均は70点、分散は64であった。この試験で、66点だった人の偏差値を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>分散が64なので、標準偏差は8である。よって、得点をXとするとき、偏差値Tは</p>
+                <p><MathFormula>{"T = \\frac{10(X-70)}{8} + 50"}</MathFormula></p>
+                <p>66点の人の偏差値は、<MathFormula>{"\\frac{10(66-70)}{8} + 50 = 45"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> Xは平均100分散2500の母集団確率変数とする。ここから、サイズ100のランダムサンプルを抽出したときの標本平均を<MathFormula>{"\\bar{X}"}</MathFormula>とする。<MathFormula>{"\\bar{X}"}</MathFormula>は近似的にどのような分布に従うか答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[\\bar{X}] = E[X] = 100, \\quad V[\\bar{X}] = V[X]/100 = 25 = 5^2"}</MathFormula></p>
+                <p>また、中心極限定理により、<MathFormula>{"\\bar{X}"}</MathFormula>は正規分布で近似できるので、<MathFormula>{"N(100, 5^2)"}</MathFormula>に従う。</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問4 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2023-4')}>
+          <span className="problem-title">問4. カード問題（各4点×5問=20点）</span>
+          <span className="toggle-icon">{openProblems['2023-4'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2023-4'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>1から10の各数字を1枚ずつ含む10枚のカードについて、次の設問に答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> この10枚のカードから無作為に1枚を選び、その数字を記録したらそのカードを戻すものとする。はじめて5の倍数のカードを引くのがX回目とする。確率変数Xの平均E[X]と分散V[X]を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[X] = \\frac{1}{1/5} = 5, \\quad V[X] = \\frac{1-1/5}{(1/5)^2} = 20"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> この操作を3回繰り返したとき、5の倍数が出た回数をY回とする。確率変数Yの値が2となる確率P(Y=2)を分数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(Y=2) = {}_3C_2 \\left(\\frac{1}{5}\\right)^2 \\left(\\frac{4}{5}\\right)^1 = \\frac{3!}{2!1!} \\times \\frac{1 \\times 1 \\times 4}{5 \\times 5 \\times 5} = \\frac{12}{125}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> この操作を10000回繰り返したとき、5の倍数が出た回数をS回とする。確率変数Sの分布を近似する正規分布を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>Sは<MathFormula>{"B(10000, 1/5)"}</MathFormula>に従うので、<MathFormula>{"E[S] = 2000, V[S] = 1600 = 40^2"}</MathFormula>より</p>
+                <p>正規分布<MathFormula>{"N(2000, 40^2)"}</MathFormula>で近似する。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 設問(3)で求めた「Sの分布を近似する正規分布」に従う確率変数をTとする。確率変数Tを標準化（平均0,分散1）した確率変数をZとする。Tを使ってZを表しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"Z = \\frac{T - 2000}{40}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(5)</strong> 設問(3)で定めたSの分布を正規分布で近似することにより5の倍数が出た回数が1980回以下になる確率を小数第4位までの小数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>SをTで近似することにより</p>
+                <p><MathFormula>{"P(S \\leq 1980) = P(T \\leq 1980) = P(Z \\leq -0.5) = 0.5 - 0.1915 = 0.3085"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問5 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2023-5')}>
+          <span className="problem-title">問5. 記述問題（各5点×2問=10点）</span>
+          <span className="toggle-icon">{openProblems['2023-5'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2023-5'] && (
+          <div className="problem-content">
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 全数調査が困難なため、標本調査により母集団の分布を推定することがあります。統計学上、偏りのない標本を抽出するためには、どの様に標本抽出をすればよいと考えられているのかを簡潔に説明しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>母集団の各要素が等確率で選ばれるように抽出手法を設計すること</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 標本調査による母集団の分布について推定する手法の1つに最尤推定があります。最尤推定における「母数推定の考え方」を簡潔に説明しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>何らかの確率モデルを仮定した上で実際に起こったことが最も起こりやすくなるように母数（パラメータ）を推定する</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問6 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2023-6')}>
+          <span className="problem-title">問6. ポアソン分布（各5点×2問=10点）</span>
+          <span className="toggle-icon">{openProblems['2023-6'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2023-6'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>M大学のメールサーバは、1週間に平均して105通のウイルスメールを受信します。このメールサーバがある日に受信するウイルスメールの件数をX通として次の設問に答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> Xはどのような分布に従うか答えなさい。（分布のパラメータを明示的に示しなさい）</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>事象の件数は、ポアソン分布に従うと考えられる。</p>
+                <p>E[X]=15なのでλ=15である。よって、Xは<MathFormula>{"Po(15)"}</MathFormula>に従う。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> M大学のメールサーバがある日に受信するウイルスメールが2件未満となる確率P(X&lt;2)を求めなさい。ただし、解答は<MathFormula>{"e^{-15}"}</MathFormula>を小数にせず、□×<MathFormula>{"e^{-15}"}</MathFormula>の形で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(X < 2) = P(X=0) + P(X=1) = e^{-15}\\frac{15^0}{0!} + e^{-15}\\frac{15^1}{1!} = e^{-15}(1+15) = 16e^{-15}"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問7 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2023-7')}>
+          <span className="problem-title">問7. 推定量の比較（10点）</span>
+          <span className="toggle-icon">{openProblems['2023-7'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2023-7'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>母集団Xから取り出したサンプルサイズ3のランダムサンプル<MathFormula>{"X_1, X_2, X_3"}</MathFormula>から作った統計量</p>
+              <p><MathFormula>{"K = \\frac{2X_1 - X_2 + X_3}{3}, \\quad L = \\frac{2X_1 + 3X_2 - X_3}{4}, \\quad M = \\frac{4X_1 - X_2 - X_3}{2}"}</MathFormula></p>
+              <p>の内、平均値の推定量として最も良いのはどれか？理由を付けて答えなさい。</p>
+            </div>
+            <div className="answer-box">
+              <p><strong>【解答】</strong></p>
+              <p><MathFormula>{"E[K] = \\frac{2E[X] - E[X] + E[X]}{3} = \\frac{2}{3}E[X]"}</MathFormula></p>
+              <p><MathFormula>{"E[L] = \\frac{2E[X] + 3E[X] - E[X]}{4} = E[X]"}</MathFormula></p>
+              <p><MathFormula>{"E[M] = \\frac{4E[X] - E[X] - E[X]}{2} = E[X]"}</MathFormula></p>
+              <p>よって、LとMが平均値の不偏推定量である。<MathFormula>{"X_1, X_2, X_3"}</MathFormula>は独立であると考えて良いから</p>
+              <p><MathFormula>{"V[L] = \\frac{1}{4}V[X] + \\frac{9}{16}V[X] + \\frac{1}{16}V[X] = \\frac{7}{8}V[X]"}</MathFormula></p>
+              <p><MathFormula>{"V[M] = 4V[X] + \\frac{1}{4}V[X] + \\frac{1}{4}V[X] = \\frac{9}{2}V[X]"}</MathFormula></p>
+              <p>共に不偏推定量であるなら、分散が小さいほうが良い推定量であるから、<MathFormula>{"V[M] > V[L]"}</MathFormula>なので<strong>Lの方が有効である。以上から、Lが最良である。</strong></p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問8 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2023-8')}>
+          <span className="problem-title">問8. 仮説検定（各4点×4問=16点）</span>
+          <span className="toggle-icon">{openProblems['2023-8'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2023-8'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>全国の小学6年生を対象にした学力試験において、得点の全国平均は65点、標準偏差は34点であったとする。学力試験の得点分布は、正規分布に従うと仮定して、次の設問に答えなさい。</p>
+              <p>ある県でこの試験を受験した289人をランダムサンプリングにより抽出し得点を調査したところ、平均は61.2点であった。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1-a)</strong> 全国の小学生の得点分布は、どのような分布に従うか答えなさい。ただし、分布のパラメータを明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>正規分布<MathFormula>{"N(65, 34^2)"}</MathFormula>に従う</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1-b)</strong> 仮説の設定をしなさい。ただし、基準となる数値を明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>この県の小学6年生の学力が、全国平均と比べて高いか低いかを判断する情報はないので両側検定する。</p>
+                <ul>
+                  <li><MathFormula>{"H_0"}</MathFormula>: この県の小学校6年生の平均は65点（学力レベルは全国平均並み）</li>
+                  <li><MathFormula>{"H_1"}</MathFormula>: この県の小学校6年生の平均は65点ではない（学力レベルは全国平均と異なる）</li>
+                </ul>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 標本平均を<MathFormula>{"\\bar{X}"}</MathFormula>とするとき、設問(1-b)で定めた仮説に対して、適切な統計量Zを定めなさい。ただし、統計量は標準化しておくこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>帰無仮説<MathFormula>{"H_0"}</MathFormula>の仮定の下で、289人の標本平均<MathFormula>{"\\bar{X}"}</MathFormula>は、<MathFormula>{"N(65, 2^2)"}</MathFormula>に従う。よって</p>
+                <p><MathFormula>{"Z = \\frac{\\bar{X} - 65}{2}"}</MathFormula></p>
+                <p>とすると、Zは<MathFormula>{"N(0,1)"}</MathFormula>に従う。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 有意水準を5%とするとき、設問(2)で定めた統計量に関する棄却域Rを答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"R = \\{z \\mid |z| \\geq z(0.05) = 1.96\\} = \\{z \\mid z \\leq -1.96, 1.96 \\leq z\\}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 設問(1-b)で定めた仮説に対して、有意水準5%で判定しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>標本から得られた、標本平均の実現値は61.2より</p>
+                <p><MathFormula>{"z = \\frac{61.2 - 65}{2} = -1.9 \\notin R"}</MathFormula></p>
+                <p>よって、<MathFormula>{"H_0"}</MathFormula>が採択され、<MathFormula>{"H_1"}</MathFormula>は棄却される。</p>
+                <p><strong>以上より、学力レベルは全国平均と異なるとは言えないと結論される。</strong></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// 2022年過去問コンポーネント
+function PastExam2022() {
+  const [openProblems, setOpenProblems] = useState({});
+  const toggleProblem = (id) => setOpenProblems(prev => ({ ...prev, [id]: !prev[id] }));
+
+  return (
+    <div className="past-exam-content">
+      <h3>2022年 数理情報II 中間試験</h3>
+
+      {/* 問1 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2022-1')}>
+          <span className="problem-title">問1. 基本計算問題（各5点×6問=30点）</span>
+          <span className="toggle-icon">{openProblems['2022-1'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2022-1'] && (
+          <div className="problem-content">
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 1～10までの数字を書いたカードが1枚ずつある。この10枚のカードから無作為にカードを1枚選び、5が出なければカードを戻して、再び無作為にカードを選ぶ操作を繰り返すものとする。初めて5のカードが選ばれるのは、平均すると何回目になるか答えなさい。また、その分散も答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>平均 = <MathFormula>{"\\frac{1}{1/10} = 10"}</MathFormula>、分散 = <MathFormula>{"\\frac{1-1/10}{(1/10)^2} = 90"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 数理情報IIの中間試験を実施したところ、得点の平均は65点、分散は144であった。この試験で、71点だった人の偏差値を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>分散が144なので、標準偏差は12である。よって、得点をXとするとき、偏差値Tは</p>
+                <p><MathFormula>{"T = \\frac{10(X-65)}{12} + 50"}</MathFormula></p>
+                <p>71点の人の偏差値は、<MathFormula>{"\\frac{10(71-65)}{12} + 50 = 55"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 20個中に当たりが1個の割合で含まれているガムがある。このガムを3個買うとき当たりが出た回数をX回とする。Xの値が2となる確率P(X=2)を分数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(X=2) = {}_3C_2 \\left(\\frac{1}{20}\\right)^2 \\left(\\frac{19}{20}\\right)^1 = \\frac{3!}{2!1!} \\times \\frac{1 \\times 1 \\times 19}{20 \\times 20 \\times 20} = \\frac{57}{8000}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 20個中に当たりが1個の割合で含まれているガムがある。このガムを60個買うとき当たりが出た回数をY回とする。Yの値をポアソン近似するとき、Yの値が4となる確率P(Y=4)を答えなさい。ただし、解答は<MathFormula>{"e^{-3}"}</MathFormula>を小数にせず、分数×<MathFormula>{"e^{-3}"}</MathFormula>の形で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[Y] = 60 \\times \\frac{1}{20} = 3 (< 5)"}</MathFormula>より、YはPo(3)で近似する。よって</p>
+                <p><MathFormula>{"P(Y=4) = e^{-3} \\frac{3^4}{4!} = \\frac{27}{8}e^{-3}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(5)</strong> 20個中に当たりが1個の割合で含まれているガムがある。このガムを7600個買うとき、当たりが出た回数をS回とする。Sの値を近似する正規分布を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>Sは<MathFormula>{"B(7600, 1/20)"}</MathFormula>に従うので、<MathFormula>{"E[S] = 380, V[S] = 361 = 19^2"}</MathFormula>より</p>
+                <p>正規分布<MathFormula>{"N(380, 19^2)"}</MathFormula>で近似する。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(6)</strong> M市では1ヵ月（=30日）の間に平均して250件の交通事故がある。M市で、事故が起こった後、次の事故が起こるまでの時間をT(日)とする。Tはどのような分布に従うか答えなさい。ただし、分布のパラメータを分数で明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>事故の間隔は指数分布に従うと考えられる。1日平均25/3件より、</p>
+                <p>平均すると<MathFormula>{"E[T] = 3/25"}</MathFormula>日間隔で事故が起きているので、</p>
+                <p>Tは、パラメータが<MathFormula>{"25/3"}</MathFormula>の指数分布に従う。</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問2 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2022-2')}>
+          <span className="problem-title">問2. ベイズの定理（各4点×2問=8点）</span>
+          <span className="toggle-icon">{openProblems['2022-2'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2022-2'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>ある部品を3つの会社（A社、B社、C社）から買い付けている。3つの会社の納品数の割合は、A社：20%、B社：30%、C社：50%であった。それぞれの会社の納品された部品に含まれる不良品の割合は、A社：0.8%、B社：0.4%、C社：0.3%である。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 全部の部品が集まったところで、1つ部品を選んだとき、それがA社製の不良品である確率を答えなさい。ただし、解答は小数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(A \\cap E) = P(E|A)P(A) = 0.008 \\times 0.2 = 0.0016"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 全部の部品が集まったところで、1つ部品を選んで検査したところ、不良品であることがわかった。このとき、この不良品がA社製である確率を分数で答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(A|E) = \\frac{P(A \\cap E)}{P(E)} = \\frac{P(A \\cap E)}{P(A \\cap E) + P(B \\cap E) + P(C \\cap E)}"}</MathFormula></p>
+                <p><MathFormula>{"= \\frac{0.008 \\times 0.2}{0.008 \\times 0.2 + 0.004 \\times 0.3 + 0.003 \\times 0.5} = \\frac{0.0016}{0.0016 + 0.0012 + 0.0015} = \\frac{16}{43}"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問3 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2022-3')}>
+          <span className="problem-title">問3. 標本調査・選挙予測（各4点×3問=12点）</span>
+          <span className="toggle-icon">{openProblems['2022-3'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2022-3'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>大学生のA君は、1週間後に迫る大学所在地の県知事選挙の結果を予想するため、自分の通っている大学で、アンケート調査をしてみることにしました。県知事選の結果は、現職のKと元知事のHのいずれかになると考えられていたので、アンケートは「現職のKと元知事のHのどちらを支持するか？」の2択で答えてもらうことにしました。A君は、（合法的に）学生名簿を手に入れ、そこからランダムサンプリングにより、31名を選出しアンケートを実施したところ、K支持者が23名、H支持者が8名でありました。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> A君は、学生名簿からランダムサンプリングにより31名を選びました。このランダムサンプリングとはどのようにアンケートの対象者を選ぶことを意味するのか？本問に即して簡潔に説明しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>学生名簿に載っている各々の学生が等確率で選ばれる様に抽出手法を設計すること</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 県内における現職知事Kの支持率をθとする。A君のアンケート調査の結果から母数θを最尤推定により求めてその値を答えなさい。ただし、導出の過程を示し、解答は分数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>尤度関数<MathFormula>{"L(\\theta) = {}_{31}C_{23} \\theta^{23}(1-\\theta)^8"}</MathFormula>より<MathFormula>{"l(\\theta) = \\log L(\\theta)"}</MathFormula>とおくと、</p>
+                <p><MathFormula>{"l'(\\theta) = \\frac{23-31\\theta}{\\theta(1-\\theta)}"}</MathFormula></p>
+                <p>よって、<MathFormula>{"l(\\theta)"}</MathFormula>は、<MathFormula>{"\\theta = \\frac{23}{31}"}</MathFormula>で最大値をとる。以上から、θの最尤推定値は<MathFormula>{"\\frac{23}{31}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> A君のアンケート結果から、県知事選の結果についてどのような予想ができるか答えなさい。また、予想が出来ない場合は、その理由を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>アンケートは、県内の有権者を対象にしてランダムサンプリングされるべきである。サンプリングが偏っているため、このアンケート結果から予想はできない。</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問4 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2022-4')}>
+          <span className="problem-title">問4. 標本平均（各5点×3問=15点）</span>
+          <span className="toggle-icon">{openProblems['2022-4'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2022-4'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>Xは正規分布N(9,16)に従う母集団確率変数とする。母集団確率変数Xから抽出したサイズ400のランダムサンプルの標本平均を<MathFormula>{"\\bar{X}"}</MathFormula>とするとき、次の設問に答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 標本平均<MathFormula>{"\\bar{X}"}</MathFormula>はどのような分布に従うか答えなさい。ただし、分布のパラメータを明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"N(9, (1/5)^2)"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 標本平均<MathFormula>{"\\bar{X}"}</MathFormula>を正規化（平均0, 分散1）した確率変数をZとする。<MathFormula>{"\\bar{X}"}</MathFormula>を使ってZを表しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"Z = \\frac{\\bar{X} - 9}{1/5} = 5\\bar{X} - 45"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 確率<MathFormula>{"P(\\bar{X} \\leq 9.2)"}</MathFormula>の値を標準正規分布表を利用して答えなさい。ただし、解答は小数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"\\bar{X} \\leq 9.2 \\Leftrightarrow Z = 5\\bar{X} - 45 \\leq 1"}</MathFormula>なので、Zが標準正規分布に従うことから</p>
+                <p><MathFormula>{"P(\\bar{X} \\leq 9.2) = P(Z \\leq 1) = 0.5 + P(0 \\leq Z \\leq 1) = 0.5 + 0.3413 = 0.8413"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問5 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2022-5')}>
+          <span className="problem-title">問5. カイ二乗分布（10点）</span>
+          <span className="toggle-icon">{openProblems['2022-5'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2022-5'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>標的の中心を原点とし、その原点を狙って玉を投げる。玉が当たった座標を(X,Y)とする。XとYは独立で正規分布N(0,5)に従うとする。玉が原点を中心とした半径<MathFormula>{"\\sqrt{53}"}</MathFormula>の円の中に入る確率を答えなさい。</p>
+            </div>
+            <div className="answer-box">
+              <p><strong>【解答】</strong></p>
+              <p><MathFormula>{"P\\left(X^2 + Y^2 \\leq (\\sqrt{53})^2\\right) = P\\left(\\left(\\frac{X}{\\sqrt{5}}\\right)^2 + \\left(\\frac{Y}{\\sqrt{5}}\\right)^2 \\leq 10.6\\right)"}</MathFormula></p>
+              <p><MathFormula>{"\\left(\\frac{X}{\\sqrt{5}}\\right)^2 + \\left(\\frac{Y}{\\sqrt{5}}\\right)^2"}</MathFormula>は<MathFormula>{"\\chi^2(2)"}</MathFormula>に従うので、カイ2乗分布表により、</p>
+              <p><MathFormula>{"P\\left(X^2 + Y^2 \\leq (\\sqrt{53})^2\\right) = 1 - 0.005 = 0.995"}</MathFormula></p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問6 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2022-6')}>
+          <span className="problem-title">問6. 推定量の比較（10点）</span>
+          <span className="toggle-icon">{openProblems['2022-6'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2022-6'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>母集団Xから取り出したサンプルサイズ3のランダムサンプル<MathFormula>{"X_1, X_2, X_3"}</MathFormula>から作った統計量</p>
+              <p><MathFormula>{"K = \\frac{2X_1 - X_2 + X_3}{2}, \\quad L = \\frac{2X_1 - X_2 + 2X_3}{4}, \\quad M = \\frac{X_1 - X_2 + 3X_3}{3}"}</MathFormula></p>
+              <p>の内、平均値の推定量として最も良いのはどれか？理由を付けて答えなさい。</p>
+            </div>
+            <div className="answer-box">
+              <p><strong>【解答】</strong></p>
+              <p><MathFormula>{"E[K] = \\frac{2E[X] - E[X] + E[X]}{2} = E[X]"}</MathFormula></p>
+              <p><MathFormula>{"E[L] = \\frac{2E[X] - E[X] + 2E[X]}{4} = \\frac{3}{4}E[X]"}</MathFormula></p>
+              <p><MathFormula>{"E[M] = \\frac{E[X] - E[X] + 3E[X]}{3} = E[X]"}</MathFormula></p>
+              <p>よって、KとMが平均値の不偏推定量である。</p>
+              <p><MathFormula>{"V[K] = V[X_1] + \\frac{1}{4}V[X_2] + \\frac{1}{4}V[X_3] = \\frac{3}{2}V[X]"}</MathFormula></p>
+              <p><MathFormula>{"V[M] = \\frac{1}{9}V[X_1] + \\frac{1}{9}V[X_2] + V[X_3] = \\frac{11}{9}V[X]"}</MathFormula></p>
+              <p>共に不偏推定量であるなら、分散が小さいほうが良い推定量であるから、<MathFormula>{"V[K] > V[M]"}</MathFormula>なので<strong>Mの方が有効である。以上から、Mが最良である。</strong></p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問7 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2022-7')}>
+          <span className="problem-title">問7. 仮説検定（各3点×4問=12点）</span>
+          <span className="toggle-icon">{openProblems['2022-7'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2022-7'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>全国の小学6年生を対象にした学力試験において、得点の全国平均は62点で、標準偏差は16点であったとする。学力試験の得点分布は、正規分布に従うと仮定して、次の設問に答えなさい。</p>
+              <p>ある県でこの試験を受験した256人をランダムサンプリングにより抽出し得点を調査したところ、平均は60.1点であった。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1-a)</strong> 全国の小学生の得点分布は、どのような分布に従うか答えなさい。ただし、分布のパラメータを明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>正規分布<MathFormula>{"N(62, 16^2)"}</MathFormula>に従う</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1-b)</strong> 仮説の設定をしなさい。ただし、基準となる数値を明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>この県の小学6年生の学力が、全国平均と比べて高いか低いかを判断する情報はないので両側検定する。</p>
+                <ul>
+                  <li><MathFormula>{"H_0"}</MathFormula>: この県の小学校6年生の平均は62点（学力レベルは全国平均並み）</li>
+                  <li><MathFormula>{"H_1"}</MathFormula>: この県の小学校6年生の平均は62点ではない（学力レベルは全国平均と異なる）</li>
+                </ul>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 標本平均を<MathFormula>{"\\bar{X}"}</MathFormula>とするとき、設問(1-b)で定めた仮説に対して、適切な統計量Zを定めなさい。ただし、統計量は正規化しておくこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>帰無仮説<MathFormula>{"H_0"}</MathFormula>の仮定の下で、256人の標本平均<MathFormula>{"\\bar{X}"}</MathFormula>は、<MathFormula>{"N(62, 1^2)"}</MathFormula>に従う。よって</p>
+                <p><MathFormula>{"Z = \\bar{X} - 62"}</MathFormula></p>
+                <p>とすると、Zは<MathFormula>{"N(0,1)"}</MathFormula>に従う。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 有意水準を5%とするとき、設問(2)で定めた統計量に関する棄却域Rを答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"R = \\{z \\mid |z| \\geq z(0.05) = 1.96\\} = \\{z \\mid z \\leq -1.96, 1.96 \\leq z\\}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 設問(1-b)で定めた仮説に対して、有意水準5%で判定しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>標本から得られた、標本平均の実現値は60.1より</p>
+                <p><MathFormula>{"z = 60.1 - 62 = -1.9 \\notin R"}</MathFormula></p>
+                <p>よって、<MathFormula>{"H_0"}</MathFormula>が採択され、<MathFormula>{"H_1"}</MathFormula>は棄却される。</p>
+                <p><strong>以上より、学力レベルは全国平均と異なるとは言えないと結論される。</strong></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// 2021年過去問コンポーネント
+function PastExam2021() {
+  const [openProblems, setOpenProblems] = useState({});
+  const toggleProblem = (id) => setOpenProblems(prev => ({ ...prev, [id]: !prev[id] }));
+
+  return (
+    <div className="past-exam-content">
+      <h3>2021年 数理情報II 中間試験</h3>
+
+      {/* 問1 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2021-1')}>
+          <span className="problem-title">問1. 基本計算問題（各5点×6問=30点）</span>
+          <span className="toggle-icon">{openProblems['2021-1'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2021-1'] && (
+          <div className="problem-content">
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 偏りがないサイコロを無作為に振るとき、はじめて3の倍数がでるのは、平均すると何回目になるか答えなさい。また、その分散も答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[X] = \\frac{1}{1/3} = 3"}</MathFormula>、<MathFormula>{"V[X] = \\frac{1-1/3}{(1/3)^2} = 6"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 数理情報IIの中間試験を実施したところ、得点の平均は68.5点、分散は121であった。この試験で、85点だった人の偏差値を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>分散が121なので、標準偏差は11である。よって、得点をXとするとき、偏差値Tは</p>
+                <p><MathFormula>{"T = \\frac{10(X-68.5)}{11} + 50"}</MathFormula></p>
+                <p>85点の人の偏差値は、<MathFormula>{"\\frac{10(85-68.5)}{11} + 50 = 65"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 30個中に当たりが1個の割合で含まれているガムがある。このガムを3個買うとき当たりが出た回数をX回とする。Xの値が2となる確率P(X=2)を分数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"P(X=2) = {}_3C_2 \\left(\\frac{1}{30}\\right)^2 \\left(\\frac{29}{30}\\right)^1 = \\frac{3!}{2!1!} \\times \\frac{1 \\times 1 \\times 29}{30 \\times 30 \\times 30} = \\frac{29}{9000}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 30個中に当たりが1個の割合で含まれているガムがある。このガムを120個買うとき当たりが出た回数をY回とする。Yの値をポアソン近似するとき、Yの値が5となる確率P(Y=5)を答えなさい。ただし、解答は<MathFormula>{"e^{-4}"}</MathFormula>を小数にせず、分数×<MathFormula>{"e^{-4}"}</MathFormula>の形で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"E[Y] = 120 \\times \\frac{1}{30} = 4 (< 5)"}</MathFormula>より、YはPo(4)で近似する。よって</p>
+                <p><MathFormula>{"P(Y=5) = e^{-4} \\frac{4^5}{5!} = \\frac{128}{15}e^{-4}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(5)</strong> 30個中に当たりが1個の割合で含まれているガムがある。このガムを26100個買うとき当たりが出た回数をS回とする。Sの値を近似する正規分布を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>Sは<MathFormula>{"B(26100, 1/30)"}</MathFormula>に従うので、<MathFormula>{"E[S] = 870, V[S] = 29^2"}</MathFormula>より</p>
+                <p>正規分布<MathFormula>{"N(870, 29^2)"}</MathFormula>で近似する。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(6)</strong> M市では1ヵ月（30日）の間に平均して105件の交通事故がある。M市で、事故が起こった後、次の事故が起こるまでの時間をT(時間)とする。Tはどのような分布に従うか答えなさい。ただし、分布のパラメータを分数で明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>事故の間隔は指数分布に従うと考えられる。1日平均3.5件より、</p>
+                <p>平均すると<MathFormula>{"E[T] = 24/3.5 = 48/7"}</MathFormula>時間間隔で事故が起きているので、</p>
+                <p>Tは、パラメータが<MathFormula>{"7/48"}</MathFormula>の指数分布に従う。</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問2 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2021-2')}>
+          <span className="problem-title">問2. ベイズの定理（各5点×2問=10点）</span>
+          <span className="toggle-icon">{openProblems['2021-2'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2021-2'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>ある部品を3つの会社（A社、B社、C社）から買い付けている。3つの会社の納品数の割合は、A社：20%、B社：30%、C社：50%であった。それぞれの会社の納品された部品に含まれる不良品の割合は、A社：0.8%、B社：0.4%、C社：0.3%である。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 条件付き確率 P(E|A), P(E|B), P(E|C) の値を答えなさい。ただし、解答は小数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>P(E|A) = 0.008, P(E|B) = 0.004, P(E|C) = 0.003</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 全部の部品が集まったところで、1つ部品を選んで検査したところ、不良品であることがわかった。この部品が、A社製ではない確率（=B社製またはC社製）を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>P(E) = P(A∩E) + P(B∩E) + P(C∩E)</p>
+                <p>= P(A)P(E|A) + P(B)P(E|B) + P(C)P(E|C)</p>
+                <p>= 0.2×0.008 + 0.3×0.004 + 0.5×0.003 = 0.0016 + 0.0012 + 0.0015 = 0.0043</p>
+                <p><MathFormula>{"P(A|E) = \\frac{P(A \\cap E)}{P(E)} = \\frac{0.0016}{0.0043} = \\frac{16}{43}"}</MathFormula></p>
+                <p><MathFormula>{"1 - \\frac{16}{43} = \\frac{27}{43} \\approx 0.628"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問3 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2021-3')}>
+          <span className="problem-title">問3. 標本平均の分布（各5点×3問=15点）</span>
+          <span className="toggle-icon">{openProblems['2021-3'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2021-3'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>Xは正規分布N(12,25)に従う母集団確率変数とする。母集団確率変数Xから抽出したサイズ10000のランダムサンプルの標本平均を<MathFormula>{"\\bar{X}"}</MathFormula>とするとき、次の設問に答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 標本平均<MathFormula>{"\\bar{X}"}</MathFormula>はどのような分布に従うか答えなさい。ただし、分布のパラメータを明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"N(12, (1/20)^2)"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 標本平均<MathFormula>{"\\bar{X}"}</MathFormula>を正規化（平均0, 分散1）した確率変数をZとする。<MathFormula>{"\\bar{X}"}</MathFormula>を使ってZを表しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"Z = \\frac{\\bar{X} - 12}{1/20} = 20\\bar{X} - 240"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 確率<MathFormula>{"P(\\bar{X} \\geq 12.05)"}</MathFormula>の値を標準正規分布表を利用して答えなさい。ただし、解答は小数で答えよ。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"\\bar{X} \\geq 12.05 \\Leftrightarrow Z = 20\\bar{X} - 240 \\geq 1"}</MathFormula>なので、Zが標準正規分布に従うことから</p>
+                <p><MathFormula>{"P(\\bar{X} \\geq 12.05) = P(Z \\geq 1) = 0.5 - P(0 \\leq Z \\leq 1) = 0.5 - 0.3413 = 0.1587"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問4 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2021-4')}>
+          <span className="problem-title">問4. 標本調査・最尤推定（各5点×2問=10点）</span>
+          <span className="toggle-icon">{openProblems['2021-4'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2021-4'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>様々な難易度の問題を含む多数の問題で構成された問題群がある。M君はこの問題群中の「自分が解ける問題の割合」を知りたいと思った。そこで、この問題群から31問を選び、解いてみたところ23問を解くことが出来たとして、次の設問に答えなさい。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1)</strong> 母集団となっている問題群から選んだ31問の難易度が母集団の難易度の分布に一致するようにするためにはどのように問題を抽出すれば良いか？その抽出手法の名称を答えなさい。また、そのような抽出を実現するためのアルゴリズムは、どのように設計すれば良いのかを本問に即して簡潔に答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>ランダムサンプリング（無作為標本抽出）</p>
+                <p>問題群を構成している各々の問題が等確率で選ばれる様に抽出手法を設計する</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 問題群には沢山の問題が含まれており、標本として抽出された問題の難易度は、母集団である問題群の問題の難易度に従っていると仮定する。このとき、M君が解ける問題の割合θの推定値を最尤推定により求めてθの値を答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>尤度関数<MathFormula>{"L(\\theta) = {}_{31}C_{23} \\theta^{23}(1-\\theta)^8"}</MathFormula>より<MathFormula>{"l(\\theta) = \\log L(\\theta)"}</MathFormula>とおくと、</p>
+                <p><MathFormula>{"l'(\\theta) = \\frac{23-31\\theta}{\\theta(1-\\theta)}"}</MathFormula></p>
+                <p>よって、<MathFormula>{"l(\\theta)"}</MathFormula>は、<MathFormula>{"\\theta = \\frac{23}{31}"}</MathFormula>で最大値をとる。以上から、θの最尤推定値は<MathFormula>{"\\frac{23}{31}"}</MathFormula></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問5 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2021-5')}>
+          <span className="problem-title">問5. カイ二乗分布（10点）</span>
+          <span className="toggle-icon">{openProblems['2021-5'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2021-5'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>標的の中心を原点とし、その原点を狙って玉を投げる。玉が当たった座標を(X,Y)とする。XとYは独立で正規分布N(0,5)に従うとする。玉が原点を中心とした半径<MathFormula>{"\\sqrt{36.9}"}</MathFormula>の円の中に入る確率を答えなさい。</p>
+            </div>
+            <div className="answer-box">
+              <p><strong>【解答】</strong></p>
+              <p><MathFormula>{"P\\left(X^2 + Y^2 \\leq (\\sqrt{36.9})^2\\right) = P\\left(\\left(\\frac{X}{\\sqrt{5}}\\right)^2 + \\left(\\frac{Y}{\\sqrt{5}}\\right)^2 \\leq 7.38\\right)"}</MathFormula></p>
+              <p><MathFormula>{"\\left(\\frac{X}{\\sqrt{5}}\\right)^2 + \\left(\\frac{Y}{\\sqrt{5}}\\right)^2"}</MathFormula>は<MathFormula>{"\\chi^2(2)"}</MathFormula>に従うので、カイ2乗分布表により、</p>
+              <p><MathFormula>{"P\\left(X^2 + Y^2 \\leq (\\sqrt{36.9})^2\\right) = 1 - 0.025 = 0.975"}</MathFormula></p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問6 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2021-6')}>
+          <span className="problem-title">問6. 区間推定（10点）</span>
+          <span className="toggle-icon">{openProblems['2021-6'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2021-6'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>学力調査のために無作為に10000人を選んでテストを行ったところ、平均点は65点であった。母分散を100(点²)とするとき、母平均の95%信頼区間を答えなさい。ただし、解答は小数で答えよ。</p>
+            </div>
+            <div className="answer-box">
+              <p><strong>【解答】</strong></p>
+              <p><MathFormula>{"n = 10000, \\bar{X} = 65, \\sigma^2 = 100, z(0.05) = 1.96"}</MathFormula>より</p>
+              <p><MathFormula>{"z(0.05) \\sqrt{\\frac{\\sigma^2}{n}} = 1.96 \\times \\sqrt{\\frac{100}{10000}} = 1.96 \\times \\frac{1}{10} = 0.196"}</MathFormula></p>
+              <p>よって、95%信頼区間は、</p>
+              <p><MathFormula>{"\\left[65 - 1.96 \\times \\sqrt{\\frac{100}{10000}}, 65 + 1.96 \\times \\sqrt{\\frac{100}{10000}}\\right] = [65 - 0.196, 65 + 0.196] = [64.804, 65.196]"}</MathFormula></p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 問7 */}
+      <div className="exam-problem">
+        <div className="problem-header" onClick={() => toggleProblem('2021-7')}>
+          <span className="problem-title">問7. 仮説検定（各3点×4問=12点）</span>
+          <span className="toggle-icon">{openProblems['2021-7'] ? '▼' : '▶'}</span>
+        </div>
+        {openProblems['2021-7'] && (
+          <div className="problem-content">
+            <div className="problem-text">
+              <p>全国の小学6年生を対象にした学力試験において、得点の全国平均は48点で、標準偏差は20点であったとして、次の設問に答えなさい。</p>
+              <p>ある県でこれを受験した400人を無作為に抽出し得点を調査したところ、平均は46.1点であった。</p>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1-a)</strong> 全国の小学生の得点分布は、どのような分布に従うか答えなさい。ただし、分布のパラメータを明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>正規分布<MathFormula>{"N(48, 20^2)"}</MathFormula>に従う</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(1-b)</strong> 仮説の設定をしなさい。ただし、基準となる数値を明示的に示すこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>この県の小学6年生の学力が、全国平均と比べて高いか低いかを判断する情報はないので両側検定する。</p>
+                <ul>
+                  <li><MathFormula>{"H_0"}</MathFormula>: この県の小学校6年生の平均は48点（学力レベルは全国平均並み）</li>
+                  <li><MathFormula>{"H_1"}</MathFormula>: この県の小学校6年生の平均は48点ではない（学力レベルは全国平均と異なる）</li>
+                </ul>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(2)</strong> 設問(1-b)で定めた仮説に対して、適切な統計量を定めなさい。ただし、統計量は正規化しておくこと。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>帰無仮説<MathFormula>{"H_0"}</MathFormula>の仮定の下で、400人の標本平均<MathFormula>{"\\bar{X}"}</MathFormula>は、<MathFormula>{"N(48, 1^2)"}</MathFormula>に従う。よって</p>
+                <p><MathFormula>{"Z = \\bar{X} - 48"}</MathFormula></p>
+                <p>とすると、Zは<MathFormula>{"N(0,1)"}</MathFormula>に従う。</p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(3)</strong> 有意水準を5%とするとき、設問(2)で定めた統計量に関する棄却域Rを答えなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p><MathFormula>{"R = \\{z \\mid |z| \\geq z(0.05) = 1.96\\} = \\{z \\mid z \\leq -1.96, 1.96 \\leq z\\}"}</MathFormula></p>
+              </div>
+            </div>
+            <div className="sub-problem">
+              <p><strong>(4)</strong> 設問(1-b)で定めた仮説に対して、有意水準5%で判定しなさい。</p>
+              <div className="answer-box">
+                <p><strong>【解答】</strong></p>
+                <p>標本から得られた、標本平均の実現値は46.1より</p>
+                <p><MathFormula>{"z = 46.1 - 48 = -1.9 \\notin R"}</MathFormula></p>
+                <p>よって、<MathFormula>{"H_0"}</MathFormula>が採択され、<MathFormula>{"H_1"}</MathFormula>は棄却される。</p>
+                <p><strong>以上より、学力レベルは全国平均と異なるとは言えないと結論される。</strong></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // 過去問対策タブ（教科書書き込み用カンペ形式）
 function ExamTab() {
   const [activeTab, setActiveTab] = useState(() => {
@@ -1635,11 +2849,23 @@ function ExamTab() {
     } catch { return 'template'; }
   });
 
+  const [selectedYear, setSelectedYear] = useState(() => {
+    try {
+      return localStorage.getItem('stats-exam-year') || '2024';
+    } catch { return '2024'; }
+  });
+
   useEffect(() => {
     try {
       localStorage.setItem('stats-exam-tab', activeTab);
     } catch {}
   }, [activeTab]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('stats-exam-year', selectedYear);
+    } catch {}
+  }, [selectedYear]);
 
   return (
     <div className="exam-tab">
@@ -1657,6 +2883,9 @@ function ExamTab() {
         </button>
         <button className={activeTab === 'example' ? 'active' : ''} onClick={() => setActiveTab('example')}>
           📘 例題付き解説
+        </button>
+        <button className={activeTab === 'pastexam' ? 'active' : ''} onClick={() => setActiveTab('pastexam')}>
+          📝 過去問演習
         </button>
       </div>
 
@@ -2132,13 +3361,51 @@ function ExamTab() {
         </div>
       )}
 
+      {activeTab === 'pastexam' && (
+        <div className="cheatsheet-content">
+          <div className="info-box" style={{ marginBottom: '20px' }}>
+            2021年〜2024年の中間試験過去問を年度別に整理しています。問題を解いてから解答を確認しましょう。
+          </div>
+
+          {/* 年度選択 */}
+          <div className="sub-tabs" style={{ justifyContent: 'center', marginBottom: '20px' }}>
+            <button className={selectedYear === '2024' ? 'active' : ''} onClick={() => setSelectedYear('2024')}>
+              2024年
+            </button>
+            <button className={selectedYear === '2023' ? 'active' : ''} onClick={() => setSelectedYear('2023')}>
+              2023年
+            </button>
+            <button className={selectedYear === '2022' ? 'active' : ''} onClick={() => setSelectedYear('2022')}>
+              2022年
+            </button>
+            <button className={selectedYear === '2021' ? 'active' : ''} onClick={() => setSelectedYear('2021')}>
+              2021年
+            </button>
+          </div>
+
+          {/* 2024年の過去問 */}
+          {selectedYear === '2024' && <PastExam2024 />}
+
+          {/* 2023年の過去問 */}
+          {selectedYear === '2023' && <PastExam2023 />}
+
+          {/* 2022年の過去問 */}
+          {selectedYear === '2022' && <PastExam2022 />}
+
+          {/* 2021年の過去問 */}
+          {selectedYear === '2021' && <PastExam2021 />}
+        </div>
+      )}
+
       {/* 合格のポイント */}
-      <div className="cheat-section" style={{ marginTop: '20px', borderLeft: '4px solid var(--success-color)', background: 'var(--success-light)' }}>
-        <p style={{margin: 0, lineHeight: '1.8'}}>
-          スペース1〜8を教科書に書き込んでおけば、過去4年分の試験範囲をほぼ100%カバーできます。<br/>
-          あとは試験開始の合図とともに、<strong>問題文の数字をこの「書き込んだ式」に当てはめて計算するだけ</strong>です。<strong>健闘を祈ります！</strong>
-        </p>
-      </div>
+      {activeTab !== 'pastexam' && (
+        <div className="cheat-section" style={{ marginTop: '20px', borderLeft: '4px solid var(--success-color)', background: 'var(--success-light)' }}>
+          <p style={{margin: 0, lineHeight: '1.8'}}>
+            スペース1〜8を教科書に書き込んでおけば、過去4年分の試験範囲をほぼ100%カバーできます。<br/>
+            あとは試験開始の合図とともに、<strong>問題文の数字をこの「書き込んだ式」に当てはめて計算するだけ</strong>です。<strong>健闘を祈ります！</strong>
+          </p>
+        </div>
+      )}
     </div>
   );
 }
@@ -4628,6 +5895,148 @@ function App() {
           }
         }
 
+        /* Past Exam Styles */
+        .past-exam-content {
+          padding: 10px 0;
+        }
+
+        .past-exam-content h3 {
+          text-align: center;
+          color: var(--text-accent);
+          font-size: 1.4rem;
+          margin-bottom: 20px;
+          padding-bottom: 10px;
+          border-bottom: 2px solid var(--accent-color);
+        }
+
+        .year-selector {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          margin-bottom: 25px;
+          flex-wrap: wrap;
+        }
+
+        .year-btn {
+          padding: 10px 24px;
+          border: 2px solid var(--border-color);
+          border-radius: 25px;
+          background: var(--bg-card);
+          color: var(--text-secondary);
+          font-family: inherit;
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .year-btn:hover {
+          border-color: var(--accent-color);
+          color: var(--accent-color);
+        }
+
+        .year-btn.active {
+          background: var(--accent-color);
+          border-color: var(--accent-color);
+          color: white;
+        }
+
+        .exam-problem {
+          background: var(--bg-card);
+          border-radius: 14px;
+          margin-bottom: 15px;
+          border: 1px solid var(--border-color);
+          box-shadow: 0 2px 8px var(--shadow-color);
+          overflow: hidden;
+        }
+
+        .exam-problem .problem-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 18px 20px;
+          cursor: pointer;
+          background: var(--bg-secondary);
+          transition: background 0.3s;
+          margin-bottom: 0;
+        }
+
+        .exam-problem .problem-header:hover {
+          background: var(--bg-tertiary);
+        }
+
+        .problem-title {
+          font-weight: 600;
+          color: var(--text-primary);
+          font-size: 1rem;
+        }
+
+        .toggle-icon {
+          color: var(--accent-color);
+          font-size: 0.9rem;
+          transition: transform 0.3s;
+        }
+
+        .exam-problem .problem-content {
+          padding: 20px;
+          border-top: 1px solid var(--border-color);
+          line-height: 1.8;
+        }
+
+        .problem-text {
+          color: var(--text-primary);
+          font-size: 0.95rem;
+          margin-bottom: 15px;
+        }
+
+        .sub-problem {
+          background: var(--bg-secondary);
+          border-radius: 10px;
+          padding: 15px;
+          margin: 12px 0;
+          border-left: 3px solid var(--accent-color);
+        }
+
+        .sub-problem p {
+          margin: 8px 0;
+        }
+
+        .exam-problem .answer-box {
+          margin-top: 10px;
+          padding: 12px 15px;
+          background: var(--success-light);
+          border-radius: 8px;
+          font-family: 'JetBrains Mono', monospace;
+          color: var(--text-success);
+          font-size: 0.9rem;
+        }
+
+        .data-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 15px 0;
+          background: var(--bg-card);
+          border-radius: 8px;
+          overflow: hidden;
+        }
+
+        .data-table th,
+        .data-table td {
+          padding: 10px 15px;
+          text-align: center;
+          border: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+          background: var(--accent-color);
+          color: white;
+          font-weight: 600;
+        }
+
+        .data-table td {
+          background: var(--bg-secondary);
+        }
+
         @media (max-width: 768px) {
           /* ヘッダー調整 */
           .header {
@@ -4695,6 +6104,32 @@ function App() {
           /* フッター */
           .footer {
             padding: 20px 15px;
+          }
+
+          /* 過去問タブ調整 */
+          .year-selector {
+            gap: 8px;
+          }
+          .year-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+          }
+          .exam-problem .problem-header {
+            padding: 15px;
+          }
+          .problem-title {
+            font-size: 0.9rem;
+          }
+          .exam-problem .problem-content {
+            padding: 15px;
+          }
+          .sub-problem {
+            padding: 12px;
+          }
+          .data-table th,
+          .data-table td {
+            padding: 8px 10px;
+            font-size: 0.85rem;
           }
         }
       `}</style>
