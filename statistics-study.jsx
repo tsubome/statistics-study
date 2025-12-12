@@ -1637,35 +1637,17 @@ const examData = {
         title: '例題：仮説検定（全国平均との比較）',
         problem: '全国の平均点が 66点、標準偏差が 36点 の試験がある。ある県の 144人 を調査したら、平均 60.6点 だった。全国と学力差はあるか？（有意水準5%）',
         solution: [
-          {
-            step: '1. 仮説の設定',
-            content: '$H_0$: $\\mu = 66$ （全国と同じ）\n$H_1$: $\\mu \\neq 66$ （全国と異なる）'
-          },
-          {
-            step: '2. 統計量 Z の計算',
-            content: '公式: $Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}$\n代入: $Z = \\frac{60.6 - 66}{36 / \\sqrt{144}} = \\frac{-5.4}{36/12} = \\frac{-5.4}{3} = -1.8$'
-          },
-          {
-            step: '3. 判定（棄却域 R）',
-            content: '基準: 有意水準5%なら $|Z| \\ge 1.96$ なら棄却\n結論: 今回は $|-1.8| < 1.96$ なので 棄却されない（採択）\n文言: 「よって、$H_0$が採択される。学力レベルは全国平均と異なるとは言えない。」'
-          }
+          { step: '1. 仮説の設定', lines: ['H₀: μ = 66 （全国と同じ）', 'H₁: μ ≠ 66 （全国と異なる）'] },
+          { step: '2. 統計量 Z の計算', lines: ['公式: Z = (X̄ - μ) / (σ / √n)', '代入: Z = (60.6 - 66) / (36 / √144) = -5.4 / 3 = -1.8'] },
+          { step: '3. 判定（棄却域 R）', lines: ['基準: 有意水準5%なら |Z| ≥ 1.96 なら棄却', '結論: |-1.8| < 1.96 なので 棄却されない（採択）', '文言: 「H₀が採択される。学力レベルは全国平均と異なるとは言えない。」'] }
         ]
       },
       template: {
         title: '仮説検定のテンプレート',
         steps: [
-          {
-            step: '1. 仮説の設定',
-            content: '$H_0$: $\\mu = [全国平均の数値]$ （差がない）\n$H_1$: $\\mu \\neq [全国平均の数値]$ （差がある）'
-          },
-          {
-            step: '2. 統計量 Z の計算',
-            content: '$Z = \\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}$\n・$\\bar{X}$: 今回の平均点\n・$\\mu$: 全国の平均点\n・$\\sigma$: 全国の標準偏差（分散ならルートする！）\n・$n$: 人数'
-          },
-          {
-            step: '3. 判定（有意水準5%）',
-            content: '棄却域: $|Z| \\ge 1.96$ （つまり 1.96 以上 または -1.96 以下）\n結論:\n・範囲に入った → 「棄却される（差があると言える）」\n・入らなかった → 「棄却されない（差があるとは言えない）」'
-          }
+          { step: '1. 仮説の設定', lines: ['H₀: μ = [全国平均の数値] （差がない）', 'H₁: μ ≠ [全国平均の数値] （差がある）'] },
+          { step: '2. 統計量 Z の計算', lines: ['Z = (X̄ - μ) / (σ / √n)', '・X̄: 今回の平均点', '・μ: 全国の平均点', '・σ: 全国の標準偏差（分散ならルートする！）', '・n: 人数'] },
+          { step: '3. 判定（有意水準5%）', lines: ['棄却域: |Z| ≥ 1.96', '・範囲に入った → 「棄却される（差があると言える）」', '・入らなかった → 「棄却されない（差があるとは言えない）」'] }
         ]
       }
     },
@@ -1678,35 +1660,17 @@ const examData = {
         title: '例題：ベイズの定理（原因の確率）',
         problem: 'シェアは A社20%, B社30%, C社50%。不良品率は A:0.8%, B:0.4%, C:0.3%。\n(1) 不良品である確率は？ (2) 不良品のとき、それがA社製である確率は？',
         solution: [
-          {
-            step: '手順1：以下の3つを計算して並べる',
-            content: '(A) = 0.2 × 0.008 = 0.0016\n(B) = 0.3 × 0.004 = 0.0012\n(C) = 0.5 × 0.003 = 0.0015'
-          },
-          {
-            step: '手順2：問1「不良品である確率は？」',
-            content: '答え = (A) + (B) + (C) = 0.0016 + 0.0012 + 0.0015 = 0.0043'
-          },
-          {
-            step: '手順3：問2「不良品だった時、A社である確率は？」',
-            content: '答え = $\\frac{(A)}{(A)+(B)+(C)} = \\frac{0.0016}{0.0043} = \\frac{16}{43}$'
-          }
+          { step: '手順1：以下の3つを計算して並べる', lines: ['(A) = 0.2 × 0.008 = 0.0016', '(B) = 0.3 × 0.004 = 0.0012', '(C) = 0.5 × 0.003 = 0.0015'] },
+          { step: '手順2：問1「不良品である確率は？」', lines: ['答え = (A) + (B) + (C) = 0.0016 + 0.0012 + 0.0015 = 0.0043'] },
+          { step: '手順3：問2「不良品だった時、A社である確率は？」', lines: ['答え = (A) / ((A)+(B)+(C)) = 0.0016 / 0.0043 = 16/43'] }
         ]
       },
       template: {
         title: '不良品・原因の確率（ベイズ）',
         steps: [
-          {
-            step: '手順1：以下の3つを計算して並べる',
-            content: '(A) = (A社のシェア) × (Aの不良率)\n(B) = (B社のシェア) × (Bの不良率)\n(C) = (C社のシェア) × (Cの不良率)\n例: 0.35 × 0.008 = 0.0028'
-          },
-          {
-            step: '手順2：問1「不良品である確率は？」',
-            content: '答え = (A) + (B) + (C)'
-          },
-          {
-            step: '手順3：問2「不良品だった時、それがX社である確率は？」',
-            content: '答え = $\\frac{(X)}{(A)+(B)+(C)}$\n※分子は聞かれている会社の数値、分母は合計'
-          }
+          { step: '手順1：以下の3つを計算して並べる', lines: ['(A) = (A社のシェア) × (Aの不良率)', '(B) = (B社のシェア) × (Bの不良率)', '(C) = (C社のシェア) × (Cの不良率)', '例: 0.35 × 0.008 = 0.0028'] },
+          { step: '手順2：問1「不良品である確率は？」', lines: ['答え = (A) + (B) + (C)'] },
+          { step: '手順3：問2「不良品だった時、それがX社である確率は？」', lines: ['答え = (X) / ((A)+(B)+(C))', '※分子は聞かれている会社の数値、分母は合計'] }
         ]
       }
     },
@@ -1717,29 +1681,17 @@ const examData = {
       location: '「係数の2乗」を忘れないためのメモ',
       example: {
         title: '例題：良い推定量はどっち？',
-        problem: '$K = \\frac{2X_1 - X_2 + X_3}{2}$ と $M = \\frac{X_1 - X_2 + 3X_3}{3}$、平均の推定量として良いのは？',
+        problem: 'K = (2X₁ - X₂ + X₃)/2 と M = (X₁ - X₂ + 3X₃)/3、平均の推定量として良いのは？',
         solution: [
-          {
-            step: '1. 不偏性の確認 (平均 E をとる)',
-            content: '$E[K] = \\frac{2E[X] - E[X] + E[X]}{2} = \\frac{2}{2}E[X] = E[X]$ (OK)\n$E[M] = \\frac{E[X] - E[X] + 3E[X]}{3} = \\frac{3}{3}E[X] = E[X]$ (OK)\n結論: 「両方とも不偏推定量である」'
-          },
-          {
-            step: '2. 有効性の確認 (分散 V を計算)',
-            content: '重要: 係数は 2乗 して出す！($V[aX] = a^2V[X]$)\n$V[K] = \\frac{2^2 + (-1)^2 + 1^2}{2^2} V[X] = \\frac{4+1+1}{4}V[X] = \\frac{6}{4}V[X]$\n$V[M] = \\frac{1^2 + (-1)^2 + 3^2}{3^2} V[X] = \\frac{1+1+9}{9}V[X] = \\frac{11}{9}V[X]$\n結論: 1.5 vs 1.22... なので小さい方が勝ち。\n「$V[M] < V[K]$ なので、Mの方が有効（最良）である」'
-          }
+          { step: '1. 不偏性の確認 (平均 E をとる)', lines: ['E[K] = (2-1+1)/2 × E[X] = E[X] (OK)', 'E[M] = (1-1+3)/3 × E[X] = E[X] (OK)', '結論: 「両方とも不偏推定量である」'] },
+          { step: '2. 有効性の確認 (分散 V を計算)', lines: ['★重要: 係数は 2乗 して出す！ V[aX] = a²V[X]', 'V[K] = (2² + (-1)² + 1²) / 2² × V[X] = 6/4 × V[X] = 1.5V[X]', 'V[M] = (1² + (-1)² + 3²) / 3² × V[X] = 11/9 × V[X] ≈ 1.22V[X]', '結論: V[M] < V[K] なので、Mの方が有効（最良）'] }
         ]
       },
       template: {
         title: '推定量の判定（平均・分散）',
         steps: [
-          {
-            step: '1. 不偏性（平均が一致するか）',
-            content: '係数をそのまま足して「1」になればOK。\n$E[K] = E[X]$ となるか確認。'
-          },
-          {
-            step: '2. 有効性（分散が小さいか）',
-            content: '重要公式: 係数を 2乗 して足す！\n$V[aX + bY] = a^2 V[X] + b^2 V[Y]$\n計算結果が 一番小さいもの が「最も良い（有効な）推定量」。\n例: $\\frac{1}{2}X_1 + \\frac{1}{2}X_2 \\rightarrow (\\frac{1}{4} + \\frac{1}{4})V[X] = \\frac{1}{2}V[X]$'
-          }
+          { step: '1. 不偏性（平均が一致するか）', lines: ['係数をそのまま足して「1」になればOK', 'E[K] = E[X] となるか確認'] },
+          { step: '2. 有効性（分散が小さいか）', lines: ['★重要公式: 係数を 2乗 して足す！', 'V[aX + bY] = a²V[X] + b²V[Y]', '計算結果が一番小さいものが「最も良い（有効な）推定量」', '例: (1/2)X₁ + (1/2)X₂ → (1/4 + 1/4)V[X] = (1/2)V[X]'] }
         ]
       }
     },
@@ -1750,45 +1702,21 @@ const examData = {
       location: '教科書の「分布」の章か、表紙裏のメインスペースに',
       example: {
         title: '例題：分布と確率計算',
-        problem: '【ポアソン分布】1ヶ月(30日)に平均60件の事故。1日の件数Xは？1件も起きない確率は？\n【指数分布】事故から次の事故までの時間T（時間単位）は？\n【的当て】X, Y ~ N(0, 5)。半径√36.9の円に入る確率は？',
+        problem: '【ポアソン分布】1ヶ月(30日)に平均60件の事故。1日の件数Xは？\n【指数分布】事故から次の事故までの時間Tは？\n【的当て】X, Y ~ N(0, 5)。半径√36.9の円に入る確率は？',
         solution: [
-          {
-            step: 'ポアソン分布の解答',
-            content: '分布: 1日平均 = 60 ÷ 30 = 2件。よって $Po(2)$ に従う。\n確率: 1件も起きない確率は？\n$P(X=0) = e^{-2} \\frac{2^0}{0!} = e^{-2}$'
-          },
-          {
-            step: '指数分布の解答',
-            content: 'パラメータ: 1日(24h)で平均2件 → 平均間隔は 24 ÷ 2 = 12時間。\n重要: 指数分布のパラメータは「平均の逆数」。つまり $\\frac{1}{12}$。\n答え: 「パラメータ 1/12 の指数分布に従う」'
-          },
-          {
-            step: '的当て（カイ二乗）の解答',
-            content: '公式: $P = 1 - e^{-\\frac{\\text{半径}^2}{2\\sigma^2}}$\n計算: $1 - e^{-\\frac{36.9}{2 \\times 5}} = 1 - e^{-3.69}$\n（または表を使う場合: 自由度2のカイ二乗分布表を見る）'
-          }
+          { step: 'ポアソン分布の解答', lines: ['1日平均 = 60 ÷ 30 = 2件 → X ~ Po(2)', 'P(X=0) = e⁻² × 2⁰/0! = e⁻² ≈ 0.135'] },
+          { step: '指数分布の解答', lines: ['1日(24h)で平均2件 → 平均間隔 = 12時間', '★重要: パラメータは「平均の逆数」= 1/12', '答え: パラメータ 1/12 の指数分布に従う'] },
+          { step: '的当て（カイ二乗）の解答', lines: ['公式: P = 1 - e^(-半径²/(2σ²))', '計算: 1 - e^(-36.9/10) = 1 - e^(-3.69)'] }
         ]
       },
       template: {
         title: '分布とパラメータ',
         steps: [
-          {
-            step: 'ポアソン分布 Po(λ)',
-            content: '「平均λ回起きる」 → パラメータはλ\n確率: $P(X=k) = e^{-\\lambda} \\frac{\\lambda^k}{k!}$'
-          },
-          {
-            step: '指数分布（待ち時間）',
-            content: '「平均A時間」 → パラメータは $\\frac{1}{A}$ (逆数!!)\n※平均12ならパラメータは1/12'
-          },
-          {
-            step: '二項分布の正規近似',
-            content: 'n回投げて確率p → $N(np, np(1-p))$ で近似\n標準化: $Z = \\frac{X - np}{\\sqrt{np(1-p)}}$'
-          },
-          {
-            step: '偏差値',
-            content: '$T = \\frac{10(X - \\text{平均})}{\\text{標準偏差}} + 50$'
-          },
-          {
-            step: 'カイ二乗分布（的当て）',
-            content: '$X^2 + Y^2 \\le r^2$ の確率 → 自由度2のカイ二乗分布 $\\chi^2(2)$\n確率 $P = 1 - e^{-\\frac{r^2}{2\\sigma^2}}$ （または表から読む）'
-          }
+          { step: 'ポアソン分布 Po(λ)', lines: ['「平均λ回起きる」→ パラメータはλ', 'P(X=k) = e⁻λ × λᵏ/k!'] },
+          { step: '指数分布（待ち時間）', lines: ['「平均A時間」→ パラメータは 1/A (★逆数!!)', '※平均12ならパラメータは1/12'] },
+          { step: '二項分布の正規近似', lines: ['n回投げて確率p → N(np, np(1-p)) で近似', '標準化: Z = (X - np) / √(np(1-p))'] },
+          { step: '偏差値', lines: ['T = 10(X - 平均) / 標準偏差 + 50'] },
+          { step: 'カイ二乗分布（的当て）', lines: ['X² + Y² ≤ r² の確率 → 自由度2のχ²分布', 'P = 1 - e^(-r²/(2σ²))'] }
         ]
       }
     },
@@ -1801,18 +1729,9 @@ const examData = {
       template: {
         title: '記述問題カンペ',
         steps: [
-          {
-            step: 'ランダムサンプリングとは？',
-            content: '「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」'
-          },
-          {
-            step: '最尤推定とは？',
-            content: '「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」'
-          },
-          {
-            step: '偏差値の定義・基準は？',
-            content: '「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」\n式: $T = \\frac{10(X - \\text{平均})}{\\text{標準偏差}} + 50$'
-          }
+          { step: 'ランダムサンプリングとは？', lines: ['「母集団を構成している各々の要素が、等確率で選ばれるように抽出手法を設計すること」'] },
+          { step: '最尤推定とは？', lines: ['「何らかの確率モデルを仮定した上で、実際に観測されたデータが最も起こりやすくなるように母数（パラメータ）を推定すること」'] },
+          { step: '偏差値の定義・基準は？', lines: ['「平均が50、分散が100（標準偏差10）になるようにデータを標準化したもの」', '式: T = 10(X - 平均) / 標準偏差 + 50'] }
         ]
       }
     }
@@ -1822,21 +1741,6 @@ const examData = {
 // 過去問対策タブ（教科書書き込み用カンペ形式）
 function ExamTab() {
   const [activeSpace, setActiveSpace] = useState('hypothesis');
-
-  // MathJaxの数式をレンダリングするコンポーネント
-  const MathText = ({ text }) => {
-    const lines = text.split('\n');
-    return (
-      <div style={{ lineHeight: '1.8' }}>
-        {lines.map((line, i) => (
-          <div key={i} style={{ marginBottom: i < lines.length - 1 ? '8px' : 0 }}>
-            <MathFormula>{line}</MathFormula>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   const currentSpace = examData.spaces.find(s => s.id === activeSpace);
 
   return (
@@ -1844,26 +1748,17 @@ function ExamTab() {
       <h2>📝 教科書書き込み用カンペ</h2>
       <p className="tab-description">試験中に「数字をどこに当てはめればいいか」が一目でわかる、例題＋テンプレート集</p>
 
-      <div style={{
-        background: 'var(--bg-warning)',
-        padding: '15px 20px',
-        borderRadius: '10px',
-        marginBottom: '25px',
-        borderLeft: '4px solid var(--border-warning)'
-      }}>
-        <p style={{ margin: 0, color: 'var(--text-warning)', fontSize: '0.95rem' }}>
-          💡 教科書の表紙裏や空白ページにこのままブロックごとに書き写してください。数字が変わってもこの手順でいけます。
-        </p>
+      <div className="info-box" style={{ marginBottom: '20px' }}>
+        <strong>💡 使い方:</strong> 教科書の表紙裏や空白ページにこのままブロックごとに書き写してください。数字が変わってもこの手順でいけます。
       </div>
 
       {/* スペース選択タブ */}
-      <div className="sub-tabs" style={{ justifyContent: 'center', marginBottom: '25px', flexWrap: 'wrap', gap: '8px' }}>
+      <div className="sub-tabs" style={{ justifyContent: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
         {examData.spaces.map(space => (
           <button
             key={space.id}
             className={activeSpace === space.id ? 'active' : ''}
             onClick={() => setActiveSpace(space.id)}
-            style={{ fontSize: '0.9rem' }}
           >
             {space.icon} {space.title.split('（')[0]}
           </button>
@@ -1871,147 +1766,79 @@ function ExamTab() {
       </div>
 
       {currentSpace && (
-        <div className="space-content">
+        <div className="cheatsheet-content">
           {/* スペースヘッダー */}
-          <div style={{
-            background: 'var(--accent-color)',
-            color: 'white',
-            padding: '15px 20px',
-            borderRadius: '12px 12px 0 0',
-            marginBottom: 0
-          }}>
-            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
-              <span style={{ fontSize: '1.4rem' }}>{currentSpace.icon}</span>
-              【スペース{examData.spaces.findIndex(s => s.id === activeSpace) + 1}：{currentSpace.title}】
-            </h3>
-            <p style={{ margin: '8px 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
-              📍 {currentSpace.location}
-            </p>
+          <div className="cheat-section" style={{ borderLeft: '4px solid var(--accent-color)' }}>
+            <h3>{currentSpace.icon} 【スペース{examData.spaces.findIndex(s => s.id === activeSpace) + 1}：{currentSpace.title}】</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: '5px 0 0 0', fontSize: '0.9rem' }}>📍 {currentSpace.location}</p>
           </div>
 
-          <div style={{
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-color)',
-            borderTop: 'none',
-            borderRadius: '0 0 12px 12px',
-            padding: '25px'
-          }}>
+          {/* 例題セクション */}
+          {currentSpace.example && (
+            <div className="cheat-section" style={{ borderLeft: '4px solid var(--success-color)' }}>
+              <h3 style={{ color: 'var(--text-success)' }}>📘 {currentSpace.example.title}</h3>
 
-            {/* 例題セクション */}
-            {currentSpace.example && (
-              <div style={{ marginBottom: '30px' }}>
-                <div style={{
-                  background: 'var(--bg-accent)',
-                  borderRadius: '10px',
-                  padding: '20px',
-                  border: '2px solid var(--accent-color)'
-                }}>
-                  <h4 style={{
-                    color: 'var(--text-accent)',
-                    marginBottom: '15px',
-                    fontSize: '1.1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <span style={{
-                      background: 'var(--accent-color)',
-                      color: 'white',
-                      padding: '3px 10px',
-                      borderRadius: '5px',
-                      fontSize: '0.85rem'
-                    }}>例題</span>
-                    {currentSpace.example.title}
-                  </h4>
-
-                  {/* 問題文 */}
-                  <div style={{
-                    background: 'var(--bg-card)',
-                    padding: '15px',
-                    borderRadius: '8px',
-                    marginBottom: '20px',
-                    borderLeft: '4px solid var(--text-secondary)'
-                  }}>
-                    <div style={{ fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', fontSize: '0.85rem' }}>【問題例】</div>
-                    <div style={{ color: 'var(--text-primary)', lineHeight: '1.7' }}>
-                      {currentSpace.example.problem.split('\n').map((line, i) => (
-                        <div key={i}><MathFormula>{line}</MathFormula></div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 解答 */}
-                  <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '12px', fontSize: '0.95rem' }}>【解答記述テンプレート】</div>
-                  {currentSpace.example.solution.map((sol, i) => (
-                    <div key={i} style={{
-                      background: 'var(--bg-card)',
-                      padding: '15px',
-                      borderRadius: '8px',
-                      marginBottom: '12px',
-                      borderLeft: '3px solid var(--success-color)'
-                    }}>
-                      <div style={{ fontWeight: '600', color: 'var(--text-success)', marginBottom: '10px' }}>{sol.step}</div>
-                      <MathText text={sol.content} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 汎用テンプレートセクション */}
-            <div>
-              <div style={{
-                background: 'linear-gradient(135deg, var(--bg-warning) 0%, var(--bg-accent) 100%)',
-                borderRadius: '10px',
-                padding: '20px',
-                border: '2px dashed var(--border-warning)'
-              }}>
-                <h4 style={{
-                  color: 'var(--text-warning)',
-                  marginBottom: '15px',
-                  fontSize: '1.1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <span style={{
-                    background: 'var(--border-warning)',
-                    color: 'white',
-                    padding: '3px 10px',
-                    borderRadius: '5px',
-                    fontSize: '0.85rem'
-                  }}>汎用</span>
-                  {currentSpace.template.title}
-                </h4>
-
-                {currentSpace.template.steps.map((step, i) => (
-                  <div key={i} style={{
-                    background: 'var(--bg-card)',
-                    padding: '15px',
-                    borderRadius: '8px',
-                    marginBottom: '12px',
-                    borderLeft: '4px solid var(--accent-color)'
-                  }}>
-                    <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '10px' }}>{step.step}</div>
-                    <MathText text={step.content} />
-                  </div>
+              <div style={{ background: 'var(--bg-accent)', padding: '12px 15px', borderRadius: '8px', marginBottom: '15px' }}>
+                <div style={{ fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '5px', fontSize: '0.85rem' }}>【問題例】</div>
+                {currentSpace.example.problem.split('\n').map((line, i) => (
+                  <div key={i} style={{ color: 'var(--text-primary)', lineHeight: '1.6' }}>{line}</div>
                 ))}
               </div>
+
+              <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '10px', fontSize: '0.9rem' }}>【解答記述テンプレート】</div>
+              {currentSpace.example.solution.map((sol, i) => (
+                <div key={i} style={{ marginBottom: '12px', paddingLeft: '10px', borderLeft: '2px solid var(--success-color)' }}>
+                  <div style={{ fontWeight: '600', color: 'var(--text-success)', marginBottom: '5px', fontSize: '0.9rem' }}>{sol.step}</div>
+                  <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                    {sol.lines.map((line, j) => (
+                      <li key={j} style={{
+                        color: line.includes('★') ? 'var(--text-warning)' : 'var(--text-primary)',
+                        fontWeight: line.includes('★') ? '600' : '400',
+                        fontSize: '0.9rem',
+                        lineHeight: '1.6',
+                        fontFamily: line.includes('=') || line.includes('≥') || line.includes('≠') ? "'JetBrains Mono', monospace" : 'inherit'
+                      }}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
+          )}
+
+          {/* 汎用テンプレートセクション */}
+          <div className="cheat-section" style={{ borderLeft: '4px solid var(--border-warning)', background: 'var(--bg-warning)' }}>
+            <h3 style={{ color: 'var(--text-warning)' }}>📋 {currentSpace.template.title}</h3>
+
+            {currentSpace.template.steps.map((step, i) => (
+              <div key={i} style={{
+                marginBottom: '12px',
+                padding: '10px 12px',
+                background: 'var(--bg-card)',
+                borderRadius: '6px',
+                borderLeft: '3px solid var(--accent-color)'
+              }}>
+                <div style={{ fontWeight: '600', color: 'var(--text-accent)', marginBottom: '5px', fontSize: '0.9rem' }}>{step.step}</div>
+                <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                  {step.lines.map((line, j) => (
+                    <li key={j} style={{
+                      color: line.includes('★') ? 'var(--text-warning)' : 'var(--text-primary)',
+                      fontWeight: line.includes('★') ? '600' : '400',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.6',
+                      fontFamily: line.includes('=') || line.includes('≥') || line.includes('≠') ? "'JetBrains Mono', monospace" : 'inherit'
+                    }}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
       {/* 合格のポイント */}
-      <div style={{
-        marginTop: '30px',
-        padding: '20px',
-        background: 'var(--success-light)',
-        borderRadius: '12px',
-        borderLeft: '4px solid var(--success-color)'
-      }}>
-        <h4 style={{ color: 'var(--text-success)', marginBottom: '12px' }}>🎯 この構成で書き込めば試験に勝てる！</h4>
-        <ul style={{ color: 'var(--text-primary)', lineHeight: '1.8', paddingLeft: '20px', margin: 0 }}>
+      <div className="cheat-section" style={{ marginTop: '20px', borderLeft: '4px solid var(--success-color)', background: 'var(--success-light)' }}>
+        <h3 style={{ color: 'var(--text-success)' }}>🎯 この構成で書き込めば試験に勝てる！</h3>
+        <ul className="cheat-mistakes">
           <li><strong>仮説検定とベイズの定理だけで約30%</strong>の配点。この2つは完璧にする</li>
           <li>毎年ほぼ<strong>同じ形式・同じ問題</strong>が出る。数字を当てはめるだけで解ける</li>
           <li>記述問題の答えは<strong>一字一句同じ</strong>でOK。暗記して書き写すだけ</li>
