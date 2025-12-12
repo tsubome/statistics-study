@@ -1629,7 +1629,17 @@ function QuizTab() {
 
 // 過去問対策タブ（教科書書き込み用カンペ形式）
 function ExamTab() {
-  const [activeTab, setActiveTab] = useState('template'); // 'template' or 'example'
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      return localStorage.getItem('stats-exam-tab') || 'template';
+    } catch { return 'template'; }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('stats-exam-tab', activeTab);
+    } catch {}
+  }, [activeTab]);
 
   return (
     <div className="exam-tab">
@@ -2723,7 +2733,11 @@ function LearnTab({ sections, openSections, toggleSection, expandAll, collapseAl
 
 // ===== メインApp =====
 function App() {
-  const [activeTab, setActiveTab] = useState('learn');
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      return localStorage.getItem('stats-active-tab') || 'learn';
+    } catch { return 'learn'; }
+  });
   const [openSections, setOpenSections] = useState(new Set([1]));
   const [darkMode, setDarkMode] = useState(() => {
     try {
@@ -2731,6 +2745,33 @@ function App() {
       return saved === 'true';
     } catch { return false; }
   });
+
+  // タブ状態を保存
+  useEffect(() => {
+    try {
+      localStorage.setItem('stats-active-tab', activeTab);
+    } catch {}
+  }, [activeTab]);
+
+  // スクロール位置を保存・復元
+  useEffect(() => {
+    // 復元
+    try {
+      const savedScroll = localStorage.getItem('stats-scroll-position');
+      if (savedScroll) {
+        setTimeout(() => window.scrollTo(0, parseInt(savedScroll, 10)), 100);
+      }
+    } catch {}
+
+    // 保存（スクロール時）
+    const handleScroll = () => {
+      try {
+        localStorage.setItem('stats-scroll-position', window.scrollY.toString());
+      } catch {}
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     try {
